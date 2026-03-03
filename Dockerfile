@@ -20,16 +20,16 @@ VOLUME /app/var/
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		file \
-		git \
+	file \
+	git \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	install-php-extensions \
-		@composer \
-		apcu \
-		intl \
-		opcache \
-		zip \
+	@composer \
+	apcu \
+	intl \
+	opcache \
+	zip \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
@@ -39,7 +39,7 @@ ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
 
 ###> recipes ###
 ###> doctrine/doctrine-bundle ###
-RUN install-php-extensions pdo_pgsql
+RUN install-php-extensions pdo_mysql
 ###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
@@ -63,7 +63,7 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 RUN set -eux; \
 	install-php-extensions \
-		xdebug \
+	xdebug \
 	;
 
 COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
@@ -93,6 +93,6 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	if [ -f importmap.php ]; then \
-		php bin/console asset-map:compile; \
+	php bin/console asset-map:compile; \
 	fi; \
 	chmod +x bin/console; sync;
