@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AnnounceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AnnounceRepository::class)]
@@ -30,12 +31,6 @@ class Announce
 
     #[ORM\Column(type: 'float')]
     private ?float $prix = null;
-
-    #[ORM\Column(type: 'float')]
-    private ?float $latitude = null;
-
-    #[ORM\Column(type: 'float')]
-    private ?float $longitude = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $equipements = null;
@@ -82,6 +77,12 @@ class Announce
 
     #[ORM\OneToMany(mappedBy: 'announce', targetEntity: Reservation::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $reservations;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
+    private ?string $latitude = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
+    private ?string $longitude = null;
 
     public function __construct()
     {
