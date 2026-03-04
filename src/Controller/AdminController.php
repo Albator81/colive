@@ -33,6 +33,7 @@ class AdminController extends AbstractController
         $announce->setIsValidated(true);
         $em->flush();
         $this->addFlash('success', 'Annonce validée avec succès.');
+
         return $this->redirectToRoute('app_admin_dashboard');
     }
 
@@ -42,6 +43,7 @@ class AdminController extends AbstractController
         $em->remove($announce);
         $em->flush();
         $this->addFlash('danger', 'Annonce refusée et supprimée.');
+
         return $this->redirectToRoute('app_admin_dashboard');
     }
 
@@ -51,6 +53,7 @@ class AdminController extends AbstractController
         $em->remove($review);
         $em->flush();
         $this->addFlash('success', 'Avis supprimé.');
+
         return $this->redirectToRoute('app_admin_dashboard');
     }
 }

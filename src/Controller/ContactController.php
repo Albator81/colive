@@ -21,8 +21,8 @@ class ContactController extends AbstractController
             $userToAdd->addContact($currentUser);
             $em->persist($currentUser);
             $em->flush();
-
         }
+
         return $this->redirectToRoute('app_message_conversation', ['id' => $userToAdd->getId()]);
     }
 

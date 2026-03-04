@@ -78,7 +78,7 @@ final class AdminCest
             throw new \Exception("ECHEC : L'annonce a disparu de la base !");
         }
 
-        if ($annonce->isValidated() !== true) {
+        if (true !== $annonce->isValidated()) {
             throw new \Exception("ECHEC : L'admin a cliqué sur valider mais isValidated est toujours à false.");
         }
     }

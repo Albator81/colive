@@ -25,9 +25,9 @@ class AnnounceRepository extends ServiceEntityRepository
 
         if ($location) {
             $qb->andWhere('a.ville LIKE :location')
-                ->setParameter('location', '%' . $location . '%');
+                ->setParameter('location', '%'.$location.'%');
         }
-        if ($type && $type !== 'all') {
+        if ($type && 'all' !== $type) {
             $qb->andWhere('a.type = :type')
                 ->setParameter('type', $type);
         }
@@ -40,6 +40,7 @@ class AnnounceRepository extends ServiceEntityRepository
                 ->setParameter('dateEnd', $dateEnd);
         }
         $qb->orderBy('a.dateCreation', 'DESC');
+
         return $qb->getQuery()->getResult();
     }
 }

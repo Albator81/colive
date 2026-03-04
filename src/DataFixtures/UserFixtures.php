@@ -15,7 +15,7 @@ class UserFixtures extends Fixture
             'prenom' => 'Admin',
             'nom' => 'CoLive',
             'password' => 'admin',
-            'role' => 2
+            'role' => 2,
         ]);
 
         UserFactory::createOne([
@@ -23,7 +23,7 @@ class UserFixtures extends Fixture
             'prenom' => 'Jean',
             'nom' => 'Test',
             'password' => 'password',
-            'role' => 1
+            'role' => 1,
         ]);
 
         UserFactory::createOne([
@@ -31,7 +31,7 @@ class UserFixtures extends Fixture
             'prenom' => 'Assistant',
             'nom' => 'FAQ',
             'password' => 'password',
-            'role' => 1
+            'role' => 1,
         ]);
 
         UserFactory::createMany(15);

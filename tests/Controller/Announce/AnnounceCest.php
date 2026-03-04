@@ -7,7 +7,6 @@ namespace App\Tests\Controller\Announce;
 use App\Entity\Announce;
 use App\Entity\User;
 use App\Tests\Support\ControllerTester;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class AnnounceCest
 {
@@ -50,13 +49,13 @@ final class AnnounceCest
         if (!$annonce) {
             throw new \Exception("ECHEC : L'announce n'a pas été trouvée en base de données !");
         }
-        if ($annonce->getVille() !== 'Reims') {
+        if ('Reims' !== $annonce->getVille()) {
             throw new \Exception("ECHEC : La ville enregistrée n'est pas la bonne.");
         }
-        if ($annonce->getCodePostal() !== '51100') {
+        if ('51100' !== $annonce->getCodePostal()) {
             throw new \Exception("ECHEC : Le code postal n'a pas été enregistré correctement.");
         }
-        if ($annonce->getSurface() != 25) {
+        if (25 != $annonce->getSurface()) {
             throw new \Exception("ECHEC : La surface n'a pas été enregistrée correctement.");
         }
     }

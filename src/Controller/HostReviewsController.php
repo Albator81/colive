@@ -13,7 +13,7 @@ class HostReviewsController extends AbstractController
     public function index(User $host): Response
     {
         return $this->render('host_reviews/index.html.twig', [
-            'host' => $host
+            'host' => $host,
         ]);
     }
 }

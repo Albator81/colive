@@ -18,7 +18,7 @@ class ReservationRepository extends ServiceEntityRepository
     }
 
     /**
-     * Cherche s'il existe une réservation ACTIVE (non annulée) qui chevauche les dates
+     * Cherche s'il existe une réservation ACTIVE (non annulée) qui chevauche les dates.
      */
     public function findOverlappingReservations(Announce $announce, \DateTimeInterface $start, \DateTimeInterface $end): array
     {

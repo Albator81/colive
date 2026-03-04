@@ -17,6 +17,7 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
+
     /**
      * Cette méthode permet à Symfony de mettre à jour le hash du mot de passe
      * automatiquement si l'algorithme change.
@@ -31,6 +32,7 @@ class UserRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
     public function findAllExcept(User $user): array
     {
         return $this->createQueryBuilder('u')

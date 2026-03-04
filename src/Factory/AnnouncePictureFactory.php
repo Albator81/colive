@@ -23,15 +23,15 @@ final class AnnouncePictureFactory extends PersistentProxyObjectFactory
 
     private function getRandomImageBase64(): string
     {
-        $url = 'https://loremflickr.com/400/300/interiors,room?lock=' . self::faker()->numberBetween(1, 1000);
+        $url = 'https://loremflickr.com/400/300/interiors,room?lock='.self::faker()->numberBetween(1, 1000);
         try {
             $imageContent = file_get_contents($url);
-            if ($imageContent === false) {
-                throw new \Exception("Erreur de téléchargement");
+            if (false === $imageContent) {
+                throw new \Exception('Erreur de téléchargement');
             }
             $base64 = base64_encode($imageContent);
-            return 'data:image/jpeg;base64,' . $base64;
 
+            return 'data:image/jpeg;base64,'.$base64;
         } catch (\Exception $e) {
             return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
         }

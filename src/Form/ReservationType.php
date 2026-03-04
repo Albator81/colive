@@ -17,16 +17,16 @@ class ReservationType extends AbstractType
             ->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date d\'arrivée',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('dateFin', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de départ',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Confirmer la réservation',
-                'attr' => ['class' => 'btn btn-dark w-100 mt-3 py-3 fw-bold rounded-pill']
+                'attr' => ['class' => 'btn btn-dark w-100 mt-3 py-3 fw-bold rounded-pill'],
             ])
         ;
     }
