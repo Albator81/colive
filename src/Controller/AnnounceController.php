@@ -124,7 +124,7 @@ final class AnnounceController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/announce/{id}/edit', name: 'app_announce_edit')]
-    public function edit(Announce $annonce, Request $request, EntityManagerInterface $em): Response
+    public function edit(Announce $annonce, Request $request, EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
         if ($annonce->getUtilisateur() !== $this->getUser()) {
             $this->addFlash('danger', 'Vous ne pouvez pas modifier cette annonce.');
@@ -148,7 +148,7 @@ final class AnnounceController extends AbstractController
                 $picture->setAnnonce($annonce);
                 $em->persist($picture);
             }
-
+            $this->setCoordinates($annonce, $httpClient);
             $em->flush();
 
             $this->addFlash('success', 'Votre annonce a été mise à jour.');
