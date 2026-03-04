@@ -8,20 +8,26 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
+#[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: "id_utilisateur", type: "integer")]
+    #[Groups(['rewiew_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['rewiew_read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['rewiew_read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 100, unique: true)]
@@ -34,6 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Groups(['rewiew_read'])]
     private ?string $avatar = null;
 
     #[ORM\Column(name: "date_creation_compte", type: "datetime")]
