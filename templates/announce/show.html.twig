@@ -319,7 +319,7 @@
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
             L.marker([{{ announce.latitude }}, {{ announce.longitude }}]).addTo(map)
-                .bindPopup("C'est ici !")
+                .bindPopup("{{announce.adresse}}, {{announce.codepostal}} - {{announce.ville}}")
                 .openPopup()
                 .on('click', function(e) {
                     map.setView(e.latlng, map.getZoom() < 15 ? 15 : map.getZoom() , { animate: true });
