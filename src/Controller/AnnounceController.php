@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class AnnounceController extends AbstractController
 {
@@ -38,7 +39,7 @@ final class AnnounceController extends AbstractController
 
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/announce/create', name: 'app_announce_create')]
-    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function create(Request $request, EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
         $annonce = new Announce();
         $form = $this->createForm(AnnounceType::class, $annonce);
@@ -56,6 +57,31 @@ final class AnnounceController extends AbstractController
                 $picture->setAnnonce($annonce);
                 $em->persist($picture);
             }
+
+            $response = $httpClient->request('GET', 'https://nominatim.openstreetmap.org/search', [
+                'verify_peer' => false,
+                'query' => [
+                    'street' => $annonce->getAdresse(), 
+                    'city'   => $annonce->getVille(),
+                    'format' => 'json',
+                    'limit' => 1,
+                ],
+                'headers' => [
+                    'User-Agent' => 'WAAAA/1.0 (set-contact-mail-for-prod@gmail.com)',
+                ],
+            ]);
+
+            $data = $response->toArray();
+
+            if (!empty($data)) {
+                $annonce->setLatitude($data[0]['lat']);
+                $annonce->setLongitude($data[0]['lon']);
+            } else {
+                $annonce->setLatitude(.0);
+                $annonce->setLongitude(.0);
+            }
+
+
             $em->persist($annonce);
             $em->flush();
             $this->addFlash('success', 'Votre annonce a été publiée avec succès.');
