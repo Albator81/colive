@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class AnnounceController extends AbstractController
 {
@@ -38,7 +39,7 @@ final class AnnounceController extends AbstractController
 
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/announce/create', name: 'app_announce_create')]
-    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function create(Request $request, EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
         $annonce = new Announce();
         $form = $this->createForm(AnnounceType::class, $annonce);
@@ -56,6 +57,7 @@ final class AnnounceController extends AbstractController
                 $picture->setAnnonce($annonce);
                 $em->persist($picture);
             }
+            $this->setCoordinates($annonce, $httpClient);
             $em->persist($annonce);
             $em->flush();
             $this->addFlash('success', 'Votre annonce a été publiée avec succès.');
@@ -66,6 +68,31 @@ final class AnnounceController extends AbstractController
         return $this->render('announce/create.html.twig', [
             'formAnnonce' => $form->createView(),
         ]);
+    }
+
+    private function setCoordinates(Announce $annonce, HttpClientInterface $httpClient): void  {
+        $response = $httpClient->request('GET', 'https://nominatim.openstreetmap.org/search', [
+            'verify_peer' => false,
+            'query' => [
+                'street' => $annonce->getAdresse(), 
+                'city'   => $annonce->getVille(),
+                'format' => 'json',
+                'limit' => 1,
+            ],
+            'headers' => [
+                'User-Agent' => 'WAAAA/1.0 (set-contact-mail-for-prod@gmail.com)',
+            ],
+        ]);
+
+        $data = $response->toArray();
+
+        if (!empty($data)) {
+            $annonce->setLatitude($data[0]['lat']);
+            $annonce->setLongitude($data[0]['lon']);
+        } else {
+            $annonce->setLatitude(.0);
+            $annonce->setLongitude(.0);
+        }
     }
 
     #[Route('/announce/{id}/like', name: 'app_announce_like')]
@@ -97,7 +124,7 @@ final class AnnounceController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/announce/{id}/edit', name: 'app_announce_edit')]
-    public function edit(Announce $annonce, Request $request, EntityManagerInterface $em): Response
+    public function edit(Announce $annonce, Request $request, EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
         if ($annonce->getUtilisateur() !== $this->getUser()) {
             $this->addFlash('danger', 'Vous ne pouvez pas modifier cette annonce.');
@@ -121,7 +148,7 @@ final class AnnounceController extends AbstractController
                 $picture->setAnnonce($annonce);
                 $em->persist($picture);
             }
-
+            $this->setCoordinates($annonce, $httpClient);
             $em->flush();
 
             $this->addFlash('success', 'Votre annonce a été mise à jour.');

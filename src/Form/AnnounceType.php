@@ -46,8 +46,6 @@ class AnnounceType extends AbstractType
                 'label' => 'Prix par nuit',
                 'currency' => 'EUR',
             ])
-            ->add('latitude', NumberType::class, ['scale' => 6, 'required' => false])
-            ->add('longitude', NumberType::class, ['scale' => 6, 'required' => false])
             ->add('equipements', TextType::class, [
                 'help' => 'Ex: Wifi, Parking, Piscine...',
             ])
