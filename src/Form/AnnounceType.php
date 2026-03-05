@@ -25,51 +25,51 @@ class AnnounceType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class, [
-                'label' => 'Titre de l\'announce'
+                'label' => 'Titre de l\'announce',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description détaillée',
-                'attr' => ['rows' => 5]
+                'attr' => ['rows' => 5],
             ])
             ->add('type', ChoiceType::class, [
                 'label' => 'Type de bien',
-                'choices'  => [
+                'choices' => [
                     'Chambre' => 'Chambre',
                     'Collocation' => 'Collocation',
                     'Studio' => 'Studio',
                 ],
             ])
             ->add('nb_pieces', IntegerType::class, [
-                'label' => 'Nombre de pièces'
+                'label' => 'Nombre de pièces',
             ])
             ->add('prix', MoneyType::class, [
                 'label' => 'Prix par nuit',
-                'currency' => 'EUR'
+                'currency' => 'EUR',
             ])
-            ->add('latitude', NumberType::class, ['scale' => 6,'required' => false])
-            ->add('longitude', NumberType::class, ['scale' => 6,'required' => false])
+            ->add('latitude', NumberType::class, ['scale' => 6, 'required' => false])
+            ->add('longitude', NumberType::class, ['scale' => 6, 'required' => false])
             ->add('equipements', TextType::class, [
-                'help' => 'Ex: Wifi, Parking, Piscine...'
+                'help' => 'Ex: Wifi, Parking, Piscine...',
             ])
             ->add('regle', TextareaType::class, [
-                'required' => false
+                'required' => false,
             ])
 //            ->add('dateCreation')
             ->add('disponibilite_debut', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Disponible du'
+                'label' => 'Disponible du',
             ])
             ->add('disponibilite_fin', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Au'
+                'label' => 'Au',
             ])
             ->add('adresse')
             ->add('ville')
             ->add('code_postal', TextType::class, [
-                'label' => 'Code postal'
+                'label' => 'Code postal',
             ])
             ->add('surface', NumberType::class, [
-                'label' => 'Surface'
+                'label' => 'Surface',
             ])
             ->add('images', FileType::class, [
                 'label' => 'Photos du logement',
@@ -86,13 +86,13 @@ class AnnounceType extends AbstractType
                                 'image/webp',
                             ],
                             'mimeTypesMessage' => 'Veuillez uploader une image valide (jpg, png, webp)',
-                        ])
-                    ])
+                        ]),
+                    ]),
                 ],
                 'attr' => [
                     'accept' => 'image/*',
                     'class' => 'd-none',
-                ]
+                ],
             ])
 //            ->add('utilisateur', EntityType::class, [
 //                'class' => User::class,

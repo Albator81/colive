@@ -9,7 +9,6 @@ use App\Form\AnnounceType;
 use App\Repository\AnnounceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,14 +26,16 @@ final class AnnounceController extends AbstractController
         $dateStart = $request->query->get('date_start');
         $dateEnd = $request->query->get('date_end');
         $announces = $announceRepository->findByFilters($location, $type, $dateStart, $dateEnd);
+
         return $this->render('announce/index.html.twig', [
-            'announces'=>$announces,
+            'announces' => $announces,
             'searchLocation' => $location,
             'searchType' => $type,
             'searchStart' => $dateStart,
             'searchEnd' => $dateEnd,
         ]);
     }
+
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/announce/create', name: 'app_announce_create')]
     public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
@@ -49,7 +50,7 @@ final class AnnounceController extends AbstractController
                 $fileContent = file_get_contents($image->getPathname());
                 $base64 = base64_encode($fileContent);
                 $mimeType = $image->getMimeType();
-                $dataUri = 'data:' . $mimeType . ';base64,' . $base64;
+                $dataUri = 'data:'.$mimeType.';base64,'.$base64;
                 $picture = new AnnouncePicture();
                 $picture->setContenu($dataUri);
                 $picture->setAnnonce($annonce);
@@ -58,8 +59,10 @@ final class AnnounceController extends AbstractController
             $em->persist($annonce);
             $em->flush();
             $this->addFlash('success', 'Votre annonce a été publiée avec succès.');
+
             return $this->redirectToRoute('app_home');
         }
+
         return $this->render('announce/create.html.twig', [
             'formAnnonce' => $form->createView(),
         ]);
@@ -74,11 +77,12 @@ final class AnnounceController extends AbstractController
         }
         $like = $entityManager->getRepository(UserLikes::class)->findOneBy([
             'utilisateur' => $user,
-            'annonce' => $announce
+            'annonce' => $announce,
         ]);
         if ($like) {
             $entityManager->remove($like);
             $entityManager->flush();
+
             return $this->json(['isLiked' => false]);
         }
         $newLike = new UserLikes();
@@ -90,12 +94,14 @@ final class AnnounceController extends AbstractController
 
         return $this->json(['isLiked' => true]);
     }
+
     #[IsGranted('ROLE_USER')]
     #[Route('/announce/{id}/edit', name: 'app_announce_edit')]
     public function edit(Announce $annonce, Request $request, EntityManagerInterface $em): Response
     {
         if ($annonce->getUtilisateur() !== $this->getUser()) {
             $this->addFlash('danger', 'Vous ne pouvez pas modifier cette annonce.');
+
             return $this->redirectToRoute('app_profile');
         }
 
@@ -103,13 +109,12 @@ final class AnnounceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $images = $form->get('images')->getData();
             foreach ($images as $image) {
                 $fileContent = file_get_contents($image->getPathname());
                 $base64 = base64_encode($fileContent);
                 $mimeType = $image->getMimeType();
-                $dataUri = 'data:' . $mimeType . ';base64,' . $base64;
+                $dataUri = 'data:'.$mimeType.';base64,'.$base64;
 
                 $picture = new AnnouncePicture();
                 $picture->setContenu($dataUri);
@@ -120,12 +125,13 @@ final class AnnounceController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Votre annonce a été mise à jour.');
+
             return $this->redirectToRoute('app_profile');
         }
 
         return $this->render('announce/edit.html.twig', [
             'formAnnonce' => $form->createView(),
-            'annonce' => $annonce
+            'annonce' => $annonce,
         ]);
     }
 
@@ -151,10 +157,10 @@ final class AnnounceController extends AbstractController
     {
         if ($annonce->getUtilisateur() !== $this->getUser()) {
             $this->addFlash('danger', 'Vous ne pouvez pas supprimer une annonce qui ne vous appartient pas.');
+
             return $this->redirectToRoute('app_profile');
         }
-        if ($this->isCsrfTokenValid('delete' . $annonce->getId(), $request->request->get('_token'))) {
-
+        if ($this->isCsrfTokenValid('delete'.$annonce->getId(), $request->request->get('_token'))) {
             $em->remove($annonce);
             $em->flush();
 

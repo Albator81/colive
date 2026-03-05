@@ -32,6 +32,7 @@ final class ContactCest
             'dateCreationCompte' => new \DateTime(),
         ]);
     }
+
     /*
      * Verify if the contact appear in the list after the user clicked on the contact button
      */
@@ -39,11 +40,12 @@ final class ContactCest
     {
         $user = $I->grabEntityFromRepository(User::class, ['id' => $this->myId]);
         $I->amLoggedInAs($user);
-        $I->amOnPage('/contact/ajouter/' . $this->otherUserId);
-        $I->seeCurrentUrlEquals('/message/' . $this->otherUserId);
+        $I->amOnPage('/contact/ajouter/'.$this->otherUserId);
+        $I->seeCurrentUrlEquals('/message/'.$this->otherUserId);
         $I->amOnPage('/message');
         $I->see('Futur Ami', '.contact-card .name');
     }
+
     /*
      * Verify if the user is correctly deleted when the bin is clicked
      */
@@ -60,7 +62,7 @@ final class ContactCest
         $I->amLoggedInAs($me);
         $I->amOnPage('/message');
         $I->see('Futur Ami');
-        $I->amOnPage('/contact/supprimer/' . $this->otherUserId);
+        $I->amOnPage('/contact/supprimer/'.$this->otherUserId);
         $I->seeCurrentUrlEquals('/message');
         $I->dontSee('Futur Ami', '.contact-card .name');
     }

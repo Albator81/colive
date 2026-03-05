@@ -7,9 +7,12 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "api-platform/doctrine-orm": "^4.2",
+        "api-platform/symfony": "^4.2",
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6.1",
+        "nelmio/cors-bundle": "^2.6",
         "phpdocumentor/reflection-docblock": "^5.6.6",
         "phpstan/phpdoc-parser": "^2.3",
         "symfony/asset": "7.3.*",
@@ -94,13 +97,22 @@
             "php bin/console doctrine:database:create",
             "php bin/console doctrine:migrations:migrate --no-interaction",
             "php bin/console doctrine:fixtures:load --no-interaction"
+        ],"test:cs": [
+            "php-cs-fixer fix --dry-run"
+        ],
+        "fix:cs": [
+            "php-cs-fixer fix"
         ],
         "test:codeception": [
             "php vendor/bin/codecept clean",
-            "bin/console doctrine:database:drop --force --if-exists --quiet --env=test",
-            "bin/console doctrine:database:create --quiet --env=test",
-            "bin/console doctrine:schema:create --quiet --env=test",
-            "php vendor/bin/codecept run"
+            "APP_ENV=test php bin/console doctrine:database:drop --force",
+            "APP_ENV=test php bin/console doctrine:database:create",
+            "APP_ENV=test php bin/console doctrine:schema:create --quiet",
+            "php vendor/bin/codecept run --no-artifacts"
+        ],
+        "test": [
+            "@test:cs",
+            "@test:codeception"
         ]
     },
     "conflict": {
@@ -118,6 +130,7 @@
         "codeception/module-doctrine": "^3.3",
         "codeception/module-symfony": "^3.8",
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
+        "friendsofphp/php-cs-fixer": "^3.94",
         "phpunit/phpunit": "^12.5.4",
         "symfony/browser-kit": "7.3.*",
         "symfony/css-selector": "7.3.*",

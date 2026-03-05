@@ -40,19 +40,19 @@ class BotController extends AbstractController
 
         Si la question est hors sujet, dis poliment que tu ne sais pas.";
 
-        $botResponse = "Une erreur est survenue.";
+        $botResponse = 'Une erreur est survenue.';
 
         try {
             $response = $client->request('POST', 'https://api.mistral.ai/v1/chat/completions', [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $_ENV['MISTRAL_API_KEY'],
+                    'Authorization' => 'Bearer '.$_ENV['MISTRAL_API_KEY'],
                     'Content-Type' => 'application/json',
                 ],
                 'json' => [
                     'model' => 'mistral-tiny',
                     'messages' => [
                         ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => $userQuestion]
+                        ['role' => 'user', 'content' => $userQuestion],
                     ],
                     'temperature' => 0.7,
                 ],
@@ -60,7 +60,6 @@ class BotController extends AbstractController
 
             $content = $response->toArray();
             $botResponse = $content['choices'][0]['message']['content'];
-
         } catch (\Exception $e) {
             $botResponse = "Désolé, je n'arrive pas à réfléchir pour le moment (Erreur API).";
         }

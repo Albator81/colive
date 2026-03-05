@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Announce;
 use App\Entity\User;
+use App\Entity\UserLikes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -14,8 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\File;
-use App\Entity\Announce;
-use App\Entity\UserLikes;
 
 #[IsGranted('ROLE_USER')]
 class ProfileController extends AbstractController
@@ -35,7 +35,7 @@ class ProfileController extends AbstractController
         foreach ($user->getAnnonces() as $annonce) {
             foreach ($annonce->getAvis() as $avis) {
                 $totalNote += $avis->getNote();
-                $countNotes++;
+                ++$countNotes;
             }
         }
 
@@ -44,20 +44,20 @@ class ProfileController extends AbstractController
         $form = $this->createFormBuilder($user)
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['placeholder' => 'Votre prénom']
+                'attr' => ['placeholder' => 'Votre prénom'],
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['placeholder' => 'Votre nom']
+                'attr' => ['placeholder' => 'Votre nom'],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse Email',
-                'attr' => ['placeholder' => 'exemple@email.com']
+                'attr' => ['placeholder' => 'exemple@email.com'],
             ])
             ->add('tel', TelType::class, [
                 'label' => 'Téléphone',
                 'required' => false,
-                'attr' => ['placeholder' => '06 12 34 56 78']
+                'attr' => ['placeholder' => '06 12 34 56 78'],
             ])
             ->add('avatarFile', FileType::class, [
                 'label' => 'Changer ma photo de profil',
@@ -72,7 +72,7 @@ class ProfileController extends AbstractController
                             'image/webp',
                         ],
                         'mimeTypesMessage' => 'Merci d\'uploader une image valide (JPG, PNG, WEBP)',
-                    ])
+                    ]),
                 ],
             ])
             ->getForm();
@@ -86,7 +86,7 @@ class ProfileController extends AbstractController
                 $fileContent = file_get_contents($uploadedFile->getPathname());
                 $base64 = base64_encode($fileContent);
                 $mimeType = $uploadedFile->getMimeType();
-                $dataUri = 'data:' . $mimeType . ';base64,' . $base64;
+                $dataUri = 'data:'.$mimeType.';base64,'.$base64;
                 $user->setAvatar($dataUri);
             }
 
@@ -113,7 +113,7 @@ class ProfileController extends AbstractController
 
         $like = $entityManager->getRepository(UserLikes::class)->findOneBy([
             'utilisateur' => $user,
-            'announce' => $annonce
+            'announce' => $annonce,
         ]);
 
         if ($like) {

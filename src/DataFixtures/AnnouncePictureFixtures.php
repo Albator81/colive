@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\AnnouncePictureFactory;
 use App\Factory\AnnounceFactory;
+use App\Factory\AnnouncePictureFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -17,5 +17,8 @@ class AnnouncePictureFixtures extends Fixture implements DependentFixtureInterfa
         }
     }
 
-    public function getDependencies(): array { return [AnnounceFixtures::class]; }
+    public function getDependencies(): array
+    {
+        return [AnnounceFixtures::class];
+    }
 }

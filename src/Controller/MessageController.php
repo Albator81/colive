@@ -28,8 +28,8 @@ class MessageController extends AbstractController
 
         if ($searchTerm) {
             foreach ($allContacts as $contact) {
-                if (stripos($contact->getNom(), $searchTerm) !== false ||
-                    stripos($contact->getPrenom(), $searchTerm) !== false) {
+                if (false !== stripos($contact->getNom(), $searchTerm)
+                    || false !== stripos($contact->getPrenom(), $searchTerm)) {
                     $users[] = $contact;
                 }
             }
@@ -54,8 +54,8 @@ class MessageController extends AbstractController
                         $message->setRecipient($selectedUser);
 
                         if ($file) {
-                            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads';
-                            $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                            $uploadDir = $this->getParameter('kernel.project_dir').'/public/uploads';
+                            $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
                             try {
                                 $file->move($uploadDir, $fileName);
