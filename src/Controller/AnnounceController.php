@@ -6,7 +6,6 @@ use App\Entity\Announce;
 use App\Entity\AnnouncePicture;
 use App\Entity\UserLikes;
 use App\Form\AnnounceType;
-use App\Repository\AnnounceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class AnnounceController extends AbstractController
@@ -58,12 +56,13 @@ final class AnnounceController extends AbstractController
         ]);
     }
 
-    private function setCoordinates(Announce $annonce, HttpClientInterface $httpClient): void  {
+    private function setCoordinates(Announce $annonce, HttpClientInterface $httpClient): void
+    {
         $response = $httpClient->request('GET', 'https://nominatim.openstreetmap.org/search', [
             'verify_peer' => false,
             'query' => [
-                'street' => $annonce->getAdresse(), 
-                'city'   => $annonce->getVille(),
+                'street' => $annonce->getAdresse(),
+                'city' => $annonce->getVille(),
                 'format' => 'json',
                 'limit' => 1,
             ],
