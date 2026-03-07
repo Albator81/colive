@@ -2,19 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'user_likes')]
+#[ApiResource(
+    operations: [
+        new Get(),
+    ]
+)]
 class UserLikes
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['announce_read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'likes')]
     #[ORM\JoinColumn(name: 'id_utilisateur', referencedColumnName: 'id_utilisateur', nullable: false)]
+    #[Groups(['announce_read'])]
     private ?User $utilisateur = null;
 
     #[ORM\ManyToOne(targetEntity: Announce::class, inversedBy: 'likes')]
