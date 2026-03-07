@@ -217,7 +217,7 @@
                     let isLiked = false;
 
                     announce.likes.forEach(like => {
-                        if (like.id == userId) {
+                        if (like.utilisateur.split('/').pop() == userId) {
                             isLiked = true;
                         }
                     });
