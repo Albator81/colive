@@ -40,7 +40,7 @@ final class Host_reviewsCest
         $reviewer = $I->grabEntityFromRepository(User::class, ['id' => $reviewerId]);
 
         $announceId = $I->haveInRepository(Announce::class, [
-            'titre' => 'Chambre en colocation Lyon',
+            'titre' => 'Chambre en collocation Lyon',
             'description' => 'Une superbe chambre pour étudiant en alternance.',
             'ville' => 'Lyon',
             'adresse' => '10 Rue de la Paix',
