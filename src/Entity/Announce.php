@@ -10,6 +10,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 
 #[ORM\Entity(repositoryClass: AnnounceRepository::class)]
 #[ORM\Table(name: 'announce')]
@@ -20,6 +23,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['ville' => 'partial', 'type' => 'exact'])]
+#[ApiFilter(DateFilter::class, properties: ['disponibilite_debut', 'disponibilite_fin'])]
 class Announce
 {
     #[ORM\Id]
