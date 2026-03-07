@@ -117,41 +117,7 @@
                 </button>
             </div>
 
-            <div class="pinterest-grid">
-                {% for announce in announces %}
-                    <article class="announce-card" onclick="window.location.href='{{ path('app_announce_show', {'id': announce.id}) }}'">
-                        {% set isLiked = false %}
-                        {% if app.user %}
-                            {% for like in announce.likes %}
-                                {% if like.utilisateur == app.user %}
-                                    {% set isLiked = true %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-
-                        <button class="card-like-btn {{ isLiked ? 'liked' : '' }}"
-                                onclick="toggleLike(event, {{ announce.id }})">
-                            <i class="bi {{ isLiked ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-                        </button>
-
-                        {% set photo = announce.photos|first %}
-                        {% if photo %}
-                            <img src="{{ photo.contenu }}" class="card-img" alt="Photo">
-                        {% else %}
-                            <img src="https://picsum.photos/seed/{{ announce.id }}/400/600" class="card-img" alt="Defaut">
-                        {% endif %}
-                        <div class="card-content">
-                            <h2 class="card-title">{{ announce.titre }}</h2>
-                            <p class="card-location"><i class="bi bi-geo-alt-fill"></i> {{ announce.ville }}</p>
-                            {% if announce.disponibiliteDebut and announce.disponibiliteFin %}
-                                <p class="card-date">
-                                    {{ announce.disponibiliteDebut|date('d M') }} - {{ announce.disponibiliteFin|date('d M') }}
-                                </p>
-                            {% endif %}
-                            <div class="card-price">{{ announce.prix }}€ <small>/mois</small></div>
-                        </div>
-                    </article>
-                {% endfor %}
+            <div class="pinterest-grid" id="grid-announces">
             </div>
         </section>
 
@@ -164,6 +130,7 @@
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
+
         async function toggleLike(event, announceId) {
             event.stopPropagation();
             event.preventDefault();
@@ -203,5 +170,57 @@
                 console.error('Erreur', error);
             }
         }
+
+        async function create_cards() {
+            try {
+                const response = await fetch(`/api/announces`);
+                const data = await response.json();
+                const announceData = data.member || [];
+                
+                const announceGrid = document.getElementById('grid-announces');
+                announceGrid.innerHTML = '';
+
+                if (announceData.length === 0) {
+                    announceGrid.innerHTML = '<p>Aucune annonce n\'a été trouvée.</p>';
+                    return;
+                }
+
+                announceData.forEach(announce => {
+                    const isLiked = false; 
+
+                    const photoUrl = (announce.photos && announce.photos.length > 0) ? announce.photos[0].contenu : `https://picsum.photos/seed/${announce.id}/400/600`;
+
+                    let dateHtml = '';
+                    
+                    const start = new Date(announce.disponibilite_debut).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+                    const end = new Date(announce.disponibilite_fin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+                    dateHtml = `<p class="card-date">${start} - ${end}</p>`;
+
+                    const announceHtml = `
+                        <article class="announce-card" onclick="window.location.href='/announces/${announce.id}'">
+                            <button class="card-like-btn ${isLiked ? 'liked' : ''}" 
+                                    onclick="toggleLike(event, ${announce.id})">
+                                <i class="bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                            </button>
+
+                            <img src="${photoUrl}" class="card-img" alt="${announce.titre}">
+
+                            <div class="card-content">
+                                <h2 class="card-title">${announce.titre}</h2>
+                                <p class="card-location"><i class="bi bi-geo-alt-fill"></i> ${announce.ville}</p>
+                                ${dateHtml}
+                                <div class="card-price">${announce.prix}€ <small>/mois</small></div>
+                            </div>
+                        </article>
+                    `;
+
+                    announceGrid.innerHTML += announceHtml;
+                });
+            } catch (error) {
+                document.getElementById('grid-announces').innerHTML = '<p>Erreur lors du chargement des annonces.</p>';
+            }
+        }
+
+        create_cards();
     </script>
 {% endblock %}
