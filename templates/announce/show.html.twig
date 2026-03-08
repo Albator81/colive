@@ -125,9 +125,11 @@
                 {% if announce.equipment %}
                     <section>
                         <h2 class="section-title">Équipements</h2>
-                        {% for equipment in announce.equipment %}
-                            <p class="text-content">{{ equipment.nom }}</p>
-                        {% endfor %}
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            {% for equipment in announce.equipment %}
+                                <p class="text-content">{{ equipment.nom }} {% if not loop.last %},{% endif %}</p> 
+                            {% endfor %}
+                        </div>
                     </section>
                 {% endif %}
 
