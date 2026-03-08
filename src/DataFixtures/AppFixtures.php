@@ -15,6 +15,7 @@ class AppFixtures extends Fixture
     {
         return [
             UserFixtures::class,
+            EquipmentFixtures::class,
             AnnounceFixtures::class,
             ReviewFixtures::class,
             AnnouncePictureFixtures::class,
