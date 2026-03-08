@@ -122,10 +122,12 @@
                     </section>
                 {% endif %}
 
-                {% if announce.equipements %}
+                {% if announce.equipment %}
                     <section>
                         <h2 class="section-title">Équipements</h2>
-                        <p class="text-content">{{ announce.equipements }}</p>
+                        {% for equipment in announce.equipment %}
+                            <p class="text-content">{{ equipment.nom }}</p>
+                        {% endfor %}
                     </section>
                 {% endif %}
 
