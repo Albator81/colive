@@ -6,22 +6,32 @@ use App\Repository\EquipmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: EquipmentRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(),
+    ]
+)]
 class Equipment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['announce_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['announce_read'])]
     private ?string $nom = null;
 
     /**
      * @var Collection<int, Announce>
      */
-    #[ORM\ManyToMany(targetEntity: Announce::class, inversedBy: 'equipment')]
+    #[ORM\ManyToMany(targetEntity: Announce::class, mappedBy: 'equipment')]
     private Collection $annonces;
 
     public function __construct()

@@ -121,7 +121,11 @@ class Announce
     /**
      * @var Collection<int, Equipment>
      */
-    #[ORM\ManyToMany(targetEntity: Equipment::class, mappedBy: 'annonces')]
+    #[ORM\ManyToMany(targetEntity: Equipment::class, inversedBy: 'annonces')]
+    #[ORM\JoinTable(name: 'announce_equipment')]
+    #[ORM\JoinColumn(name: 'announce_id', referencedColumnName: 'id_annonce')]
+    #[ORM\InverseJoinColumn(name: 'equipment_id', referencedColumnName: 'id')]
+    #[Groups(['announce_read'])]
     private Collection $equipment;
 
     public function __construct()

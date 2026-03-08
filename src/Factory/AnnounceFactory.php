@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Announce;
+use App\Factory\EquipmentFactory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 final class AnnounceFactory extends PersistentProxyObjectFactory
@@ -29,6 +30,7 @@ final class AnnounceFactory extends PersistentProxyObjectFactory
             'disponibilite_debut' => self::faker()->dateTimeBetween('now', '+1 month'),
             'disponibilite_fin' => self::faker()->dateTimeBetween('+6 months', '+1 year'),
             'utilisateur' => UserFactory::new(),
+            'equipment' => EquipmentFactory::randomRange(1, 5),
             'isValidated' => self::faker()->boolean(),
         ];
     }
