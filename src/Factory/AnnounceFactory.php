@@ -17,7 +17,7 @@ final class AnnounceFactory extends PersistentProxyObjectFactory
         return [
             'titre' => self::faker()->sentence(4),
             'description' => self::faker()->paragraphs(2, true),
-            'type' => self::faker()->randomElement(['Studio', 'Chambre', 'Appartement', 'Colocation']),
+            'type' => self::faker()->randomElement(['Studio', 'Chambre', 'Appartement', 'Collocation']),
             'nb_pieces' => self::faker()->numberBetween(1, 4),
             'prix' => self::faker()->randomFloat(2, 350, 950),
             'latitude' => self::faker()->latitude(45.7, 45.8),

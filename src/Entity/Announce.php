@@ -2,86 +2,124 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\AnnounceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AnnounceRepository::class)]
 #[ORM\Table(name: 'announce')]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['announce_read']],
+        ),
+    ]
+)]
+#[ApiFilter(SearchFilter::class, properties: ['ville' => 'partial', 'type' => 'exact'])]
+#[ApiFilter(DateFilter::class, properties: ['disponibilite_debut', 'disponibilite_fin'])]
 class Announce
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_annonce', type: 'integer')]
+    #[Groups(['announce_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['announce_read'])]
     private ?string $titre = null;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['announce_read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['announce_read'])]
     private ?string $type = null;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['announce_read'])]
     private ?int $nb_pieces = null;
 
     #[ORM\Column(type: 'float')]
+    #[Groups(['announce_read'])]
     private ?float $prix = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['announce_read'])]
     private ?string $equipements = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['announce_read'])]
     private ?string $regle = null;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(['announce_read'])]
     private \DateTimeInterface $dateCreation;
 
     #[ORM\Column(type: 'date')]
+    #[Groups(['announce_read'])]
     private \DateTimeInterface $disponibilite_debut;
 
     #[ORM\Column(type: 'date')]
+    #[Groups(['announce_read'])]
     private \DateTimeInterface $disponibilite_fin;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['announce_read'])]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['announce_read'])]
     private ?string $ville = null;
 
     #[ORM\Column(length: 10, nullable: true)]
+    #[Groups(['announce_read'])]
     private ?string $code_postal = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['announce_read'])]
     private ?float $surface = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['announce_read'])]
     private bool $isValidated = false;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'annonces')]
     #[ORM\JoinColumn(name: 'id_utilisateur', referencedColumnName: 'id_utilisateur', nullable: false)]
+    #[Groups(['announce_read'])]
     private ?User $utilisateur = null;
 
     #[ORM\OneToMany(mappedBy: 'annonce', targetEntity: Review::class, cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['announce_read'])]
     private Collection $avis;
 
     #[ORM\OneToMany(mappedBy: 'annonce', targetEntity: AnnouncePicture::class, cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['announce_read'])]
     private Collection $photos;
 
     #[ORM\OneToMany(mappedBy: 'annonce', targetEntity: UserLikes::class, cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['announce_read'])]
     private Collection $likes;
 
     #[ORM\OneToMany(mappedBy: 'announce', targetEntity: Reservation::class, cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['announce_read'])]
     private Collection $reservations;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
+    #[Groups(['announce_read'])]
     private ?string $latitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
+    #[Groups(['announce_read'])]
     private ?string $longitude = null;
 
     public function __construct()

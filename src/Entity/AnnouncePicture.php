@@ -2,19 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'announce_picture')]
+#[ApiResource(
+    operations: [
+        new Get(),
+    ]
+)]
 class AnnouncePicture
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_photoAnnonce', type: 'integer')]
+    #[Groups(['announce_read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['announce_read'])]
     private ?string $contenu = null;
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $dateCreation;

@@ -15,32 +15,4 @@ class AnnounceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Announce::class);
     }
-
-    public function findByFilters(?string $location, ?string $type, ?string $dateStart, ?string $dateEnd): array
-    {
-        $qb = $this->createQueryBuilder('a');
-
-        $qb->andWhere('a.isValidated = :valid')
-            ->setParameter('valid', true);
-
-        if ($location) {
-            $qb->andWhere('a.ville LIKE :location')
-                ->setParameter('location', '%'.$location.'%');
-        }
-        if ($type && 'all' !== $type) {
-            $qb->andWhere('a.type = :type')
-                ->setParameter('type', $type);
-        }
-        if ($dateStart) {
-            $qb->andWhere('a.disponibilite_debut <= :dateStart')
-                ->setParameter('dateStart', $dateStart);
-        }
-        if ($dateEnd) {
-            $qb->andWhere('a.disponibilite_fin >= :dateEnd')
-                ->setParameter('dateEnd', $dateEnd);
-        }
-        $qb->orderBy('a.dateCreation', 'DESC');
-
-        return $qb->getQuery()->getResult();
-    }
 }

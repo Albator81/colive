@@ -26,7 +26,7 @@ class BotController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $userQuestion = $data['message'] ?? '';
 
-        $systemPrompt = "Tu es l'assistant virtuel de CoLive (site de colocation étudiante).
+        $systemPrompt = "Tu es l'assistant virtuel de CoLive (site de collocation étudiante).
         Ton ton est : Jeune, serviable et concis.
 
         Ta base de données :
