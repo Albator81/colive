@@ -94,6 +94,25 @@
                         </select>
                     </div>
 
+                    <div class="divider"></div>
+
+                    <div class="search-item">
+                        <label for="prix_max">Budget max</label>
+                        <input type="number" id="prix_max" name="prix_max" placeholder="€">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="search-item">
+                        <label for="equipement">Équipement</label>
+                        <select name="equipement" id="equipement">
+                            <option value="">Tous</option>
+                            {% for equip in equipment %}
+                                <option value="{{ equip.id }}">{{ equip.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                     <button type="submit" class="search-btn">
                         Rechercher
                     </button>
