@@ -15,7 +15,7 @@ final class EquipmentFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'nom' => self::faker()->randomElement([
+            'nom' => self::faker()->unique()->randomElement([
                 'WiFi',
                 'Machine à laver',
                 'Sèche-linge',
