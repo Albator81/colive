@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\EquipmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: EquipmentRepository::class)]
 #[ApiResource(
@@ -16,6 +17,7 @@ use ApiPlatform\Metadata\Get;
         new Get(),
     ]
 )]
+#[UniqueEntity(fields: ['nom'], message: 'Cet équipement existe déjà dans la base de données.')]
 class Equipment
 {
     #[ORM\Id]
@@ -24,7 +26,7 @@ class Equipment
     #[Groups(['announce_read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(['announce_read'])]
     private ?string $nom = null;
 
