@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Announce;
 use App\Entity\AnnouncePicture;
+use App\Entity\Equipment;
 use App\Entity\UserLikes;
 use App\Form\AnnounceType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,9 +19,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class AnnounceController extends AbstractController
 {
     #[Route('/announce', name: 'app_announce')]
-    public function index()
+    public function index(EntityManagerInterface $em)
     {
-        return $this->render('announce/index.html.twig');
+        $equipment = $em->getRepository(Equipment::class)->findAll();
+        return $this->render('announce/index.html.twig', [
+            'equipment' => $equipment,
+        ]);
     }
 
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
