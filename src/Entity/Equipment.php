@@ -12,11 +12,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EquipmentRepository::class)]
-#[ApiResource(
-    operations: [
-        new Get(),
-    ]
-)]
 #[UniqueEntity(fields: ['nom'], message: 'Cet équipement existe déjà dans la base de données.')]
 class Equipment
 {

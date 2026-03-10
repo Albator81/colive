@@ -10,11 +10,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'announce_picture')]
-#[ApiResource(
-    operations: [
-        new Get(),
-    ]
-)]
 class AnnouncePicture
 {
     #[ORM\Id]
