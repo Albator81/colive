@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Image;
-use Doctrine\ORM\EntityRepository;
 
 class AnnounceType extends AbstractType
 {

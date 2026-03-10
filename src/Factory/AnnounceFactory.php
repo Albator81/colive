@@ -3,7 +3,6 @@
 namespace App\Factory;
 
 use App\Entity\Announce;
-use App\Factory\EquipmentFactory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 final class AnnounceFactory extends PersistentProxyObjectFactory
