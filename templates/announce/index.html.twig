@@ -182,6 +182,11 @@
                 const dateStart = urlParams.get('date_start');
                 const dateEnd = urlParams.get('date_end');
 
+                const prixMin = urlParams.get('prix_min');
+                const prixMax = urlParams.get('prix_max');
+                const surface = urlParams.get('surface');
+                const equipement = urlParams.get('equipement');
+
                 if (locationParam) {
                     apiParams.append('ville', locationParam);
                 }
@@ -196,6 +201,22 @@
 
                 if (dateEnd) {
                     apiParams.append('disponibilite_fin[before]', dateEnd);
+                }
+
+                if (prixMin) {
+                    apiParams.append('prix[gte]', prixMin);
+                }
+
+                if (prixMax) {
+                    apiParams.append('prix[lte]', prixMax);
+                }
+
+                if (surface) {
+                    apiParams.append('surface[gte]', surface);
+                }
+
+                if (equipement) {
+                    apiParams.append('equipment', equipement);
                 }
 
                 const apiURL = `/api/announces?${apiParams.toString()}`;
