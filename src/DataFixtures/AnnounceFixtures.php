@@ -19,6 +19,6 @@ class AnnounceFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [UserFixtures::class];
+        return [UserFixtures::class, EquipmentFixtures::class];
     }
 }

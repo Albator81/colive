@@ -55,10 +55,6 @@ class Announce
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['announce_read'])]
-    private ?string $equipements = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['announce_read'])]
     private ?string $regle = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -122,6 +118,16 @@ class Announce
     #[Groups(['announce_read'])]
     private ?string $longitude = null;
 
+    /**
+     * @var Collection<int, Equipment>
+     */
+    #[ORM\ManyToMany(targetEntity: Equipment::class, inversedBy: 'annonces')]
+    #[ORM\JoinTable(name: 'announce_equipment')]
+    #[ORM\JoinColumn(name: 'announce_id', referencedColumnName: 'id_annonce')]
+    #[ORM\InverseJoinColumn(name: 'equipment_id', referencedColumnName: 'id')]
+    #[Groups(['announce_read'])]
+    private Collection $equipment;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTime();
@@ -132,6 +138,7 @@ class Announce
         $this->likes = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->isValidated = false;
+        $this->equipment = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -219,18 +226,6 @@ class Announce
     public function setLongitude(float $l): self
     {
         $this->longitude = $l;
-
-        return $this;
-    }
-
-    public function getEquipements(): ?string
-    {
-        return $this->equipements;
-    }
-
-    public function setEquipements(?string $e): self
-    {
-        $this->equipements = $e;
 
         return $this;
     }
@@ -391,6 +386,33 @@ class Announce
             if ($reservation->getAnnounce() === $this) {
                 $reservation->setAnnounce(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipment>
+     */
+    public function getEquipment(): Collection
+    {
+        return $this->equipment;
+    }
+
+    public function addEquipment(Equipment $equipment): static
+    {
+        if (!$this->equipment->contains($equipment)) {
+            $this->equipment->add($equipment);
+            $equipment->addAnnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipment(Equipment $equipment): static
+    {
+        if ($this->equipment->removeElement($equipment)) {
+            $equipment->removeAnnonce($this);
         }
 
         return $this;

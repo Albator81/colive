@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Announce;
-use App\Entity\User;
+use App\Entity\Equipment;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -46,8 +46,11 @@ class AnnounceType extends AbstractType
                 'label' => 'Prix par nuit',
                 'currency' => 'EUR',
             ])
-            ->add('equipements', TextType::class, [
-                'help' => 'Ex: Wifi, Parking, Piscine...',
+            ->add('equipment', EntityType::class, [
+                'class' => Equipment::class,
+                'choice_label' => 'nom',
+                'multiple' => true,
+                'expanded' => true,
             ])
             ->add('regle', TextareaType::class, [
                 'required' => false,
