@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -23,8 +24,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['ville' => 'partial', 'type' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['ville' => 'partial', 'type' => 'exact', 'equipment' => 'exact'])]
 #[ApiFilter(DateFilter::class, properties: ['disponibilite_debut', 'disponibilite_fin'])]
+#[ApiFilter(RangeFilter::class, properties: ['prix', 'surface'])]
 class Announce
 {
     #[ORM\Id]

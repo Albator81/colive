@@ -96,6 +96,48 @@
                     </div>
                 </fieldset>
 
+                <div style="height: 50px;" class="desktop-hidden"></div>
+
+                <fieldset class="form-fieldset">
+                    <legend class="form-legend">Prix (€/mois)</legend>
+                    <div style="display: flex; gap: 10px;">
+                        <div>
+                            <label class="form-label">Min</label>
+                            <input type="number" name="prix_min" class="form-input" value="{{ app.request.query.get('prix_min') }}" placeholder="Prix minimum">
+                        </div>
+                        <div>
+                            <label class="form-label">Max</label>
+                            <input type="number" name="prix_max" class="form-input" value="{{ app.request.query.get('prix_max') }}" placeholder="Prix maximum">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div style="height: 50px;" class="desktop-hidden"></div>
+
+                <fieldset class="form-fieldset">
+                    <legend class="form-legend">Surface (m²)</legend>
+                    <div>
+                        <label class="form-label">Min</label>
+                        <input type="number" name="surface" class="form-input" value="{{ app.request.query.get('surface') }}" placeholder="Surface minimum">
+                    </div>
+                </fieldset>
+
+                <div style="height: 50px;" class="desktop-hidden"></div>
+
+                <fieldset class="form-fieldset">
+                    <legend class="form-legend">Équipements</legend>
+                    <div>
+                        <select name="equipement" class="form-input">
+                            <option value="">Tous</option>
+                            {% for equip in equipment %}
+                                <option value="{{ equip.id }}" {% if app.request.query.get('equipement') == equip.id %}selected{% endif %}>
+                                    {{ equip.nom }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </fieldset>
+
                 <button type="submit" class="btn-submit">Voir les résultats</button>
 
                 <a href="{{ path('app_announce') }}" class="btn-reset-filters">
@@ -182,6 +224,11 @@
                 const dateStart = urlParams.get('date_start');
                 const dateEnd = urlParams.get('date_end');
 
+                const prixMin = urlParams.get('prix_min');
+                const prixMax = urlParams.get('prix_max');
+                const surface = urlParams.get('surface');
+                const equipement = urlParams.get('equipement');
+
                 if (locationParam) {
                     apiParams.append('ville', locationParam);
                 }
@@ -196,6 +243,22 @@
 
                 if (dateEnd) {
                     apiParams.append('disponibilite_fin[before]', dateEnd);
+                }
+
+                if (prixMin) {
+                    apiParams.append('prix[gte]', prixMin);
+                }
+
+                if (prixMax) {
+                    apiParams.append('prix[lte]', prixMax);
+                }
+
+                if (surface) {
+                    apiParams.append('surface[gte]', surface);
+                }
+
+                if (equipement) {
+                    apiParams.append('equipment', equipement);
                 }
 
                 const apiURL = `/api/announces?${apiParams.toString()}`;
