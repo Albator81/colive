@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <button onclick="send()">CLIQUE</button>
+    <div id="add"></div>
+
+    <script>
+        const container = document.getElementById("add");
+
+        
+        const eventSource = new EventSource("{{ mercure('boo')|escape('js') }}");
+        eventSource.onmessage = event => {
+            console.log(JSON.parse(event.data));
+            container.innerHTML += `<h1>${event.data["status"]}</h1>`
+        }
+
+        function send() {
+            fetch("/test_send");
+        }
+    </script>
+{% endblock %}
