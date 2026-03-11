@@ -10,18 +10,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageController extends AbstractController
-{
+{   
+    #[IsGranted("ROLE_USER")]
     #[Route('/message', name: 'app_message')]
     #[Route('/message/{id}', name: 'app_message_conversation')]
     public function index(?int $id, MessageRepository $messageRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return $this->redirectToRoute('app_login');
-        }
         $allContacts = $currentUser->getContacts();
         $searchTerm = $request->query->get('q');
         $users = [];

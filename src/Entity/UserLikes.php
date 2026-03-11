@@ -9,11 +9,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'user_likes')]
-#[ApiResource(
-    operations: [
-        new Get(),
-    ]
-)]
 class UserLikes
 {
     #[ORM\Id]

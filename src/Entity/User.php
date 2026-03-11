@@ -14,17 +14,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
-#[ApiResource(
-    operations: [
-        new Get(),
-    ]
-)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_utilisateur', type: 'integer')]
-    #[Groups(['rewiew_read', 'announce_read'])]
+    #[Groups(['announce_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
