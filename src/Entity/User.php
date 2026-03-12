@@ -15,6 +15,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -86,7 +87,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reservations = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->notificationTopic = Uuid::v4();
+    }
+
+    #[ORM\PrePersist]
+    public function generateNotificationTopic(): void
+    {
+        if (null === $this->notificationTopic) {
+            $this->notificationTopic = Uuid::v4();
+        }
     }
 
     public function getUserIdentifier(): string
