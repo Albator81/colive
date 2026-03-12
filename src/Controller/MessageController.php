@@ -41,6 +41,10 @@ class MessageController extends AbstractController
         if ($id) {
             $selectedUser = $entityManager->getRepository(User::class)->find($id);
 
+            if ($selectedUser && !$currentUser->getContacts()->contains($selectedUser)) {
+                throw $this->createAccessDeniedException('You can only send messages to your owns contacts.');
+            }
+
             if ($selectedUser) {
                 if ($request->isMethod('POST')) {
                     $content = $request->request->get('content');
