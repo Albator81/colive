@@ -125,4 +125,21 @@ class ProfileController extends AbstractController
 
         return $this->redirectToRoute('app_profile');
     }
+
+    #[Route('/profil/delete', name: 'app_profile_delete', methods: ['POST'])]
+    public function deleteAccount(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $request->getSession()->invalidate();
+        $this->addFlash('success', 'Your account has been deleted.');
+
+        return $this->redirectToRoute('app_login');
+    }
 }
