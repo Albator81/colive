@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
@@ -73,6 +74,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'target', orphanRemoval: true)]
     private Collection $notifications;
 
+    #[ORM\Column(type: 'uuid')]
+    private ?Uuid $notificationTopic = null;
+
     public function __construct()
     {
         $this->dateCreationCompte = new \DateTime();
@@ -82,6 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reservations = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->notificationTopic = Uuid::v4();
     }
 
     public function getUserIdentifier(): string
@@ -272,6 +277,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $notification->setTarget(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNotificationTopic(): ?Uuid
+    {
+        return $this->notificationTopic;
+    }
+
+    public function setNotificationTopic(Uuid $notificationTopic): static
+    {
+        $this->notificationTopic = $notificationTopic;
 
         return $this;
     }
