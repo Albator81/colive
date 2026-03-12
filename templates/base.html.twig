@@ -42,13 +42,10 @@
 
     <script>
         {% if app.user %}
-            const id = '{{app.user.notificationTopic}}';
-            console.log("topic  : ", id);
-            const eventSource = new EventSource("{{ mercure(id)|escape('js') }}");
+            const eventSource = new EventSource("{{ mercure(app.user.notificationTopic)|escape('js') }}");
             eventSource.onmessage = event => {
                 console.log(JSON.parse(event.data));
             }
         {% endif %}
-        
     </script>
 </html>

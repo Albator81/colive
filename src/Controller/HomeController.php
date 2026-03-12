@@ -3,11 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Equipment;
+use App\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
@@ -21,21 +20,21 @@ final class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/test', name: 'app_test')]
-    public function test(): Response
+    #[Route('/test', name: 'app_send')]
+    public function testSend(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('home/test.html.twig');
-    }
+        $user = $this->getUser();
 
-    #[Route('/test_send', name: 'app_send')]
-    public function testSend(HubInterface $interface): Response
-    {
-        $interface->publish(
-            new Update(
-                "boo",
-                json_encode(['status' => 'OutOfStock'])
-            )
-        );
-        return new Response("aaaaaaaaaaa");
+        if ($user){
+            $notif = new Notification();
+            $notif->setTitle("titre aaa")
+                ->setContent("boooo")
+                ->setIsSeen(false)
+                ->setTarget($user);
+            $entityManager->persist($notif);
+            $entityManager->flush();
+        }
+
+        return new Response("fait");
     }
 }
