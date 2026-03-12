@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Equipment;
-use App\Entity\Notification;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,21 +20,21 @@ final class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/test', name: 'app_send')]
-    public function testSend(EntityManagerInterface $entityManager): Response
+    #[Route('/test', name: 'app_test_mercure')]
+    public function testSend(NotificationService $notificationService): Response
     {
         $user = $this->getUser();
 
-        if ($user){
-            $notif = new Notification();
-            $notif->setTitle("titre aaa")
-                ->setContent("boooo")
-                ->setIsSeen(false)
-                ->setTarget($user);
-            $entityManager->persist($notif);
-            $entityManager->flush();
+        if ($user) {
+            $notificationService->createNotification(
+                $user, 
+                "titre de qualite", 
+                "petite notification"
+            );
+
+            return new Response("notification envoye !");
         }
 
-        return new Response("fait");
+        return new Response("t pas connecte");
     }
 }

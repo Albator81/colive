@@ -25,7 +25,6 @@ class NotificationListener
                 json_encode([
                     'title' => $notification->getTitle(),
                     'content' => $notification->getContent(),
-                    'target' => '/profil'
                 ])
             );
 
