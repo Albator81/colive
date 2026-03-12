@@ -19,6 +19,12 @@ class ReservationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function reserve(Announce $announce, Request $request, EntityManagerInterface $em): Response
     {
+        if ($announce->getUtilisateur() === $this->getUser()) {
+            $this->addFlash('alert', 'You can\'t reserve your own announce.');
+
+            return $this->redirectToRoute('app_announce_show', ['id' => $announce->getId()]);
+        }
+
         $reservation = new Reservation();
         $reservation->setAnnounce($announce);
         $tenant = $this->getUser();
@@ -51,7 +57,7 @@ class ReservationController extends AbstractController
                 $em->persist($reservation);
                 $em->flush();
 
-                if ($host && $host !== $tenant) {
+                if ($host && $host !== $tenant && $tenant instanceof \App\Entity\User) {
                     if (!$tenant->getContacts()->contains($host)) {
                         $tenant->addContact($host);
                     }
@@ -120,6 +126,12 @@ class ReservationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        if ('PENDING' !== $reservation->getStatut()) {
+            $this->addFlash('alert', 'this reservation has already been processed.');
+
+            return $this->redirectToRoute('app_profile');
+        }
+
         $reservation->setStatut('CONFIRMED');
 
         $msg = new Message();
@@ -145,6 +157,12 @@ class ReservationController extends AbstractController
     {
         if ($reservation->getAnnounce()->getUtilisateur() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
+        }
+
+        if ('PENDING' !== $reservation->getStatut()) {
+            $this->addFlash('alert', 'this reservation has already been processed.');
+
+            return $this->redirectToRoute('app_profile');
         }
 
         $reservation->setStatut('CANCELLED');
