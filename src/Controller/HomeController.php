@@ -29,7 +29,8 @@ final class HomeController extends AbstractController
             $notificationService->createNotification(
                 $user, 
                 "titre de qualite", 
-                "petite notification"
+                "petite notification",
+                "/a/a"
             );
 
             return new Response("notification envoye !");

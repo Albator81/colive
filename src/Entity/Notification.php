@@ -26,6 +26,9 @@ class Notification
     #[ORM\JoinColumn(name: 'id_utilisateur', referencedColumnName: 'id_utilisateur', nullable: false)]
     private ?User $target = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $targetLink = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +78,18 @@ class Notification
     public function setTarget(?User $target): static
     {
         $this->target = $target;
+
+        return $this;
+    }
+
+    public function getTargetLink(): ?string
+    {
+        return $this->targetLink;
+    }
+
+    public function setTargetLink(string $targetLink): static
+    {
+        $this->targetLink = $targetLink;
 
         return $this;
     }

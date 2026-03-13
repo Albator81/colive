@@ -43,8 +43,12 @@
     <script>
         {% if app.user %}
             const eventSource = new EventSource("{{ mercure(app.user.notificationTopic)|escape('js') }}");
+            const notificationBubble = document.findElementbyId("notificationBubble");
+            const notificationList = document.findElementbyId("notificationList");
             eventSource.onmessage = event => {
-                console.log(JSON.parse(event.data));
+                const data = JSON.parse(event.data);
+                console.log(data);
+                notificationList.innerHTML += `<a href="${data.target}"><div><h2>${data.title}</h2><p>${data.content}</p></div></a>`
             }
         {% endif %}
     </script>
