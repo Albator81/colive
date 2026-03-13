@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ContactController extends AbstractController
 {
-    #[IsGranted("ROLE_USER")]
+    #[IsGranted('ROLE_USER')]
     #[Route('/contact/ajouter/{id}', name: 'app_contact_add')]
     public function add(User $userToAdd, EntityManagerInterface $em): Response
     {
@@ -28,7 +28,7 @@ class ContactController extends AbstractController
         return $this->redirectToRoute('app_message_conversation', ['id' => $userToAdd->getId()]);
     }
 
-    #[IsGranted("ROLE_USER")]
+    #[IsGranted('ROLE_USER')]
     #[Route('/contact/supprimer/{id}', name: 'app_contact_remove')]
     public function remove(User $userToRemove, EntityManagerInterface $em): Response
     {

@@ -12,8 +12,9 @@ class NotificationService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private HubInterface $hub
-    ) {}
+        private HubInterface $hub,
+    ) {
+    }
 
     public function createNotification(User $user, string $title, string $content, string $target): Notification
     {
@@ -28,15 +29,15 @@ class NotificationService
         $this->entityManager->flush();
 
         $update = new Update(
-                $user->getNotificationTopic()->toString(),
-                json_encode([
-                    'title' => $notification->getTitle(),
-                    'content' => $notification->getContent(),
-                    'target' => $target
-                ])
-            );
+            $user->getNotificationTopic()->toString(),
+            json_encode([
+                'title' => $notification->getTitle(),
+                'content' => $notification->getContent(),
+                'target' => $target,
+            ])
+        );
 
-            $this->hub->publish($update);
+        $this->hub->publish($update);
 
         return $notification;
     }

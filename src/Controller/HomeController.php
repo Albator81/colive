@@ -15,6 +15,7 @@ final class HomeController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $equipment = $em->getRepository(Equipment::class)->findAll();
+
         return $this->render('home/index.html.twig', [
             'equipment' => $equipment,
         ]);
@@ -27,15 +28,15 @@ final class HomeController extends AbstractController
 
         if ($user) {
             $notificationService->createNotification(
-                $user, 
-                "titre de qualite", 
-                "petite notification",
-                "/a/a"
+                $user,
+                'titre de qualite',
+                'petite notification',
+                '/a/a'
             );
 
-            return new Response("notification envoye !");
+            return new Response('notification envoye !');
         }
 
-        return new Response("t pas connecte");
+        return new Response('t pas connecte');
     }
 }
