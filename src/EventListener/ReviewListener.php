@@ -20,6 +20,11 @@ class ReviewListener
     public function onPostPersist(Review $review): void
     {
         $username = $review->getUtilisateur()->getPrenom().' '.$review->getUtilisateur()->getNom();
-        $this->notificationService->createNotification($review->getAnnonce()->getUtilisateur(), 'Nouvel avis !', "L'utilisateur $username a émis un avis vous consernant", $this->router->generate('app_profile'));
+        $this->notificationService->createNotification(
+            $review->getAnnonce()->getUtilisateur(),
+            'Nouvel avis !',
+            "L'utilisateur $username a émis un avis vous consernant",
+            $this->router->generate('app_profile')
+        );
     }
 }

@@ -20,6 +20,11 @@ class UserLikesListener
     public function onPostPersist(UserLikes $like): void
     {
         $username = $like->getUtilisateur()->getPrenom().' '.$like->getUtilisateur()->getNom();
-        $this->notificationService->createNotification($like->getAnnonce()->getUtilisateur(), 'Nouveau like !', "L'utilisateur $username a liké une de vos annonces !", $this->router->generate('app_announce_show', ['id' => $like->getAnnonce()->getId()]));
+        $this->notificationService->createNotification(
+            $like->getAnnonce()->getUtilisateur(),
+            'Nouveau like !',
+            "L'utilisateur $username a liké une de vos annonces !",
+            $this->router->generate('app_announce_show', ['id' => $like->getAnnonce()->getId()])
+        );
     }
 }
