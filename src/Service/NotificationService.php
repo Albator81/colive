@@ -35,6 +35,7 @@ class NotificationService
                 'title' => $notification->getTitle(),
                 'content' => $notification->getContent(),
                 'target' => $target,
+                'timestamp' => $notification->getTimestamp()->format('d/m/Y H:i'),
             ])
         );
 
