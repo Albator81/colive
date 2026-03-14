@@ -9,6 +9,7 @@ use Doctrine\ORM\Events;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsEntityListener(event: Events::postPersist, method: 'onPostPersist', entity: Reservation::class)]
+#[AsEntityListener(event: Events::postUpdate, method: 'onPostUpdate', entity: Reservation::class)]
 class ReservationListener
 {
     public function __construct(
@@ -17,8 +18,45 @@ class ReservationListener
     ) {
     }
 
-    public function onPostPersist(Reservation $Reservation): void
+    public function onPostPersist(Reservation $reservation): void
     {
-        
+        $username = $reservation->getLocataire()->getPrenom() . ' ' . $reservation->getLocataire()->getNom();
+        $this->notificationService->createNotification($reservation->getAnnounce()->getUtilisateur(), "Nouvelle réservaition",  "$username à émis une demande de réservation pour l'une de vos annonces", $this->router->generate('app_message_conversation', ['id' => $reservation->getLocataire()->getId()]));
+    }
+
+    public function onPostUpdate(Reservation $reservation): void
+    {
+        $username = $reservation->getLocataire()->getPrenom() . ' ' . $reservation->getLocataire()->getNom();
+        $announceName = $reservation->getAnnounce()->getTitre();
+
+        if ($reservation->getStatut() == 'CANCELLED') {
+            $this->notificationService->createNotification(
+                $reservation->getLocataire(), 
+                "Annulation de la réservation",
+                "Votre réservation pour l'annonce $announceName à été annulée/refusée !", 
+                $this->router->generate('app_message_conversation', ['id' => $reservation->getAnnounce()->getUtilisateur()->getId()])
+            );
+
+            $this->notificationService->createNotification(
+                $reservation->getAnnounce()->getUtilisateur(), 
+                "Annulation de la réservation",  
+                "La réservation de l'annonce $announceName avec l'utilisateur $username à été annulée/refusée", 
+                $this->router->generate('app_message_conversation', ['id' => $reservation->getLocataire()->getId()])
+            );
+        } elseif ($reservation->getStatut() == 'CONFIRMED') {
+            $this->notificationService->createNotification(
+                $reservation->getLocataire(), 
+                "Confirmation de la réservation",
+                "Votre réservation pour l'annonce $announceName à été confirmée !", 
+                $this->router->generate('app_message_conversation', ['id' => $reservation->getAnnounce()->getUtilisateur()->getId()])
+            );
+
+            $this->notificationService->createNotification(
+                $reservation->getAnnounce()->getUtilisateur(), 
+                "Confirmation de la réservation",  
+                "La réservation de l'annonce $announceName avec l'utilisateur $username à été confirmée !", 
+                $this->router->generate('app_message_conversation', ['id' => $reservation->getLocataire()->getId()])
+            );
+        }
     }
 }

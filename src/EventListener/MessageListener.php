@@ -20,6 +20,11 @@ class MessageListener
     public function onPostPersist(Message $message): void
     {
         $username = $message->getSender()->getPrenom().' '.$message->getSender()->getNom();
-        $this->notificationService->createNotification($message->getRecipient(), 'Nouveau message !', "Vous avez reçu un nouveau message de la part de $username", $this->router->generate('app_message_conversation', ['id' => $message->getRecipient()->getId()]));
+        $this->notificationService->createNotification(
+            $message->getRecipient(), 
+            'Nouveau message !', 
+            "Vous avez reçu un nouveau message de la part de $username", 
+            $this->router->generate('app_message_conversation', ['id' => $message->getSender()->getId()])
+        );
     }
 }
