@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Notification;
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -23,6 +24,7 @@ class NotificationService
             ->setContent($content)
             ->setIsSeen(false)
             ->setTargetLink($target)
+            ->setTimestamp(new DateTime())
             ->setTarget($user);
 
         $this->entityManager->persist($notification);

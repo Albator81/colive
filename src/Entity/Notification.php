@@ -29,6 +29,9 @@ class Notification
     #[ORM\Column(length: 255)]
     private ?string $targetLink = null;
 
+    #[ORM\Column]
+    private ?\DateTime $timestamp = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Notification
     public function setTargetLink(string $targetLink): static
     {
         $this->targetLink = $targetLink;
+
+        return $this;
+    }
+
+    public function getTimestamp(): ?\DateTime
+    {
+        return $this->timestamp;
+    }
+
+    public function setTimestamp(\DateTime $timestamp): static
+    {
+        $this->timestamp = $timestamp;
 
         return $this;
     }
