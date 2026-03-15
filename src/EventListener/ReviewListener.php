@@ -24,7 +24,7 @@ class ReviewListener
             $review->getAnnonce()->getUtilisateur(),
             'Nouvel avis !',
             "L'utilisateur $username a émis un avis vous consernant",
-            $this->router->generate('app_host_reviews', ["id" => $review->getAnnonce()->getUtilisateur()->getId()])
+            $this->router->generate('app_host_reviews', ['id' => $review->getAnnonce()->getUtilisateur()->getId()])
         );
     }
 }
