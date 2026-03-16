@@ -22,6 +22,7 @@ final class AnnounceController extends AbstractController
     public function index(EntityManagerInterface $em)
     {
         $equipment = $em->getRepository(Equipment::class)->findAll();
+
         return $this->render('announce/index.html.twig', [
             'equipment' => $equipment,
         ]);

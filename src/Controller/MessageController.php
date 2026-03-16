@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageController extends AbstractController
-{   
-    #[IsGranted("ROLE_USER")]
+{
+    #[IsGranted('ROLE_USER')]
     #[Route('/message', name: 'app_message')]
     #[Route('/message/{id}', name: 'app_message_conversation')]
     public function index(?int $id, MessageRepository $messageRepository, EntityManagerInterface $entityManager, Request $request): Response

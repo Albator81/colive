@@ -14,6 +14,7 @@ final class HomeController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $equipment = $em->getRepository(Equipment::class)->findAll();
+
         return $this->render('home/index.html.twig', [
             'equipment' => $equipment,
         ]);

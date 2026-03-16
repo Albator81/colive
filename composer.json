@@ -28,6 +28,7 @@
         "symfony/http-client": "7.3.*",
         "symfony/intl": "7.3.*",
         "symfony/mailer": "7.3.*",
+        "symfony/mercure-bundle": "^0.4.2",
         "symfony/mime": "7.3.*",
         "symfony/monolog-bundle": "^3.11.1",
         "symfony/notifier": "7.3.*",
@@ -103,7 +104,7 @@
             "php-cs-fixer fix --dry-run"
         ],
         "fix:cs": [
-            "php-cs-fixer fix"
+            "php vendor/bin/php-cs-fixer fix"
         ],
         "test:codeception": [
             "php vendor/bin/codecept clean",

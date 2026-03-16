@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,9 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -67,6 +67,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'locataire', targetEntity: Reservation::class)]
     private Collection $reservations;
 
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'target', orphanRemoval: true)]
+    private Collection $notifications;
+
+    #[ORM\Column(type: 'uuid')]
+    private ?Uuid $notificationTopic = null;
+
     public function __construct()
     {
         $this->dateCreationCompte = new \DateTime();
@@ -75,6 +84,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->avis = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->contacts = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function generateNotificationTopic(): void
+    {
+        if (null === $this->notificationTopic) {
+            $this->notificationTopic = Uuid::v4();
+        }
     }
 
     public function getUserIdentifier(): string
@@ -237,5 +255,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getReservations(): Collection
     {
         return $this->reservations;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setTarget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getTarget() === $this) {
+                $notification->setTarget(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNotificationTopic(): ?Uuid
+    {
+        return $this->notificationTopic;
+    }
+
+    public function setNotificationTopic(Uuid $notificationTopic): static
+    {
+        $this->notificationTopic = $notificationTopic;
+
+        return $this;
     }
 }
