@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EquipmentRepository::class)]
 #[UniqueEntity(fields: ['nom'], message: 'Cet équipement existe déjà dans la base de données.')]
@@ -21,6 +22,7 @@ class Equipment
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le nom de l\'équipement contient des caractères interdits.')]
     private ?string $nom = null;
 
     /**

@@ -25,6 +25,7 @@ class Reservation
     private ?\DateTimeInterface $dateFin = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le statut contient des caractères interdits.')]
     private ?string $statut = 'PENDING';
 
     #[ORM\Column]

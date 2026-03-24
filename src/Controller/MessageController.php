@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Csrf\CsrfTokenManagerInterface;
 
 class MessageController extends AbstractController
 {
@@ -40,9 +41,18 @@ class MessageController extends AbstractController
 
         if ($id) {
             $selectedUser = $entityManager->getRepository(User::class)->find($id);
+            $r = $request->headers->get('referer') ?? '/';
+            if ($selectedUser && !$currentUser->getContacts()->contains($selectedUser)) {
+                $this->addFlash('error', 'Vous ne pouvez envoyer des messages qu\'à vos propres contacts.');
+                return $this->redirect($r);
+            }
 
             if ($selectedUser) {
                 if ($request->isMethod('POST')) {
+                    if (!$this->isCsrfTokenValid('message_send', $request->request->get('_token'))) {
+                        $this->addFlash('danger', 'Token CSRF invalide');
+                        return $this->redirectToRoute('app_message_conversation', ['id' => $id]);
+                    }
                     $content = $request->request->get('content');
                     $file = $request->files->get('file_upload');
 

@@ -27,7 +27,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/announce/{id}/validate', name: 'app_admin_announce_validate')]
+    #[Route('/announce/{id}/validate', name: 'app_admin_announce_validate', methods: ['POST'])]
     public function validateAnnounce(Announce $announce, EntityManagerInterface $em): Response
     {
         $announce->setIsValidated(true);
@@ -37,7 +37,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_dashboard');
     }
 
-    #[Route('/announce/{id}/delete', name: 'app_admin_announce_delete')]
+    #[Route('/announce/{id}/delete', name: 'app_admin_announce_delete', methods: ['POST'])]
     public function deleteAnnounce(Announce $announce, EntityManagerInterface $em): Response
     {
         $em->remove($announce);
@@ -47,7 +47,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_dashboard');
     }
 
-    #[Route('/review/{id}/delete', name: 'app_admin_review_delete')]
+    #[Route('/review/{id}/delete', name: 'app_admin_review_delete', methods: ['POST'])]
     public function deleteReview(Review $review, EntityManagerInterface $em): Response
     {
         $em->remove($review);
