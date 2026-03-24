@@ -20,7 +20,7 @@ class ReservationController extends AbstractController
     public function reserve(Announce $announce, Request $request, EntityManagerInterface $em): Response
     {
         if ($announce->getUtilisateur() === $this->getUser()) {
-            $this->addFlash('alert', 'You can\'t reserve your own announce.');
+            $this->addFlash('error', 'Vous ne pouvez pas reserver vos propres annonces');
 
             return $this->redirectToRoute('app_announce_show', ['id' => $announce->getId()]);
         }
@@ -127,7 +127,7 @@ class ReservationController extends AbstractController
         }
 
         if ('PENDING' !== $reservation->getStatut()) {
-            $this->addFlash('alert', 'this reservation has already been processed.');
+            $this->addFlash('error', 'Cette reservation a déjà été reservée.');
 
             return $this->redirectToRoute('app_profile');
         }
@@ -160,7 +160,7 @@ class ReservationController extends AbstractController
         }
 
         if ('PENDING' !== $reservation->getStatut()) {
-            $this->addFlash('alert', 'this reservation has already been processed.');
+            $this->addFlash('error', 'Cette reservation a déjà été reservée.');
 
             return $this->redirectToRoute('app_profile');
         }

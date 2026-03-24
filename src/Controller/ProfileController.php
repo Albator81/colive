@@ -135,7 +135,7 @@ class ProfileController extends AbstractController
         }
 
         if (!$this->isCsrfTokenValid('delete_account', $request->request->get('_token'))) {
-            $this->addFlash('alert', 'Invalid CSRF token.');
+            $this->addFlash('error', 'Token CSRF invalide.');
             return $this->redirectToRoute('app_profile');
         }
 
