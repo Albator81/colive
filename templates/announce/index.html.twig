@@ -165,54 +165,8 @@
 
     </div>
 
+    <script src="{{ asset('js/announce_index.js') }}"></script>
     <script>
-        function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
-        async function toggleLike(event, announceId) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            {% if not app.user %}
-            window.location.href = "{{ path('app_login') }}";
-            return;
-            {% endif %}
-
-            const btn = event.currentTarget;
-            const icon = btn.querySelector('i');
-
-            try {
-                const response = await fetch('/announce/' + announceId + '/like', {
-                    method: 'POST'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-
-                    if (data.isLiked) {
-                        btn.classList.add('liked');
-                        btn.classList.add('animate');
-
-                        icon.classList.remove('bi-heart');
-                        icon.classList.add('bi-heart-fill');
-
-                        setTimeout(() => btn.classList.remove('animate'), 400);
-
-                    } else {
-                        btn.classList.remove('liked');
-                        icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart');
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur', error);
-            }
-        }
-
         async function create_cards() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
