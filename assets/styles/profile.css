@@ -359,3 +359,39 @@
     color: #ffffff;
 }
 
+/* =========================
+   Profile Additional
+   ========================= */
+.reservation-meta-info {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.date-info-label {
+    color: #6b7280;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.listing-card.is-inactive {
+    opacity: 0.7;
+    background-color: #fafafa;
+    border: 1px dashed #d1d5db;
+}
+
+.status-badge-info {
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+}
+
+.status-cancelled { color: #ef4444; }
+.status-finished { color: #6b7280; }
+
