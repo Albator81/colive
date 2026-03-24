@@ -1,6 +1,33 @@
 :root {
-    --hero-height: 40vh; /* Réduit un peu pour laisser voir le début du contenu */
+    --hero-height: 40vh;
     --padding-x: 20px;
+}
+
+.btn-login-padding {
+    padding: 0 30px;
+}
+
+.equipment-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.section-dates {
+    display: block;
+}
+
+.tag-pill-inline {
+    display: inline-flex;
+}
+
+.map-container {
+    height: 400px;
+    width: 100%;
+}
+
+.map-placeholder {
+    min-height: 400px;
 }
 
 body {

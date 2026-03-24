@@ -49,7 +49,7 @@
                     <input type="text" id="location" name="location" value="{{ app.request.query.get('location') }}" class="form-input" placeholder="Ex: Paris">
                 </div>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+                <div class="spacer desktop-hidden"></div>
 
                 <fieldset class="form-fieldset">
                     <legend class="form-legend">Type de logement</legend>
@@ -82,11 +82,11 @@
 
                 </fieldset>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+                <div class="spacer desktop-hidden"></div>
 
                 <fieldset class="form-fieldset">
                     <legend class="form-legend">Période</legend>
-                    <div style="margin-bottom:30px;">
+                    <div class="date-range-wrapper">
                         <label class="form-label">Arrivée</label>
                         <input type="date" name="date_start" class="form-input" value="{{ app.request.query.get('date_start') }}">
                     </div>
@@ -96,11 +96,11 @@
                     </div>
                 </fieldset>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+                <div class="spacer desktop-hidden"></div>
 
                 <fieldset class="form-fieldset">
                     <legend class="form-legend">Prix (€/mois)</legend>
-                    <div style="display: flex; gap: 10px;">
+                    <div class="price-range-wrapper">
                         <div>
                             <label class="form-label">Min</label>
                             <input type="number" name="prix_min" class="form-input" value="{{ app.request.query.get('prix_min') }}" placeholder="Prix minimum">
@@ -112,7 +112,7 @@
                     </div>
                 </fieldset>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+                <div class="spacer desktop-hidden"></div>
 
                 <fieldset class="form-fieldset">
                     <legend class="form-legend">Surface (m²)</legend>
@@ -122,7 +122,7 @@
                     </div>
                 </fieldset>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+                <div class="spacer desktop-hidden"></div>
 
                 <fieldset class="form-fieldset">
                     <legend class="form-legend">Équipements</legend>

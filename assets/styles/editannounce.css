@@ -28,3 +28,41 @@
     display: flex; align-items: center; justify-content: center;
 }
 .btn-remove-image:hover { background-color: #bb2d3b; transform: scale(1.1); }
+
+.page-background {
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('../img/home.png') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+}
+
+.container-narrow {
+    max-width: 53rem;
+    margin: 0 auto;
+}
+
+.logo-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    background: black;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: bold;
+}
+
+#drop-zone {
+    min-height: 12.5rem;
+}
+
+#drop-zone button {
+    pointer-events: none;
+}
+
+.btn-submit-announce {
+    font-size: 1.1rem;
+}

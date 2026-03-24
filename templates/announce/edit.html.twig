@@ -11,12 +11,12 @@
 {% endblock %}
 
 {% block body %}
-    <div style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{{ asset('img/home.png') }}') no-repeat center center fixed; background-size: cover; min-height: 100vh; padding-top: 3rem; padding-bottom: 5rem;">
-        <div class="container" style="max-width: 53rem;">
+    <div class="page-background">
+        <div class="container-narrow">
 
             <div class="mb-4 d-flex justify-content-between align-items-center">
                 <a href="{{ path('app_profile') }}" class="text-decoration-none">
-                    <span class="bg-black text-white d-inline-flex align-items-center justify-content-center rounded-3 fw-bold" style="width: 2.5rem; height: 2.5rem; font-size: 1.2rem;">C</span>
+                    <span class="logo-icon">C</span>
                 </a>
                 <h2 class="text-white fw-bold m-0">Modifier l'annonce</h2>
             </div>
@@ -128,7 +128,7 @@
             </div>
 
             <div class="text-center pb-5">
-                <button type="submit" class="btn btn-light bg-white fw-bold px-5 py-3 rounded-pill shadow-lg border-0" style="font-size: 1.1rem;">
+                <button type="submit" class="btn btn-light bg-white fw-bold px-5 py-3 rounded-pill shadow-lg border-0 btn-submit-announce">
                     Enregistrer les modifications
                 </button>
             </div>

@@ -33,7 +33,7 @@
             <div class="col-md-4">
                 <div class="stat-card">
                     <span class="stat-label">Statut Système</span>
-                    <span class="stat-number text-success" style="font-size: 1.2rem; margin-top: 15px;">● Opérationnel</span>
+                    <span class="stat-number text-success system-status">● Opérationnel</span>
                 </div>
             </div>
         </div>
@@ -94,7 +94,7 @@
                             <td class="text-muted italic">"{{ review.commentaire }}"</td>
                             <td>
                                 {% for i in 1..5 %}
-                                    <span style="color: {{ i <= review.note ? 'black' : '#ddd' }};">★</span>
+                                    <span class="review-star {{ i <= review.note ? 'active' : '' }}">★</span>
                                 {% endfor %}
                             </td>
                             <td class="text-end">

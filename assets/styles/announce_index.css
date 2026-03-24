@@ -5,6 +5,19 @@
     --header-height: 80px;
 }
 
+.spacer {
+    height: 50px;
+}
+
+.date-range-wrapper {
+    margin-bottom: 30px;
+}
+
+.price-range-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
 body {
     background-color: #f8f9fa;
     margin: 0;

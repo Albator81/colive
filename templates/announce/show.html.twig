@@ -48,7 +48,7 @@
                     <span>{{ app.user.prenom }}</span>
                 </a>
             {% else %}
-                <a href="{{ path('app_login') }}" class="btn-profile-floating" onclick="event.stopPropagation()" style="padding: 0 30px;">Se connecter</a>
+                <a href="{{ path('app_login') }}" class="btn-profile-floating btn-login-padding" onclick="event.stopPropagation()">Se connecter</a>
             {% endif %}
 
             <!-- FLECHES CAROUSSEL MOBILE -->
@@ -125,7 +125,7 @@
                 {% if announce.equipment %}
                     <section>
                         <h2 class="section-title">Équipements</h2>
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div class="equipment-grid">
                             {% for equipment in announce.equipment %}
                                 <p class="text-content">{{ equipment.nom }} {% if not loop.last %},{% endif %}</p> 
                             {% endfor %}
@@ -133,9 +133,9 @@
                     </section>
                 {% endif %}
 
-                <section class="d-lg-none" style="display:block;">
+                <section class="d-lg-none section-dates">
                     <h2 class="section-title">Dates</h2>
-                    <div class="tag-pill" style="display:inline-flex;">
+                    <div class="tag-pill tag-pill-inline">
                         <i class="bi bi-calendar3"></i>
                         {{ announce.disponibiliteDebut|date('d M') }} - {{ announce.disponibiliteFin|date('d M Y') }}
                     </div>
@@ -173,9 +173,9 @@
         </main>
 
         {% if announce.latitude != 0 and announce.longitude != 0 %}
-            <div id="map" class="flex-grow-1 shadow rounded mt-4" style="height:400px; width:100%;"></div>
+            <div id="map" class="flex-grow-1 shadow rounded mt-4 map-container"></div>
         {% else %}
-            <div class="flex-grow-1 shadow rounded d-flex align-items-center justify-content-center bg-light" style="min-height:400px;">
+            <div class="flex-grow-1 shadow rounded d-flex align-items-center justify-content-center bg-light map-placeholder">
                 <div class="text-center text-muted">
                     <p class="mt-2 fw-bold">Carte non disponible</p>
                     <small>Nous n'avons pas réussi à géolocaliser cet événement. Merci de vous référer à l'adresse postale.</small>

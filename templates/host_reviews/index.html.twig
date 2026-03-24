@@ -10,8 +10,8 @@
     <script>document.body.dataset.hostId = "{{ host.id }}";</script>
 
     <nav class="user-navbar">
-        <a href="{{ path('app_home') }}" style="font-weight:bold; font-size:1.2rem; display:flex; align-items:center; gap:5px;">
-            <span style="background:black; color:white; padding:2px 8px; border-radius:6px;">C</span> CoLive
+        <a href="{{ path('app_home') }}" id="nav-logo">
+            <span>C</span> CoLive
         </a>
         <div>
             {% if app.user %}
@@ -64,7 +64,7 @@
             </div>
 
             <div class="reviews-grid" id="reviewsGrid">
-                <div style="text-align:center; padding: 20px;">Chargement des avis...</div>
+                <div id="reviews-loading">Chargement des avis...</div>
             </div>
         </main>
     </div>

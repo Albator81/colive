@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #E51D53; /* Rose Airbnb / CoLive */
+    --primary-color: #E51D53;
     --primary-hover: #D70466;
     --text-main: #222222;
     --text-light: #717171;
@@ -7,6 +7,22 @@
     --border-color: #B0B0B0;
     --border-radius: 12px;
     --shadow-card: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+#drop-zone {
+    min-height: 12.5rem;
+}
+
+.btn-choose-files {
+    pointer-events: none;
+}
+
+.btn-submit-announce {
+    font-size: 1.1rem;
+}
+
+.hidden-form-fields {
+    display: none;
 }
 
 body {

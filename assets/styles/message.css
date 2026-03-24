@@ -28,9 +28,14 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    font-weight: 700;
-    font-size: 1.5rem;
+}
+
+.logo-link {
     text-decoration: none;
+}
+
+.hidden-input {
+    display: none;
 }
 
 .nav-right-group {

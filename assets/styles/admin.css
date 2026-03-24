@@ -5,6 +5,19 @@
     --colive-border-radius: 24px;
 }
 
+.system-status {
+    font-size: 1.2rem;
+    margin-top: 15px;
+}
+
+.review-star {
+    color: #ddd;
+}
+
+.review-star.active {
+    color: black;
+}
+
 body {
     background-color: #f8f9fa;
     font-family: 'Inter', -apple-system, sans-serif;

@@ -395,3 +395,212 @@
 .status-cancelled { color: #ef4444; }
 .status-finished { color: #6b7280; }
 
+#nav-logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: black;
+}
+
+#nav-logo span {
+    background: black;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.note-info-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.contact-email {
+    word-break: break-all;
+}
+
+.avatar-upload-box {
+    margin-bottom: 1.5rem;
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px dashed #d1d5db;
+}
+
+.avatar-upload-error {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-row {
+    margin-bottom: 1.5rem;
+}
+
+.btn-save-wrapper {
+    margin-top: 2rem;
+    overflow: hidden;
+}
+
+.btn-save-wrapper .btn-save {
+    float: right;
+}
+
+.danger-zone {
+    margin-top: 3rem;
+    padding: 1rem;
+    border: 1px solid #ff0000;
+}
+
+.danger-zone h3 {
+    color: #ff0000;
+    margin-bottom: 1rem;
+}
+
+.danger-zone p {
+    color: #888888;
+    margin-bottom: 1rem;
+}
+
+.danger-zone form {
+    display: inline;
+}
+
+.delete-account-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #dc3545;
+    cursor: pointer;
+    font: inherit;
+}
+
+.empty-message {
+    color: #6b7280;
+    text-align: center;
+    padding: 2rem;
+}
+
+.badge-likes {
+    margin-left: 5px;
+}
+
+.btn-manage-link {
+    text-decoration: none;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.listing-title-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.reservation-info-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.badge-status {
+    background: transparent;
+    border: 1px solid;
+}
+
+.badge-status.status-pending {
+    background: #f59e0b20;
+    color: #f59e0b;
+    border-color: #f59e0b40;
+}
+
+.badge-status.status-confirmed {
+    background: #10b98120;
+    color: #10b981;
+    border-color: #10b98140;
+}
+
+.badge-status.status-finished {
+    background: #6b728020;
+    color: #6b7280;
+    border-color: #6b728040;
+}
+
+.badge-status.status-cancelled {
+    background: #ef444420;
+    color: #ef4444;
+    border-color: #ef444440;
+}
+
+.reservation-price {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.boutons-container-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.boutons-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.btn-contact-link {
+    text-decoration: none;
+    text-align: center;
+}
+
+.cancel-form {
+    margin: 0;
+}
+
+.empty-reservations {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.empty-reservations p {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.explore-link {
+    color: #000;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.profile-hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 2rem 0;
+}
+
+.favorites-empty {
+    color: #6b7280;
+    text-align: center;
+}
+
+.listing-actions-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reservations-section {
+    margin-bottom: 2rem;
+}
+
