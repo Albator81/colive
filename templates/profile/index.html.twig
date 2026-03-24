@@ -132,7 +132,7 @@
                         
                         <div style="margin-top: 3rem; padding: 1rem; border: 1px solid #ff0000;">
                             <h3 style="color: #ff0000; margin-bottom: 1rem;">Zone Dangereuse</h3>
-                            <p style="color: #888888; margin-bottom: 1rem;">La suppression de votre compte est définitive. Toute vos données seront perdus</p>
+                            <p style="color: #888888; margin-bottom: 1rem;">La suppression de votre compte est définitive. Toute vos données seront perdues</p>
                             
                             <form method="post" action="{{ path('app_profile_delete') }}" onsubmit="return confirm('Êtes vous sure de vouloir supprimé votre compte? Cette action est irréversible.');" style="display:inline;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
