@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Csrf\CsrfTokenManagerInterface;
 
 class MessageController extends AbstractController
 {
@@ -19,6 +20,9 @@ class MessageController extends AbstractController
     #[Route('/message/{id}', name: 'app_message_conversation')]
     public function index(?int $id, MessageRepository $messageRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
+        if (!$this->isCsrfTokenValid('message_send', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
         /** @var User $currentUser */
         $currentUser = $this->getUser();
         $allContacts = $currentUser->getContacts();
