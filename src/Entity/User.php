@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
@@ -24,16 +25,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 50)]
     #[Groups(['rewiew_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
     #[Groups(['rewiew_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Assert\Regex('/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/')]
     private ?string $email = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Regex('/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/')]
     private ?string $tel = null;
 
     #[ORM\Column(name: 'mot_de_passe', length: 255)]
@@ -41,6 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['rewiew_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $avatar = null;
 
     #[ORM\Column(name: 'date_creation_compte', type: 'datetime')]

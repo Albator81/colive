@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'announce_picture')]
@@ -20,6 +21,7 @@ class AnnouncePicture
     #[Groups(['announce_read'])]
     private ?string $contenu = null;
     #[ORM\Column(type: 'datetime')]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private \DateTimeInterface $dateCreation;
 
     #[ORM\ManyToOne(targetEntity: Announce::class, inversedBy: 'photos')]

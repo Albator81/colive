@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ORM\Table(name: 'message')]
@@ -17,11 +18,12 @@ class Message
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
-
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $attachment = null;
-
+    
     #[ORM\Column]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]

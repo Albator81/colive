@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'review')]
@@ -34,6 +35,7 @@ class Review
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['rewiew_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $commentaire = null;
 
     #[ORM\Column(name: 'date_creation', type: 'datetime')]

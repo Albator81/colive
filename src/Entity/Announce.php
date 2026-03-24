@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AnnounceRepository::class)]
 #[ORM\Table(name: 'announce')]
@@ -37,14 +38,17 @@ class Announce
 
     #[ORM\Column(length: 100)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $titre = null;
 
     #[ORM\Column(type: 'text')]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $type = null;
 
     #[ORM\Column(type: 'integer')]
@@ -57,6 +61,7 @@ class Announce
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $regle = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -73,14 +78,17 @@ class Announce
 
     #[ORM\Column(length: 255)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $ville = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $code_postal = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
@@ -115,9 +123,11 @@ class Announce
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
     #[Groups(['announce_read'])]
     private ?string $latitude = null;
+    #[Assert\Regex('/^[^<>&"]*$/')]
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?string $longitude = null;
 
     /**
