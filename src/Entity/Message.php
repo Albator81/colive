@@ -23,7 +23,6 @@ class Message
     private ?string $attachment = null;
     
     #[ORM\Column]
-    #[Assert\Regex('/^[^<>&"]*$/')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
