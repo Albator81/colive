@@ -22,8 +22,8 @@ eventSource.onmessage = event => {
         <li>
             <a class="dropdown-item notif-item notif-new px-3 py-2 d-flex flex-column" href="${data.target}">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <strong class="text-primary" style="font-size: 0.9rem;"><strong>*</strong> ${data.title}</strong>
-                    <span class="text-muted small" style="font-size: 0.7rem;">${data.timestamp}</span>
+                    <strong class="text-primary notif-title"><strong>*</strong> ${data.title}</strong>
+                    <span class="text-muted small notif-timestamp">${data.timestamp}</span>
                 </div>
                 <span class="text-muted small">${data.content}</span>
             </a>

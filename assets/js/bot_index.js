@@ -16,7 +16,7 @@ function sendMessage() {
     let loadingId = "loading-" + Date.now();
     chatBox.innerHTML += `
     <div class="message bot" id="${loadingId}">
-        <div class="bubble" style="font-style:italic; color:#777;">Écrit...</div>
+        <div class="bubble bubble-loading">Écrit...</div>
     </div>
 `;
     chatBox.scrollTop = chatBox.scrollHeight;
