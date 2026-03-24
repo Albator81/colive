@@ -25,20 +25,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 50)]
     #[Groups(['rewiew_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le nom contient des caractères interdits.')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
     #[Groups(['rewiew_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le prénom contient des caractères interdits.')]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Assert\Regex('/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/')]
+    #[Assert\Regex('/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/', message: 'L\'adresse email n\'est pas valide.')]
     private ?string $email = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Assert\Regex('/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/')]
+    #[Assert\Regex('/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/', message: 'Le numéro de téléphone n\'est pas valide.')]
     private ?string $tel = null;
 
     #[ORM\Column(name: 'mot_de_passe', length: 255)]
@@ -46,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['rewiew_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'L\'avatar contient des caractères interdits.')]
     private ?string $avatar = null;
 
     #[ORM\Column(name: 'date_creation_compte', type: 'datetime')]

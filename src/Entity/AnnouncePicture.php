@@ -21,7 +21,6 @@ class AnnouncePicture
     #[Groups(['announce_read'])]
     private ?string $contenu = null;
     #[ORM\Column(type: 'datetime')]
-    #[Assert\Regex('/^[^<>&"]*$/')]
     private \DateTimeInterface $dateCreation;
 
     #[ORM\ManyToOne(targetEntity: Announce::class, inversedBy: 'photos')]

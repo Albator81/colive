@@ -38,17 +38,17 @@ class Announce
 
     #[ORM\Column(length: 100)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le titre contient des caractères interdits.')]
     private ?string $titre = null;
 
     #[ORM\Column(type: 'text')]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'La description contient des caractères interdits.')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le type contient des caractères interdits.')]
     private ?string $type = null;
 
     #[ORM\Column(type: 'integer')]
@@ -61,7 +61,7 @@ class Announce
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Les règles contiennent des caractères interdits.')]
     private ?string $regle = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -78,17 +78,17 @@ class Announce
 
     #[ORM\Column(length: 255)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'L\'adresse contient des caractères interdits.')]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'La ville contient des caractères interdits.')]
     private ?string $ville = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le code postal contient des caractères interdits.')]
     private ?string $code_postal = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
@@ -122,12 +122,12 @@ class Announce
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
     #[Groups(['announce_read'])]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'La latitude contient des caractères interdits.')]
     private ?string $latitude = null;
-    #[Assert\Regex('/^[^<>&"]*$/')]
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'La longitude contient des caractères interdits.')]
     private ?string $longitude = null;
 
     /**

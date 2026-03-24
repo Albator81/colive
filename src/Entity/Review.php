@@ -35,7 +35,7 @@ class Review
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['rewiew_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le commentaire contient des caractères interdits.')]
     private ?string $commentaire = null;
 
     #[ORM\Column(name: 'date_creation', type: 'datetime')]

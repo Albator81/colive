@@ -22,7 +22,7 @@ class Equipment
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['announce_read'])]
-    #[Assert\Regex('/^[^<>&"]*$/')]
+    #[Assert\Regex('/^[^<>&"]*$/', message: 'Le nom de l\'équipement contient des caractères interdits.')]
     private ?string $nom = null;
 
     /**
