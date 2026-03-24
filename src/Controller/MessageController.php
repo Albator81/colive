@@ -20,9 +20,6 @@ class MessageController extends AbstractController
     #[Route('/message/{id}', name: 'app_message_conversation')]
     public function index(?int $id, MessageRepository $messageRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('message_send', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException('Invalid CSRF token');
-        }
         /** @var User $currentUser */
         $currentUser = $this->getUser();
         $allContacts = $currentUser->getContacts();
@@ -44,13 +41,18 @@ class MessageController extends AbstractController
 
         if ($id) {
             $selectedUser = $entityManager->getRepository(User::class)->find($id);
-
+            $r = $request->headers->get('referer') ?? '/';
             if ($selectedUser && !$currentUser->getContacts()->contains($selectedUser)) {
-                throw $this->createAccessDeniedException('You can only send messages to your owns contacts.');
+                $this->addFlash('error', 'Vous ne pouvez envoyer des messages qu\'à vos propres contacts.');
+                return $this->redirect($r);
             }
 
             if ($selectedUser) {
                 if ($request->isMethod('POST')) {
+                    if (!$this->isCsrfTokenValid('message_send', $request->request->get('_token'))) {
+                        $this->addFlash('danger', 'Token CSRF invalide');
+                        return $this->redirectToRoute('app_message_conversation', ['id' => $id]);
+                    }
                     $content = $request->request->get('content');
                     $file = $request->files->get('file_upload');
 
