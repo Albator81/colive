@@ -122,16 +122,19 @@
                     </section>
                 {% endif %}
 
-                {% if announce.equipment %}
-                    <section>
-                        <h2 class="section-title">Équipements</h2>
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            {% for equipment in announce.equipment %}
-                                <p class="text-content">{{ equipment.nom }} {% if not loop.last %},{% endif %}</p> 
-                            {% endfor %}
-                        </div>
-                    </section>
-                {% endif %}
+{% if announce.equipment or announce.userEquipments %}
+<section>
+<h2 class="section-title">Équipements</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+{% for equipment in announce.equipment %}
+<p class="text-content">{{ equipment.nom }}{% if not loop.last or announce.userEquipments|length > 0 %},{% endif %}</p>
+{% endfor %}
+{% for userEquipment in announce.userEquipments %}
+<p class="text-content">{{ userEquipment.nom }}{% if not loop.last %},{% endif %}</p>
+{% endfor %}
+</div>
+</section>
+{% endif %}
 
                 <section class="d-lg-none" style="display:block;">
                     <h2 class="section-title">Dates</h2>
