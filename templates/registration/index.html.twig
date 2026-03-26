@@ -2,60 +2,61 @@
 
 {% block title %}Créer un compte{% endblock %}
 
+{% set show_header = false %}
+
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/registration.css') }}">
 {% endblock %}
 
 {% block body %}
-    <div class="auth-bg">
-        <img src="{{ asset('img/home.png') }}" alt="image-home-appartement">
+    <div class="min-vh-100 d-flex align-items-center justify-content-center position-relative" style="background:url('{{ asset('img/home.png') }}') center/cover no-repeat;">
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
 
-        <div class="auth-center">
-            <section class="auth-card">
+        <div class="card border-0 shadow-lg rounded-4 p-4 bg-white position-relative" style="max-width:450px;width:90%;">
+            <div class="text-center mb-4">
+                <div class="bg-dark text-white rounded-3 d-inline-flex justify-content-center align-items-center" style="width:50px;height:50px;font-weight:bold;font-size:1.5rem;">C</div>
+                <h2 class="h4 fw-bold mt-3">Rejoindre CoLive</h2>
+                <p class="text-muted">Créez votre compte pour commencer à partager des logements</p>
+                <small class="text-muted">Remplissez les informations ci-dessous pour vous inscrire</small>
+            </div>
 
-                <div class="logo-box">C</div>
-
-                <h2 class="title">Rejoindre CoLive</h2>
-                <p class="subtitle">Créez votre compte pour commencer à partager des logements</p>
-                <p class="small-label">Remplissez les informations ci-dessous pour vous inscrire</p>
-
-
-
-                <form action="{{ path('app_registration') }}" method="post" class="form">
-
-                    <div class="two-cols">
-                        <div>
-                            <label for="prenom">Prénom</label>
-                            <input type="text" id="prenom" name="registrationForm[prenom]" placeholder="Votre Prénom" required>
-                        </div>
-                        <div>
-                            <label for="nom">Nom</label>
-                            <input type="text" id="nom" name="registrationForm[nom]" placeholder="Votre nom" required>
-                        </div>
+            <form action="{{ path('app_registration') }}" method="post">
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <label for="prenom" class="form-label fw-bold">Prénom</label>
+                        <input type="text" id="prenom" name="registrationForm[prenom]" class="form-control rounded-3" placeholder="Votre Prénom" required>
                     </div>
+                    <div class="col-6">
+                        <label for="nom" class="form-label fw-bold">Nom</label>
+                        <input type="text" id="nom" name="registrationForm[nom]" class="form-control rounded-3" placeholder="Votre nom" required>
+                    </div>
+                </div>
 
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="registrationForm[email]" placeholder="votre.email@example.com" required>
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-bold">Email</label>
+                    <input type="email" id="email" name="registrationForm[email]" class="form-control rounded-3" placeholder="votre.email@example.com" required>
+                </div>
 
-                    <label for="plainPassword_first">Mot de passe</label>
-                    <input type="password" id="plainPassword_first" name="registrationForm[plainPassword][first]" placeholder="......." required>
+                <div class="mb-3">
+                    <label for="plainPassword_first" class="form-label fw-bold">Mot de passe</label>
+                    <input type="password" id="plainPassword_first" name="registrationForm[plainPassword][first]" class="form-control rounded-3" placeholder="......." required>
+                </div>
 
-                    <label for="plainPassword_second">Répéter le mot de passe</label>
-                    <input type="password" id="plainPassword_second" name="registrationForm[plainPassword][second]" placeholder="......." required>
+                <div class="mb-3">
+                    <label for="plainPassword_second" class="form-label fw-bold">Répéter le mot de passe</label>
+                    <input type="password" id="plainPassword_second" name="registrationForm[plainPassword][second]" class="form-control rounded-3" placeholder="......." required>
+                </div>
 
-                    {% for message in app.flashes('error') %}
-                        <div class="flash-error">{{ message }}</div>
-                    {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger rounded-3">{{ message }}</div>
+                {% endfor %}
 
-                    <button type="submit" class="btn-primary">Créer mon compte</button>
-                </form>
+                <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill mt-3">Créer mon compte</button>
+            </form>
 
-                <p class="login-link">
-                    Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a>
-                </p>
-
-            </section>
+            <p class="text-center mt-4 mb-0">
+                Déjà inscrit ? <a href="{{ path('app_login') }}" class="fw-bold">Se connecter</a>
+            </p>
         </div>
     </div>
 {% endblock %}

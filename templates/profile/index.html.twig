@@ -4,7 +4,6 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/profile.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 {% endblock %}
 
@@ -13,246 +12,271 @@
 {% block btn_profile %}{% endblock %}
 
 {% block header_buttons %}
-    <a href="{{ path('app_logout') }}" class="logout-btn">Se déconnecter</a>
+    <a href="{{ path('app_logout') }}" class="btn btn-outline-dark rounded-pill px-4">Se déconnecter</a>
 {% endblock %}
 
 {% block body %}
 
-    <div class="colive-profile-page">
-
-        <div class="container">
-
-            <div class="profile-header">
-                <h1>Mon Profil</h1>
-                <p class="subtitle">Gérez vos informations personnelles et vos préférences.</p>
-            </div>
-
-            <div class="grid-layout">
-
-                <div class="sidebar">
-                    <div class="card">
-                        <div class="avatar-container">
-                            {% if user.avatar %}
-                                <img src="{{ user.avatar }}" alt="Avatar" class="avatar-img">
-                            {% else %}
-                                <img src="https://ui-avatars.com/api/?name={{ user.prenom }}+{{ user.nom }}&background=000&color=fff&size=256&font-size=0.33" alt="Avatar" class="avatar-img">
-                            {% endif %}
-                        </div>
-                        {% if nbNotes != 0 %}
-                            <a href="{{ path('app_host_reviews', {'id': user.id}) }}" class="note-info note-info-link">
-                                <div class="rating-stars">
-                                    {% for i in 1..5 %}
-                                        {% if i <= averageRating %}
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FFB400" viewBox="0 0 24 24"><path d="m6.87 14.33-1.83 6.4c-.12.4.03.84.37 1.08.34.25.8.26 1.14.02L12 18.2l5.45 3.63a.988.988 0 0 0 1.14-.02c.34-.25.49-.68.37-1.08l-1.83-6.4 4.54-4.08c.3-.27.41-.69.28-1.06-.13-.38-.47-.64-.87-.68l-5.7-.45-2.47-5.46a.998.998 0 0 0-1.82 0L8.62 8.06l-5.7.45c-.4.03-.74.3-.87.68s-.02.8.28 1.06z"></path></svg>
-                                        {% else %}
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#D1D5DB" viewBox="0 0 24 24"><path d="m4.83 12.49 2.04 1.83-.83 2.9-1 3.5c-.12.4.03.84.37 1.08.34.25.8.26 1.14.02l3-2L12 18.19l2.45 1.63 3 2a.988.988 0 0 0 1.14-.02c.34-.25.49-.68.37-1.08l-1-3.5-.83-2.9 2.04-1.83 2.5-2.25c.3-.27.41-.69.28-1.06-.13-.38-.47-.64-.87-.68l-3.15-.25-2.56-.2-2.47-5.46a.998.998 0 0 0-1.82 0L8.61 8.05l-2.56.2-3.15.25c-.4.03-.74.3-.87.68s-.02.8.28 1.06l2.5 2.25Zm1.39-2.25 2.52-.2.62-.05.59-.05.84-1.86 1.2-2.66 1.2 2.66.84 1.86.59.05.62.05 2.52.2.83.07-.77.69-2.5 2.25-.46.42.17.6 1.25 4.38-3.74-2.49-.55-.37-.55.37-3.74 2.49 1.25-4.38.17-.6-.46-.42L6.16 11l-.77-.69z"></path></svg>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <span>({{ nbNotes }} avis)</span>
-                            </a>
+<div class="bg-light min-vh-100 py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+                    <div class="avatar-container mb-3">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width:140px;height:140px;">
+                        {% else %}
+                            <img src="https://ui-avatars.com/api/?name={{ user.prenom }}+{{ user.nom }}&background=000&color=fff&size=256&font-size=0.33" alt="Avatar" class="rounded-circle object-fit-cover" style="width:140px;height:140px;">
                         {% endif %}
-                        <div class="user-name">{{ user.prenom }} {{ user.nom }}</div>
-                        <div class="user-meta">Membre depuis {{ user.dateCreationCompte|date('Y') }}</div>
-                        <div class="contact-section">
-                            <div class="contact-row">
-                                <div class="contact-icon"><i class="bi bi-envelope"></i></div>
-                                <span class="contact-email">{{ user.email }}</span>
+                    </div>
+                    
+                    {% if nbNotes != 0 %}
+                        <a href="{{ path('app_host_reviews', {'id': user.id}) }}" class="text-decoration-none">
+                            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                                {% for i in 1..5 %}
+                                    {% if i <= averageRating %}
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    {% else %}
+                                        <i class="bi bi-star text-secondary"></i>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
-                            <div class="contact-row">
-                                <div class="contact-icon"><i class="bi bi-telephone"></i></div>
-                                <span>{{ user.tel|default('Non renseigné') }}</span>
-                            </div>
+                            <span class="text-muted">({{ nbNotes }} avis)</span>
+                        </a>
+                    {% endif %}
+                    
+                    <h2 class="h4 fw-bold mb-1">{{ user.prenom }} {{ user.nom }}</h2>
+                    <p class="text-muted mb-3">Membre depuis {{ user.dateCreationCompte|date('Y') }}</p>
+                    
+                    <div class="text-start ps-3 mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="bg-light rounded p-2"><i class="bi bi-envelope"></i></div>
+                            <span class="small text-muted text-truncate">{{ user.email }}</span>
                         </div>
-                        <div class="stats-box">
-                            <div class="stat-item"><span class="stat-number">{{ user.annonces|length }}</span><span class="stat-label">Annonces</span></div>
-                            <div class="stat-divider"></div>
-                            <div class="stat-item"><span class="stat-number">{{ user.likes|length }}</span><span class="stat-label">Favoris</span></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="bg-light rounded p-2"><i class="bi bi-telephone"></i></div>
+                            <span class="small text-muted">{{ user.tel|default('Non renseigné') }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-around border-top pt-3">
+                        <div class="text-center">
+                            <span class="h4 fw-bold d-block">{{ user.annonces|length }}</span>
+                            <span class="small text-muted">Annonces</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="h4 fw-bold d-block">{{ user.likes|length }}</span>
+                            <span class="small text-muted">Favoris</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="content">
-
-                    <div class="tabs-container">
-                        <button class="tab-btn active" onclick="openTab(event, 'content-infos')">Informations</button>
-                        <button class="tab-btn inactive" onclick="openTab(event, 'content-annonces')">Mes annonces ({{ user.annonces|length }})</button>
-                        <button class="tab-btn inactive" onclick="openTab(event, 'content-favoris')">Mes réservations et favoris</button>
-                    </div>
-
-                    <div id="content-infos" class="tab-content active card">
-                        <div class="header-section"><h3>Informations personnelles</h3></div>
-                        {{ form_start(form) }}
-                        <div class="avatar-upload-box">
-                            {{ form_label(form.avatarFile, 'Changer ma photo de profil', {'label_attr': {'class': 'd-block mb-2 fw-bold'}}) }}
-                            {{ form_widget(form.avatarFile, {'attr': {'class': 'form-control w-100'}}) }}
-                            <div class="avatar-upload-error">{{ form_errors(form.avatarFile) }}</div>
-                        </div>
-                        <div class="form-grid">
-                            <div>{{ form_label(form.prenom) }}{{ form_widget(form.prenom) }}</div>
-                            <div>{{ form_label(form.nom) }}{{ form_widget(form.nom) }}</div>
-                        </div>
-                        <div class="form-row">{{ form_label(form.email) }}{{ form_widget(form.email) }}</div>
-                        <div class="form-row">{{ form_label(form.tel) }}{{ form_widget(form.tel) }}</div>
-                        <div class="btn-save-wrapper"><button type="submit" class="btn-save">Enregistrer</button></div>
-                        {{ form_end(form) }}
-                        
-                        <div class="danger-zone">
-                            <h3>Zone Dangereuse</h3>
-                            <p>La suppression de votre compte est définitive. Toute vos données seront perdues</p>
-                            
-                            <form method="post" action="{{ path('app_profile_delete') }}" onsubmit="return confirm('Êtes vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
-                                <button type="submit" class="delete-account-btn">
-                                    Supprimer mon compte
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div id="content-annonces" class="tab-content card">
-                        <div class="header-section"><h3>Mes annonces</h3><a href="{{ path('app_announce_create') }}" class="btn-new">Nouvelle annonce +</a></div>
-                        {% if user.annonces is empty %}<p class="empty-message">Vous n'avez posté aucune annonce.</p>
-                        {% else %}
-                            {% for annonce in user.annonces %}
-                                <div class="listing-card">
-                                    <div class="listing-img-container">
-                                        {% if annonce.photos is not empty %}<img src="{{ annonce.photos|first.contenu }}" alt="Photo" class="listing-thumb">{% else %}<img src="https://via.placeholder.com/150?text=No+Image" alt="Pas de photo" class="listing-thumb">{% endif %}
-                                    </div>
-                                    <div class="listing-info">
-                                        <h4>{{ annonce.titre }}</h4>
-                                        <div class="listing-details">{{ annonce.ville }} • {{ annonce.prix }}€/mois</div>
-                                        <div><span class="badge">Actif</span><span class="badge badge-likes">{{ annonce.likes|length }} J'aime</span></div>
-                                    </div>
-                                    <div class="listing-actions">
-                                        <a href="{{ path('app_announce_edit', {'id': annonce.id}) }}" class="btn-manage btn-manage-link">
-                                            Modifier l'annonce
-                                        </a>
-                                        <form method="post" action="{{ path('app_announce_delete', {'id': annonce.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce définitivement ? Cette action est irréversible.');" class="inline-form">
-
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">
-
-                                            <button type="submit" class="link-delete">
-                                                Supprimer
-                                            </button>
-                                        </form>
-                                    </div>
+            </div>
+            
+            <!-- Contenu principal -->
+            <div class="col-lg-8">
+                <ul class="nav nav-pills nav-fill mb-3 p-1 bg-white rounded-pill shadow-sm" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#infos" type="button">Informations</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#annonces" type="button">Mes annonces ({{ user.annonces|length }})</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#favoris" type="button">Réservations et favoris</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content">
+                    <!-- Informations -->
+                    <div class="tab-pane fade show active" id="infos">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h3 class="h5 fw-bold mb-4">Informations personnelles</h3>
+                            {{ form_start(form) }}
+                            <div class="bg-light rounded-3 p-3 mb-4">
+                                {{ form_label(form.avatarFile, 'Changer ma photo de profil', {'label_attr': {'class': 'd-block mb-2 fw-bold'}}) }}
+                                {{ form_widget(form.avatarFile, {'attr': {'class': 'form-control w-100'}}) }}
+                                <div class="text-danger small mt-1">{{ form_errors(form.avatarFile) }}</div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    {{ form_label(form.prenom) }}{{ form_widget(form.prenom, {'attr': {'class': 'form-control rounded-3'}}) }}
                                 </div>
-                            {% endfor %}
-                        {% endif %}
+                                <div class="col-md-6">
+                                    {{ form_label(form.nom) }}{{ form_widget(form.nom, {'attr': {'class': 'form-control rounded-3'}}) }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form_label(form.email) }}{{ form_widget(form.email, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                            <div class="mb-4">
+                                {{ form_label(form.tel) }}{{ form_widget(form.tel, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-dark rounded-pill px-4">Enregistrer</button>
+                            </div>
+                            {{ form_end(form) }}
+                            
+                            <hr class="my-4">
+                            
+                            <div class="border border-2 border-danger rounded-3 p-3">
+                                <h4 class="text-danger fw-bold mb-2">Zone Dangereuse</h4>
+                                <p class="text-muted mb-3">La suppression de votre compte est définitive. Toutes vos données seront perdues.</p>
+                                <form method="post" action="{{ path('app_profile_delete') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
+                                    <button type="submit" class="btn btn-outline-danger rounded-pill">
+                                        <i class="bi bi-trash"></i> Supprimer mon compte
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
-                    <div id="content-favoris" class="tab-content card">
-
-                        <div class="reservations-section">
-                            <div class="header-section"><h3>Mes réservations</h3></div>
-
+                    
+                    <!-- Mes annonces -->
+                    <div class="tab-pane fade" id="annonces">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="h5 fw-bold mb-0">Mes annonces</h3>
+                                <a href="{{ path('app_announce_create') }}" class="btn btn-dark rounded-pill">
+                                    <i class="bi bi-plus-lg"></i> Nouvelle annonce
+                                </a>
+                            </div>
+                            
+                            {% if user.annonces is empty %}
+                                <p class="text-muted text-center py-4">Vous n'avez posté aucune annonce.</p>
+                            {% else %}
+                                {% for annonce in user.annonces %}
+                                    <div class="card border rounded-3 mb-3 p-3 hover-shadow">
+                                        <div class="d-flex gap-3">
+                                            <div style="width:80px;height:80px;flex-shrink:0;">
+                                                {% if annonce.photos is not empty %}
+                                                    <img src="{{ annonce.photos|first.contenu }}" alt="Photo" class="rounded-3 w-100 h-100 object-fit-cover">
+                                                {% else %}
+                                                    <div class="bg-light rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <i class="bi bi-image text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h4 class="h6 fw-bold mb-1">{{ annonce.titre }}</h4>
+                                                <p class="text-muted small mb-2">{{ annonce.ville }} • {{ annonce.prix }}€/mois</p>
+                                                <span class="badge bg-success rounded-pill">{{ annonce.likes|length }} J'aime</span>
+                                            </div>
+                                            <div class="d-flex flex-column gap-2">
+                                                <a href="{{ path('app_announce_edit', {'id': annonce.id}) }}" class="btn btn-outline-dark btn-sm rounded-3">
+                                                    <i class="bi bi-pencil"></i> Modifier
+                                                </a>
+                                                <form method="post" action="{{ path('app_announce_delete', {'id': annonce.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce définitivement ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-3 w-100">
+                                                        <i class="bi bi-trash"></i> Supprimer
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Réservations et favoris -->
+                    <div class="tab-pane fade" id="favoris">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                            <h3 class="h5 fw-bold mb-4"><i class="bi bi-calendar-check"></i> Mes réservations</h3>
+                            
                             {% if user.reservations is defined and user.reservations is not empty %}
                                 {% for reservation in user.reservations %}
                                     {% set isFinished = reservation.dateFin < date() and reservation.statut == 'CONFIRMED' %}
-
-                                    <div class="listing-card {{ (reservation.statut == 'CANCELLED' or isFinished) ? 'is-inactive' : '' }}">
-
-                                        <div class="listing-img-container">
-                                            {% if reservation.announce.photos is not empty %}
-                                                <img src="{{ reservation.announce.photos|first.contenu }}" alt="Photo" class="listing-thumb">
-                                            {% else %}
-                                                <img src="https://via.placeholder.com/150?text=No+Image" alt="Pas de photo" class="listing-thumb">
-                                            {% endif %}
-                                        </div>
-
-                                        <div class="listing-info">
-                                            <a href="{{ path('app_announce_show', {'id': reservation.announce.id}) }}" class="listing-title-link">
-                                                <h4>{{ reservation.announce.titre }}</h4>
-                                            </a>
-                                            <div class="listing-details">
-                                                <i class="bi bi-calendar-event"></i>
-                                                Du {{ reservation.dateDebut|date('d/m/Y') }} au {{ reservation.dateFin|date('d/m/Y') }}
+                                    <div class="card border rounded-3 mb-3 p-3 {% if reservation.statut == 'CANCELLED' or isFinished %}opacity-75{% endif %}">
+                                        <div class="d-flex gap-3">
+                                            <div style="width:80px;height:80px;flex-shrink:0;">
+                                                {% if reservation.announce.photos is not empty %}
+                                                    <img src="{{ reservation.announce.photos|first.contenu }}" alt="Photo" class="rounded-3 w-100 h-100 object-fit-cover">
+                                                {% else %}
+                                                    <div class="bg-light rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <i class="bi bi-image text-muted"></i>
+                                                    </div>
+                                                {% endif %}
                                             </div>
-
-                                            <div class="reservation-info-row">
-                                                {% set statusClass = reservation.statut == 'PENDING' ? 'status-pending' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'status-finished' : 'status-confirmed') : 'status-cancelled') %}
-                                                {% set statusText = reservation.statut == 'PENDING' ? 'En attente' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'Terminée' : 'Confirmée') : 'Annulée') %}
-
-                                                <span class="badge badge-status {{ statusClass }}">
-                                                    {{ statusText }}
-                                                </span>
-                                                <span class="reservation-price">
-                                                    Loyer : {{ reservation.announce.prix }} €/mois
-                                                </span>
+                                            <div class="flex-grow-1">
+                                                <a href="{{ path('app_announce_show', {'id': reservation.announce.id}) }}" class="text-decoration-none">
+                                                    <h4 class="h6 fw-bold text-dark mb-1">{{ reservation.announce.titre }}</h4>
+                                                </a>
+                                                <p class="text-muted small mb-2">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                    Du {{ reservation.dateDebut|date('d/m/Y') }} au {{ reservation.dateFin|date('d/m/Y') }}
+                                                </p>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    {% set statusClass = reservation.statut == 'PENDING' ? 'bg-warning text-dark' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'bg-secondary' : 'bg-success') : 'bg-danger') %}
+                                                    {% set statusText = reservation.statut == 'PENDING' ? 'En attente' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'Terminée' : 'Confirmée') : 'Annulée') %}
+                                                    <span class="badge {{ statusClass }} rounded-pill">{{ statusText }}</span>
+                                                    <span class="small text-muted">Loyer: {{ reservation.announce.prix }}€/mois</span>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div class="listing-actions">
-                                            <div class="boutons-container boutons-container-actions">
-
-                                                <div class="reservation-meta-info">
-                                                    <span class="date-info-label">
-                                                        Chambre réservée le {{ reservation.createdAt|date('d/m/Y') }}
-                                                    </span>
-                                                </div>
-
-                                                <div class="boutons-row">
-                                                    {% if reservation.statut == 'CANCELLED' %}
-                                                        <span class="status-badge-info status-cancelled">
-                                                            <i class="bi bi-calendar-x"></i> Réservation Annulée
-                                                        </span>
-                                                    {% elseif isFinished %}
-                                                        <span class="status-badge-info status-finished">
-                                                            <i class="bi bi-check-circle"></i> Séjour terminé
-                                                        </span>
-                                                    {% else %}
-                                                        <a href="{{ path('app_message_conversation', {id: reservation.announce.utilisateur.id}) }}" class="btn-contact btn-contact-link">
-                                                            Contacter l'hôte
-                                                        </a>
-
-                                                        <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');" class="cancel-form">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-                                                            <button type="submit" class="btn-annuler">
-                                                                Annuler ma réservation
-                                                            </button>
-                                                        </form>
-                                                    {% endif %}
-                                                </div>
+                                            <div class="d-flex flex-column gap-2 align-items-end">
+                                                <small class="text-muted">Créée le {{ reservation.createdAt|date('d/m/Y') }}</small>
+                                                {% if reservation.statut == 'CANCELLED' %}
+                                                    <span class="badge bg-danger rounded-pill"><i class="bi bi-calendar-x"></i> Annulée</span>
+                                                {% elseif isFinished %}
+                                                    <span class="badge bg-secondary rounded-pill"><i class="bi bi-check-circle"></i> Terminée</span>
+                                                {% else %}
+                                                    <a href="{{ path('app_message_conversation', {id: reservation.announce.utilisateur.id}) }}" class="btn btn-dark btn-sm rounded-pill">Contacter l'hôte</a>
+                                                    <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">Annuler</button>
+                                                    </form>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <div class="empty-reservations">
-                                    <p>Vous n'avez aucune réservation en cours.</p>
-                                    <a href="{{ path('app_home') }}" class="explore-link">Explorer les logements</a>
+                                <div class="text-center py-4">
+                                    <p class="text-muted mb-3">Vous n'avez aucune réservation en cours.</p>
+                                    <a href="{{ path('app_home') }}" class="btn btn-outline-dark rounded-pill">Explorer les logements</a>
                                 </div>
                             {% endif %}
                         </div>
-
-                        <hr class="profile-hr">
-
-                        <div class="header-section">
-                            <h3>Mes favoris
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="red" viewBox="0 0 24 24"><path d="M11.29 20.69c.2.2.45.29.71.29s.51-.1.71-.29l7.5-7.5c2.35-2.35 2.35-6.05 0-8.41-2.29-2.29-5.84-2.35-8.21-.2-2.36-2.15-5.91-2.09-8.21.2-2.35 2.36-2.35 6.06 0 8.41z"></path></svg>
-                            </h3>
+                        
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h3 class="h5 fw-bold mb-4"><i class="bi bi-heart-fill text-danger"></i> Mes favoris</h3>
+                            
+                            {% if user.likes is empty %}
+                                <p class="text-muted text-center py-4">Aucun coup de cœur pour le moment.</p>
+                            {% else %}
+                                {% for like in user.likes %}
+                                    <div class="card border rounded-3 mb-3 p-3">
+                                        <div class="d-flex gap-3">
+                                            <div style="width:80px;height:80px;flex-shrink:0;">
+                                                {% if like.annonce.photos is not empty %}
+                                                    <img src="{{ like.annonce.photos|first.contenu }}" alt="Photo" class="rounded-3 w-100 h-100 object-fit-cover">
+                                                {% else %}
+                                                    <div class="bg-light rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                                        <i class="bi bi-image text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h4 class="h6 fw-bold mb-1">{{ like.annonce.titre }}</h4>
+                                                    <p class="text-muted small mb-0">{{ like.annonce.ville }} • {{ like.annonce.prix }}€/mois</p>
+                                                </div>
+                                                <button class="btn btn-danger btn-sm rounded-circle" onclick="toggleLike(event, {{ like.annonce.id }})" title="Retirer des favoris">
+                                                    <i class="bi bi-heart-fill"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
-
-                        {% if user.likes is empty %}<p class="favorites-empty">Aucun coup de cœur pour le moment.</p>
-                        {% else %}
-                            {% for like in user.likes %}
-                                <div class="listing-card">
-                                    <div class="listing-img-container">
-                                        {% if like.annonce.photos is not empty %}<img src="{{ like.annonce.photos|first.contenu }}" alt="Photo" class="listing-thumb">{% else %}<img src="https://via.placeholder.com/150?text=No+Image" alt="Pas de photo" class="listing-thumb">{% endif %}
-                                    </div>
-                                    <div class="listing-info"><h4>{{ like.annonce.titre }}</h4><div class="listing-details">{{ like.annonce.ville }} • {{ like.annonce.prix }}€/mois</div></div>
-                                    <div class="listing-actions listing-actions-center">
-                                        <button class="card-like-btn liked" onclick="toggleLike(event, {{ like.annonce.id }})" title="Retirer des favoris"><i class="bi bi-heart-fill"></i></button>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="{{ asset('js/profile_index.js') }}"></script>
+<script src="{{ asset('js/profile_index.js') }}"></script>
 {% endblock %}

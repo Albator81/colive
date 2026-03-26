@@ -3,89 +3,99 @@
 {% block title %}Messagerie{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/message.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 {% endblock %}
 
 {% block body %}
-    <div class="messagerie-wrapper">
-        <div class="messagerie-container">
-            <div class="messagerie-sidebar">
-                <div class="sidebar-header"><h2>Messagerie</h2></div>
-                <div class="search-box">
+    <div class="container-fluid px-0">
+        <div class="row g-0 min-vh-100">
+            <!-- Sidebar -->
+            <div class="col-md-4 col-lg-3 border-end bg-light">
+                <div class="p-3 border-bottom">
+                    <h2 class="h5 fw-bold mb-3">Messagerie</h2>
                     <form action="{{ path('app_message') }}" method="get">
-                        <input type="text" name="q" value="{{ searchTerm }}" placeholder="Rechercher un contact" autocomplete="off">
+                        <input type="text" name="q" value="{{ searchTerm }}" class="form-control rounded-pill" placeholder="Rechercher un contact">
                     </form>
                 </div>
-                <div class="contact-list">
-                    <h3>Mes Discussions ({{ users|length }})</h3>
-                    <div class="list-scroll" id="contactListContainer">
+                <div class="p-3">
+                    <h3 class="small fw-bold text-muted mb-3">Mes Discussions ({{ users|length }})</h3>
+                    <div class="list-group list-group-flush" id="contactListContainer">
                         {% for user in users %}
-                            <div class="contact-item-wrapper">
-                                <a href="{{ path('app_message_conversation', {id: user.id}) }}" class="contact-card {{ selectedUser and selectedUser.id == user.id ? 'active' : '' }}">
-                                    <div class="avatar">{{ user.prenom|first|upper }}</div>
-                                    <div class="info"><span class="name">{{ user.prenom }} {{ user.nom }}</span><span class="sub-text">Voir la conversation</span></div>
-                                </a>
-                            </div>
+                            <a href="{{ path('app_message_conversation', {id: user.id}) }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3 rounded-3 mb-2 {% if selectedUser and selectedUser.id == user.id %}bg-primary bg-opacity-10{% endif %}">
+                                <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center" style="width:40px;height:40px;">{{ user.prenom|first|upper }}</div>
+                                <div>
+                                    <div class="fw-bold">{{ user.prenom }} {{ user.nom }}</div>
+                                    <small class="text-muted">Voir la conversation</small>
+                                </div>
+                            </a>
                         {% endfor %}
                     </div>
                 </div>
             </div>
 
-            <div class="messagerie-content">
+            <!-- Contenu -->
+            <div class="col-md-8 col-lg-9 d-flex flex-column">
                 {% if selectedUser %}
-                    <div class="chat-header">
-                        <div class="avatar">{{ selectedUser.prenom|first|upper }}</div>
-                        <h3>{{ selectedUser.prenom }} {{ selectedUser.nom }}</h3>
-                        <a href="{{ path('app_contact_remove', {id: selectedUser.id}) }}" class="btn-delete-contact"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M17 6V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H2v2h2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8h2V6zM9 4h6v2H9zM6 20V8h12v12z"></path></svg></a>
+                    <div class="p-3 border-bottom d-flex align-items-center gap-3">
+                        <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center" style="width:40px;height:40px;">{{ selectedUser.prenom|first|upper }}</div>
+                        <h3 class="h6 fw-bold mb-0">{{ selectedUser.prenom }} {{ selectedUser.nom }}</h3>
+                        <a href="{{ path('app_contact_remove', {id: selectedUser.id}) }}" class="btn btn-outline-danger btn-sm rounded-circle ms-auto"><i class="bi bi-trash"></i></a>
                     </div>
 
-                    <div class="messages-area" id="messagesArea">
+                    <div class="flex-grow-1 p-3 overflow-auto" id="messagesArea" style="background:#f8f9fa;">
                         {% for message in messages %}
-                            <div class="message-row {{ message.sender.id == app.user.id ? 'sent' : 'received' }}">
-                                {% if message.sender.id != app.user.id %}<div class="message-avatar">{{ message.sender.prenom|first }}</div>{% endif %}
-                                <div class="message-bubble">
-                                    {% if message.attachment %}<div class="message-image"><img src="{{ asset('uploads/' ~ message.attachment) }}"></div>{% endif %}
+                            <div class="d-flex mb-3 {% if message.sender.id == app.user.id %}justify-content-end{% else %}justify-content-start{% endif %}">
+                                {% if message.sender.id != app.user.id %}
+                                    <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center me-2" style="width:32px;height:32px;">{{ message.sender.prenom|first }}</div>
+                                {% endif %}
+                                <div class="rounded-3 p-3 {% if message.sender.id == app.user.id %}bg-primary text-white{% else %}bg-white shadow-sm{% endif %}" style="max-width:70%;">
+                                    {% if message.attachment %}
+                                        <div class="mb-2"><img src="{{ asset('uploads/' ~ message.attachment) }}" class="rounded" style="max-width:200px;"></div>
+                                    {% endif %}
 
                                     {% if "[RES_ID:" in message.content %}
                                         {% set resId = message.content|split('[RES_ID:')[1]|split(']')[0] %}
                                         {% set cleanContent = message.content|split(']')|last %}
                                         {% if message.sender.id == app.user.id %}
-                                            <div class="info-msg-system"><i class="bi bi-send-check"></i> Demande de réservation envoyée.</div>
-                                            <p>{{ cleanContent }}</p>
+                                            <div class="small fw-bold mb-1"><i class="bi bi-send-check"></i> Demande de réservation envoyée.</div>
+                                            <p class="mb-2 small">{{ cleanContent }}</p>
                                         {% else %}
-                                            <div class="reservation-request-card">
-                                                <span class="res-badge"><i class="bi bi-megaphone"></i> Demande reçue</span>
-                                                <p>{{ cleanContent }}</p>
-                                                <div class="res-actions">
-                                                    <a href="{{ path('app_reservation_accept', {id: resId}) }}" class="btn-res btn-accept">Accepter</a>
-                                                    <a href="{{ path('app_reservation_reject', {id: resId}) }}" class="btn-res btn-reject" onclick="return confirm('Refuser cette demande ?')">Refuser</a>
-                                                </div>
+                                            <div class="badge bg-warning text-dark mb-2"><i class="bi bi-megaphone"></i> Demande reçue</div>
+                                            <p class="mb-2">{{ cleanContent }}</p>
+                                            <div class="d-flex gap-2">
+                                                <a href="{{ path('app_reservation_accept', {id: resId}) }}" class="btn btn-success btn-sm rounded-pill">Accepter</a>
+                                                <a href="{{ path('app_reservation_reject', {id: resId}) }}" class="btn btn-outline-danger btn-sm rounded-pill" onclick="return confirm('Refuser cette demande ?')">Refuser</a>
                                             </div>
                                         {% endif %}
                                     {% elseif "[RES_ACCEPT]" in message.content %}
-                                        <div class="info-msg-system"><i class="bi bi-check-circle-fill icon-accept"></i> {{ message.content|replace({'[RES_ACCEPT]': ''}) }}</div>
+                                        <div class="text-success"><i class="bi bi-check-circle-fill"></i> {{ message.content|replace({'[RES_ACCEPT]': ''}) }}</div>
                                     {% elseif "[RES_REJECT]" in message.content %}
-                                        <div class="info-msg-system"><i class="bi bi-x-circle-fill icon-reject"></i> {{ message.content|replace({'[RES_REJECT]': ''}) }}</div>
+                                        <div class="text-danger"><i class="bi bi-x-circle-fill"></i> {{ message.content|replace({'[RES_REJECT]': ''}) }}</div>
                                     {% else %}
-                                        <p>{{ message.content }}</p>
+                                        <p class="mb-0">{{ message.content }}</p>
                                     {% endif %}
-                                    <small class="message-time">{{ message.createdAt|date('H:i') }}</small>
+                                    <small class="{% if message.sender.id == app.user.id %}opacity-75{% else %}text-muted{% endif %}">{{ message.createdAt|date('H:i') }}</small>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
 
-                    <div class="input-area">
-                        <form method="post" class="input-form" enctype="multipart/form-data">
-                            <label for="file-upload" class="btn-attachment"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 24 24"><path d="m20,4h-8.59l-1.41-1.41c-.38-.38-.88-.59-1.41-.59h-4.59c-1.1,0-2,.9-2,2v14c0,1.1.9,2,2,2h16c1.1,0,2-.9,2-2V6c0-1.1-.9-2-2-2Zm0,2v3H4v-3h16ZM4,18v-7h16v7H4Z"></path></svg></label>
-                            <input id="file-upload" type="file" name="file_upload" class="hidden-input" accept="image/*">
-                            <input type="text" name="content" placeholder="Écrivez votre message..." autocomplete="off">
+                    <div class="p-3 bg-white border-top">
+                        <form method="post" class="d-flex gap-2 align-items-center" enctype="multipart/form-data">
+                            <label for="file-upload" class="btn btn-outline-secondary rounded-circle p-2"><i class="bi bi-paperclip"></i></label>
+                            <input type="file" name="file_upload" id="file-upload" class="d-none" accept="image/*">
+                            <input type="text" name="content" class="form-control rounded-pill" placeholder="Écrivez votre message...">
                             <input type="hidden" name="_token" value="{{ csrf_token('message_send') }}">
-                            <button type="submit" class="btn-send">Envoyer</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">Envoyer</button>
                         </form>
                     </div>
-                {% else %}<div class="no-selection"><p>Sélectionnez une discussion à gauche.</p></div>{% endif %}
+                {% else %}
+                    <div class="d-flex align-items-center justify-content-center flex-grow-1 text-center p-4">
+                        <div>
+                            <i class="bi bi-chat-dots display-4 text-muted mb-3"></i>
+                            <p class="text-muted">Sélectionnez une discussion à gauche.</p>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -5,20 +5,16 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('styles/editannounce.css') }}">
-
 {% endblock %}
 
 {% set show_header = false %}
 
 {% block body %}
-    <div class="page-background">
-        <div class="container-narrow">
-
+    <div class="bg-dark min-vh-100 py-4">
+        <div class="container" style="max-width:800px;">
             <div class="mb-4 d-flex justify-content-between align-items-center">
                 <a href="{{ path('app_profile') }}" class="text-decoration-none">
-                    <span class="logo-icon">C</span>
+                    <span class="bg-white text-dark rounded-2 px-2 fw-bold fs-5">C</span>
                 </a>
                 <h2 class="text-white fw-bold m-0">Modifier l'annonce</h2>
             </div>
@@ -26,112 +22,110 @@
             {{ form_start(formAnnonce) }}
 
             <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Informations de base</h5>
-                <div class="row g-4">
+                <h5 class="fw-bold mb-3">Informations de base</h5>
+                <div class="row g-3">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Titre</label>
-                            {{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control'}}) }}
+                            <label class="form-label fw-bold">Titre</label>
+                            {{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control rounded-3'}}) }}
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Type</label>
-                            {{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select'}}) }}
+                            <label class="form-label fw-bold">Type</label>
+                            {{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select rounded-3'}}) }}
                         </div>
                         <div class="mb-0">
-                            <label class="form-label fw-bold small">Nombre de pièces</label>
-                            {{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control'}}) }}
+                            <label class="form-label fw-bold">Nombre de pièces</label>
+                            {{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control rounded-3'}}) }}
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Description</label>
-                        {{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control', 'style': 'height: 14rem; resize: none;'}}) }}
+                        <label class="form-label fw-bold">Description</label>
+                        {{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control rounded-3', 'style': 'height: 14rem; resize: none;'}}) }}
                     </div>
                 </div>
             </div>
 
             <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Photos</h5>
-                <p class="text-muted small mb-2">Photos enregistrées:</p>
+                <h5 class="fw-bold mb-3">Photos</h5>
+                <p class="text-muted small">Photos enregistrées:</p>
                 <div class="d-flex gap-3 flex-wrap mb-4" id="existing-photos">
                     {% for photo in annonce.photos %}
-                        <div class="image-wrapper" id="photo-{{ photo.id }}">
-                            <img src="{{ photo.contenu }}">
-                            <button type="button" class="btn-delete-existing" onclick="deleteExistingPhoto({{ photo.id }})">
-                                &times;
-                            </button>
+                        <div class="position-relative" id="photo-{{ photo.id }}">
+                            <img src="{{ photo.contenu }}" class="rounded-3" style="width:100px;height:100px;object-fit:cover;">
+                            <button type="button" class="position-absolute top-0 end-0 btn btn-danger btn-sm rounded-circle" onclick="deleteExistingPhoto({{ photo.id }})">&times;</button>
                         </div>
                     {% endfor %}
                 </div>
 
-                <p class="text-muted small mb-2">Ajouter de nouvelles photos :</p>
+                <p class="text-muted small">Ajouter de nouvelles photos :</p>
                 <div class="d-none">{{ form_widget(formAnnonce.images) }}</div>
-                <div class="upload-area rounded-4 p-4 text-center bg-white" id="drop-zone">
-                    <p class="text-muted small mb-0">Cliquez ici pour sélectionner des images</p>
-                    <div id="preview-container" class="preview-container"></div>
+                <div class="border border-2 border-dashed rounded-4 p-4 text-center" id="drop-zone">
+                    <p class="text-muted mb-0">Cliquez ici pour sélectionner des images</p>
+                    <div id="preview-container" class="d-flex gap-2 flex-wrap mt-3"></div>
                 </div>
             </div>
 
             <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Localisation</h5>
+                <h5 class="fw-bold mb-3">Localisation</h5>
                 <div class="mb-3">
-                    <label class="form-label fw-bold small">Adresse</label>
-                    {{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control'}}) }}
+                    <label class="form-label fw-bold">Adresse</label>
+                    {{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control rounded-3'}}) }}
                 </div>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Ville</label>
-                        {{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control'}}) }}
+                        <label class="form-label fw-bold">Ville</label>
+                        {{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control rounded-3'}}) }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Code postal</label>
-                        {{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control'}}) }}
+                        <label class="form-label fw-bold">Code postal</label>
+                        {{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control rounded-3'}}) }}
                     </div>
                 </div>
             </div>
 
             <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Tarification & Surface</h5>
+                <h5 class="fw-bold mb-3">Tarification & Surface</h5>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Surface (m²)</label>
-                        {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control'}}) }}
+                        <label class="form-label fw-bold">Surface (m²)</label>
+                        {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control rounded-3'}}) }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Prix par mois (€)</label>
-                        {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control'}}) }}
+                        <label class="form-label fw-bold">Prix par mois (€)</label>
+                        {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control rounded-3'}}) }}
                     </div>
                 </div>
             </div>
 
             <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Détails supplémentaires</h5>
+                <h5 class="fw-bold mb-3">Détails supplémentaires</h5>
                 <div class="mb-3">
-                    <label class="form-label fw-bold small">Équipements</label>
-                    {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-control'}}) }}
+                    <label class="form-label fw-bold">Équipements</label>
+                    {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-select rounded-3', 'style': 'height:120px;'}}) }}
                 </div>
                 <div class="mb-0">
-                    <label class="form-label fw-bold small">Règles</label>
-                    {{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control'}}) }}
+                    <label class="form-label fw-bold">Règles</label>
+                    {{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control rounded-3', 'style': 'height:100px;'}}) }}
                 </div>
             </div>
 
             <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Disponibilité</h5>
+                <h5 class="fw-bold mb-3">Disponibilité</h5>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Du</label>
-                        {{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control'}}) }}
+                        <label class="form-label fw-bold">Du</label>
+                        {{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control rounded-3'}}) }}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-bold small">Au</label>
-                        {{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control'}}) }}
+                        <label class="form-label fw-bold">Au</label>
+                        {{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control rounded-3'}}) }}
                     </div>
                 </div>
             </div>
 
             <div class="text-center pb-5">
-                <button type="submit" class="btn btn-light bg-white fw-bold px-5 py-3 rounded-pill shadow-lg border-0 btn-submit-announce">
-                    Enregistrer les modifications
+                <button type="submit" class="btn btn-light fw-bold px-5 py-3 rounded-pill shadow-lg">
+                    <i class="bi bi-save"></i> Enregistrer les modifications
                 </button>
             </div>
 

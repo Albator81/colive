@@ -4,32 +4,39 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/bot.css') }}">
 {% endblock %}
 
 {% block body %}
-    <div class="bot-container">
-        <div class="bot-window">
-            <div class="bot-header">
-                <div class="bot-info">
-                    <h3>Assistant CoLive</h3>
-                    <span>En ligne (IA)</span>
+    <div class="min-vh-100 d-flex align-items-center justify-content-center bg-light p-4">
+        <div class="card border-0 shadow-lg rounded-4" style="width:100%;max-width:600px;height:80vh;">
+            <div class="card-header bg-dark text-white rounded-top-4 p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px;height:40px;font-weight:bold;">C</div>
+                    <div>
+                        <h3 class="h6 fw-bold mb-0">Assistant CoLive</h3>
+                        <small class="opacity-75">En ligne (IA)</small>
+                    </div>
                 </div>
             </div>
 
-            <div class="bot-messages" id="chatBox">
-                <div class="message bot">
-                    <div class="bubble">Bonjour ! Je suis l'IA de CoLive. Une question sur le site ?</div>
+            <div class="card-body overflow-auto d-flex flex-column gap-3 p-4" id="chatBox" style="background:#f8f9fa;">
+                <div class="d-flex justify-content-start">
+                    <div class="bg-white rounded-3 p-3 shadow-sm" style="max-width:80%;">
+                        <p class="mb-0">Bonjour ! Je suis l'IA de CoLive. Une question sur le site ?</p>
+                    </div>
                 </div>
             </div>
-            <div class="bot-input">
-                <input type="text" id="userInput" placeholder="Posez votre question..." autocomplete="off">
-                <button onclick="sendMessage()">Envoyer</button>
+            
+            <div class="card-footer p-3 bg-white rounded-bottom-4">
+                <div class="input-group">
+                    <input type="text" id="userInput" class="form-control rounded-pill" placeholder="Posez votre question...">
+                    <button class="btn btn-dark rounded-pill px-4" onclick="sendMessage()">Envoyer</button>
+                </div>
             </div>
         </div>
     </div>
-{% endblock %}
 
-{% block javascripts %}
-    <script src="{{ asset('js/bot_index.js') }}"></script>
+    {% block javascripts %}
+        <script src="{{ asset('js/bot_index.js') }}"></script>
+    {% endblock %}
 {% endblock %}

@@ -10,66 +10,63 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
-    <link rel="stylesheet" href="{{ asset('styles/book.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <a href="{{ path('app_announce_show', {'id': announce.id}) }}" class="back-link">
-            <svg width="12" height="12" viewBox="0 0 320 512" fill="currentColor"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
-            Retour à l'annonce
+    <div class="container py-5" style="max-width:600px;">
+        <a href="{{ path('app_announce_show', {'id': announce.id}) }}" class="btn btn-outline-dark rounded-pill mb-4 d-inline-flex align-items-center">
+            <i class="bi bi-arrow-left me-2"></i>Retour à l'annonce
         </a>
 
-        <div class="booking-container">
-
-            <div class="booking-header">
+        <div class="card border-0 shadow-lg rounded-4 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-4">
                 <div>
-                    <div class="booking-title">{{ announce.titre }}</div>
-                    <div class="booking-subtitle">Jusqu'au {{ announce.disponibiliteFin|date('d F Y') }}</div>
+                    <h1 class="h4 fw-bold mb-1">{{ announce.titre }}</h1>
+                    <p class="text-muted mb-0">Jusqu'au {{ announce.disponibiliteFin|date('d F Y') }}</p>
                 </div>
-                <div class="booking-price">
-                    {{ announce.prix}} € <span>/ nuit</span>
+                <div class="text-end">
+                    <span class="h3 fw-bold">{{ announce.prix }}€</span>
+                    <span class="text-muted small">/ nuit</span>
                 </div>
             </div>
 
             {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-            <div class="date-inputs-wrapper">
-                <div class="date-input-box active" id="box_start">
-                    <div class="input-label">ARRIVÉE</div>
-                    <div class="input-value" id="text_start">Ajouter une date</div>
+            <div class="d-flex gap-2 mb-3">
+                <div class="flex-fill p-3 border rounded-3" id="box_start" style="cursor:pointer;border-color:var(--bs-primary);">
+                    <small class="text-muted d-block fw-bold text-uppercase">Arrivée</small>
+                    <span class="fw-bold" id="text_start">Ajouter une date</span>
                 </div>
-                <div class="date-input-box" id="box_end">
-                    <div class="input-label">DÉPART</div>
-                    <div class="input-value" id="text_end">Ajouter une date</div>
+                <div class="flex-fill p-3 border rounded-3" id="box_end" style="cursor:pointer;">
+                    <small class="text-muted d-block fw-bold text-uppercase">Départ</small>
+                    <span class="fw-bold" id="text_end">Ajouter une date</span>
                 </div>
             </div>
 
-            <div id="inline_calendar"></div>
+            <div id="inline_calendar" class="mb-3"></div>
 
-            <div class="hidden-form-fields">
+            <div class="d-none">
                 {{ form_widget(form.dateDebut) }}
                 {{ form_widget(form.dateFin) }}
             </div>
 
-            <div class="text-danger small mt-2 fw-bold">
+            <div class="text-danger small fw-bold mb-3">
                 {{ form_errors(form.dateDebut) }}
                 {{ form_errors(form.dateFin) }}
             </div>
 
-            <div class="booking-footer">
-                <button type="button" class="btn-clear" id="btn_clear">Effacer les dates</button>
-                {{ form_widget(form.submit, {'attr': {'class': 'btn-submit'}, 'label': 'Confirmer la réservation'}) }}
+            <div class="d-flex gap-2 align-items-center">
+                <button type="button" class="btn btn-outline-secondary rounded-pill" id="btn_clear">Effacer</button>
+                {{ form_widget(form.submit, {'attr': {'class': 'btn btn-dark btn-lg rounded-pill flex-fill'}, 'label': 'Confirmer la réservation'}) }}
             </div>
 
             {{ form_end(form) }}
         </div>
 
-        <div class="text-center text-muted small mt-3 pb-5">
+        <p class="text-center text-muted small mt-3 pb-5 mb-0">
             Votre réservation n'est pas encore confirmée. Vous ne serez débité qu'après validation.
-        </div>
+        </p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
