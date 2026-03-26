@@ -8,26 +8,29 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        {% block stylesheets %}{% endblock %}
+<link rel="stylesheet" href="{{ asset('styles/app.css') }}">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+{% block stylesheets %}{% endblock %}
+
     </head>
     <body
         data-login-url="{{ path('app_login') }}"
         data-bot-ask-url="{{ path('app_bot_ask') }}"
         {% if app.user %}
+data-user-id="{{ app.user.id }}"
+
             data-notif-sound="{{ asset('audio/notif.mp3') }}"
             data-mercure-url="{{ mercure(app.user.notificationTopic) }}"
             data-notif-see-url="{{ path('app_notification_see') }}"
             data-notif-clear-url="{{ path('app_notification_clear') }}"
         {% endif %}
+{% block body_data %}{% endblock %}
+
     >
         <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" id="flash-container">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
-                    {% set flash_class = (label == 'error') ? 'danger' : label %}
+{% set flash_class = (label == 'error') ? 'danger' : label %}
 
                     <div class="alert alert-{{ flash_class }} alert-dismissible fade show shadow-lg" role="alert">
                         <div class="d-flex">
@@ -43,6 +46,46 @@
             {% endfor %}
         </div>
 
+{% if show_header|default(true) %}
+	<nav class="user-navbar {{ header_transparent|default(true) ? 'transparent' : '' }}">
+		<a href="{{ path('app_home') }}" id="nav-logo">
+			<span>C</span>
+			CoLive
+		</a>
+		<div class="header-buttons">
+			{% block btn_bot %}
+				{% if app.user %}
+					<a href="{{ path('app_bot') }}" class="nav-icon-btn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewbox="0 0 24 24">
+							<path d="M8.5 10a1.5 2 0 1 0 0 4 1.5 2 0 1 0 0-4M15.5 10a1.5 2 0 1 0 0 4 1.5 2 0 1 0 0-4M8 16h8v2H8z"></path>
+							<path d="M21 11V8c0-1.1-.9-2-2-2h-6V4.61c.3-.27.5-.67.5-1.11 0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5c0 .44.2.84.5 1.11V6H5c-1.1 0-2 .9-2 2v3c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1v3c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-3c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1M5 20V8h14v12z"></path>
+						</svg>
+					</a>
+				{% endif %}
+			{% endblock %}
+			{% block btn_message %}
+				{% if app.user %}
+					<a href="{{ path('app_message') }}" class="nav-icon-btn" title="Mes messages">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewbox="0 0 24 24">
+							<path d="m21.55,8.17l-2.55-1.7v-1.46c0-.55-.45-1-1-1h-2.7l-2.75-1.83c-.34-.22-.77-.22-1.11,0l-2.75,1.83h-2.7c-.55,0-1,.45-1,1v1.46l-2.55,1.7c-.28.19-.45.5-.45.83v11c0,1.1.9,2,2,2h16c1.1,0,2-.9,2-2v-11c0-.33-.17-.65-.45-.83Zm-14.55-2.17h10v4.46l-5,3.33-5-3.33v-4.46Zm-3,14v-9.13l1.45.96,6,4c.17.11.36.17.55.17s.39-.06.55-.17l6-4,1.45-.96v9.13H4Z"></path>
+						</svg>
+					</a>
+				{% endif %}
+			{% endblock %}
+			{% block btn_profile %}
+				{% if app.user %}
+					<a href="{{ path('app_profile') }}" class="nav-user-pill"><img src="{{ app.user.avatar ?: 'https://ui-avatars.com/api/?name=' ~ app.user.prenom ~ '+' ~ app.user.nom ~ '&background=000&color=fff' }}" alt="Avatar" class="nav-avatar-mini"><span>{{ app.user.prenom }}</span>
+					</a>
+				{% else %}
+					<a href="{{ path('app_login') }}" class="login-btn">Se connecter</a>
+				{% endif %}
+			{% endblock %}
+			{% block header_buttons %}{% endblock %}
+		</div>
+	</nav>
+{% endif %}
+
+
         {% block body %}{% endblock %}
 
         {% if app.user %}
@@ -50,11 +93,10 @@
             <div class="notification-container dropup">
                 <button class="btn btn-notification dropdown-toggle" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-bell-fill"></i>
-                    <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {% if notSeenCount == 0 %}d-none{% endif %}">
-                        {{ notSeenCount }}
-                    </span>
-                </button>
-                
+<span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {% if notSeenCount == 0 %}d-none{% endif %}">{{ notSeenCount }}</span>
+
+</button>
+
                 <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notifDropdown">
                     <li class="p-3 bg-light border-bottom rounded-top d-flex justify-content-between align-items-center">
                         <h6 class="dropdown-header p-0 m-0 text-dark fw-bold">Notifications</h6>
@@ -72,16 +114,23 @@
                                 </a>
                             </li>
                         {% else %}
-                            <li id="empty-notif-msg" class="text-center text-muted py-3">
-                                <small>Fin des notifications</small>
-                            </li>
+<li id="empty-notif-msg" class="text-center text-muted py-3">
+	<small>Fin des notifications</small>
+</li>
+
                         {% endfor %}
                     </div>
                 </ul>
-            </div>
-            
+</div>
+
             <script src="{{ asset('js/base.js') }}"></script>
         {% endif %}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block javascripts %}
+	{% block importmap %}
+		{{ importmap('app') }}
+	{% endblock %}
+{% endblock %}
+
     </body>
 </html>

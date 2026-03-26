@@ -2,6 +2,12 @@
 
 {% block title %}Réserver - {{ announce.titre }}{% endblock %}
 
+{% block body_data %}
+    data-unavailable-dates="{{ unavailableDates|default('[]')|escape('html_attr') }}"
+    data-min-date="{{ minDateCalculated|default(announce.disponibiliteDebut)|date('Y-m-d') }}"
+    data-max-date="{{ announce.disponibiliteFin|date('Y-m-d') }}"
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
@@ -68,10 +74,5 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/fr.min.js"></script>
-    <script>
-        document.body.dataset.unavailableDates = '{{ unavailableDates|default('[]')|raw }}';
-        document.body.dataset.minDate = '{{ minDateCalculated|default(announce.disponibiliteDebut)|date('Y-m-d') }}';
-        document.body.dataset.maxDate = '{{ announce.disponibiliteFin|date('Y-m-d') }}';
-    </script>
     <script src="{{ asset('js/reservation_book.js') }}"></script>
 {% endblock %}

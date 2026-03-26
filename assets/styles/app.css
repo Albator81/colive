@@ -103,6 +103,127 @@ hr {
 }
 
 /* =========================
+   Header
+   ========================= */
+.user-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #E5E7EB;
+    height: 70px;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-navbar.transparent {
+    background-color: transparent;
+    border-bottom: none;
+}
+
+#nav-logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: black;
+}
+
+#nav-logo span {
+    background: black;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 5px 15px 5px 5px;
+    border-radius: 30px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.nav-avatar-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.login-btn {
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+    border: 2px solid #000000;
+    padding: 10px 20px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.logout-btn {
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+    border: 2px solid #000000;
+    padding: 10px 20px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.nav-right-group, .header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background-color: #f4f4f4;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+}
+
+.nav-icon-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.nav-icon-btn svg {
+    fill: currentColor;
+}
+
+/* =========================
    Notifications
    ========================= */
 .notification-container {
