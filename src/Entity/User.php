@@ -82,6 +82,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'uuid')]
     private ?Uuid $notificationTopic = null;
 
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: UserEquipment::class, cascade: ['persist', 'remove'])]
+    private Collection $userEquipments;
+
     public function __construct()
     {
         $this->dateCreationCompte = new \DateTime();
@@ -91,6 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reservations = new ArrayCollection();
         $this->contacts = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->userEquipments = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -301,6 +305,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNotificationTopic(Uuid $notificationTopic): static
     {
         $this->notificationTopic = $notificationTopic;
+
+        return $this;
+    }
+
+    public function getUserEquipments(): Collection
+    {
+        return $this->userEquipments;
+    }
+
+    public function addUserEquipment(UserEquipment $userEquipment): static
+    {
+        if (!$this->userEquipments->contains($userEquipment)) {
+            $this->userEquipments->add($userEquipment);
+            $userEquipment->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserEquipment(UserEquipment $userEquipment): static
+    {
+        if ($this->userEquipments->removeElement($userEquipment)) {
+            if ($userEquipment->getUtilisateur() === $this) {
+                $userEquipment->setUtilisateur(null);
+            }
+        }
 
         return $this;
     }
