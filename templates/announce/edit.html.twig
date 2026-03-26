@@ -103,10 +103,10 @@
 
             <div class="card rounded-4 mb-4 p-4">
                 <h5 class="fw-bold mb-1">Détails supplémentaires</h5>
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Équipements</label>
-                    {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-control'}}) }}
-                </div>
+<div class="mb-3">
+<label class="form-label fw-bold small">Équipements</label>
+{{ form_widget(formAnnonce.equipment, {'attr': {'data-controller': 'tom-select', 'data-tom-select-create-url-value': path('app_equipment_create')}}) }}
+</div>
                 <div class="mb-0">
                     <label class="form-label fw-bold small">Règles</label>
                     {{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control'}}) }}

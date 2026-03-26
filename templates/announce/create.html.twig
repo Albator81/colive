@@ -178,8 +178,8 @@
             <div class="card rounded-4 mb-4 p-4">
                 <h5 class="fw-bold mb-1">Équipements et services</h5>
                 <p class="text-muted small mb-4">Quels équipements sont disponibles ?</p>
-                <label class="form-label fw-bold small">Liste des équipements <span class="text-danger">*</span></label>
-                {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Wifi, Cuisine équipée, Lave-linge...'}}) }}
+<label class="form-label fw-bold small">Liste des équipements <span class="text-danger">*</span></label>
+{{ form_widget(formAnnonce.equipment, {'attr': {'data-controller': 'tom-select', 'data-tom-select-create-url-value': path('app_equipment_create'), 'placeholder': 'Ex: Wifi, Cuisine équipée, Lave-linge...'}}) }}
             </div>
 
             <div class="card rounded-4 mb-4 p-4">
