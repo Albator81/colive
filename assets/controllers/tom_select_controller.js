@@ -7,13 +7,12 @@ export default class extends Controller {
     };
 
     connect() {
-        const config = {
-            create: true,
-            createOnBlur: true,
-            persist: true,
-        };
+        const config = {};
 
         if (this.createUrlValue) {
+            config.create = true;
+            config.createOnBlur = true;
+            config.persist = true;
             config.onOptionAdd = (value, data) => {
                 const existingOptions = this.element.options;
                 for (let i = 0; i < existingOptions.length; i++) {
