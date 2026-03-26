@@ -1,196 +1,230 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ announce.titre }}{% endblock %}
+{# Configuration pour le base.html.twig #}
+{% set bg_image = false %}
+{% set header_transparent = true %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% block title %}
+	{{ announce.titre }}
 {% endblock %}
 
-{% set show_header = false %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock %}
 
 {% block body %}
 
-<div class="min-vh-100 bg-light">
-    <!-- Hero Image -->
-    <div class="position-relative" style="height:50vh;min-height:400px;">
-        {% if announce.photos is not empty %}
-            <img id="main-hero-img" src="{{ announce.photos|first.contenu }}" class="w-100 h-100 object-fit-cover" alt="Couverture" onclick="handleHeroClick()">
-            <div id="desktop-photo-count" class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-3 py-1 rounded-top">1 / {{ announce.photos|length }}</div>
-        {% else %}
-            <img src="https://picsum.photos/seed/{{ announce.id }}/800/1000" class="w-100 h-100 object-fit-cover" alt="Couverture">
-        {% endif %}
-        
-        <!-- Nav Buttons -->
-        <a href="{{ path('app_announce') }}" class="position-absolute top-0 start-0 m-3 btn btn-light rounded-circle p-2">
-            <i class="bi bi-arrow-left"></i>
-        </a>
-        {% if app.user %}
-            <a href="{{ path('app_profile') }}" class="position-absolute top-0 end-0 m-3 btn btn-light rounded-pill px-3 py-2 d-flex align-items-center gap-2">
-                <img src="{{ app.user.avatar ?: 'https://ui-avatars.com/api/?name=' ~ app.user.prenom ~ '+' ~ app.user.nom ~ '&background=000&color=fff' }}" class="rounded-circle" style="width:24px;height:24px;">
-                <span>{{ app.user.prenom }}</span>
-            </a>
-        {% else %}
-            <a href="{{ path('app_login') }}" class="position-absolute top-0 end-0 m-3 btn btn-dark rounded-pill px-4">Se connecter</a>
-        {% endif %}
-        
-        <!-- Carousel Nav -->
-        <div class="position-absolute bottom-0 end-0 m-3 d-flex gap-2">
-            <button class="btn btn-light rounded-circle" onclick="moveDesktopCarousel(-1, event)"><i class="bi bi-chevron-left"></i></button>
-            <button class="btn btn-light rounded-circle" onclick="moveDesktopCarousel(1, event)"><i class="bi bi-chevron-right"></i></button>
-        </div>
-    </div>
+	{# Préparation des données pour le JavaScript #}
+	{% set photos_array = [] %}
+	{% if announce.photos is not empty %}
+		{% for photo in announce.photos %}
+			{% set photos_array = photos_array|merge([photo.contenu]) %}
+		{% endfor %}
+	{% else %}
+		{% set photos_array = ['https://picsum.photos/seed/' ~ announce.id ~ '/800/1000'] %}
+	{% endif %}
 
-    <div class="container py-4">
-        <div class="row">
-            <!-- Main Content -->
-            <div class="col-lg-8">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
-                        <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill"></i> {{ announce.ville }}</p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge bg-light text-dark rounded-pill">{{ announce.type }}</span>
-                            {% if announce.surface %}<span class="badge bg-light text-dark rounded-pill">{{ announce.surface }} m²</span>{% endif %}
-                            {% if announce.nbPieces %}<span class="badge bg-light text-dark rounded-pill">{{ announce.nbPieces }} pièces</span>{% endif %}
-                        </div>
-                    </div>
-                    {% set isLiked = false %}
-                    {% if app.user %}
-                        {% for like in announce.likes %}
-                            {% if like.utilisateur == app.user %}{% set isLiked = true %}{% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <button class="btn btn-outline-danger rounded-circle p-3" onclick="toggleLike(event, {{ announce.id }})">
-                        <i class="bi {{ isLiked ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
-                    </button>
-                </div>
+<div id="announce-data" class="d-none" data-photos="{{ photos_array|json_encode|e('html_attr') }}" data-announce-id="{{ announce.id }}" data-login-url="{{ path('app_login') }}" data-is-logged-in="{{ app.user ? 'true' : 'false' }}" data-lat=" {{ announce.latitude }} " data-lng=" {{ announce.longitude }} " data-address=" {{ announce.adresse }} , {{ announce.codepostal }} - {{ announce.ville }} "></div>
 
-                <!-- Host Card -->
-                {% if announce.utilisateur %}
-                    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle" style="width:50px;height:50px;">
-                            <div>
-                                <h3 class="h6 fw-bold mb-0">Hôte : {{ announce.utilisateur.prenom }}</h3>
-                                <small class="text-muted">Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}</small>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
 
-                <!-- Description -->
-                <section class="mb-4">
-                    <h2 class="h5 fw-bold mb-3">Le logement</h2>
-                    <p class="text-secondary">{{ announce.description }}</p>
-                </section>
+	<div
+		class="bg-white min-vh-100">
 
-                <!-- Photos -->
-                {% if announce.photos|length > 1 %}
-                    <section class="mb-4">
-                        <h2 class="h5 fw-bold mb-3">Photos</h2>
-                        <div class="row g-2">
-                            {% for photo in announce.photos|slice(1) %}
-                                <div class="col-4">
-                                    <img src="{{ photo.contenu }}" alt="Photo" class="rounded-3 w-100" style="height:120px;object-fit:cover;cursor:pointer;" onclick="openLightbox({{ loop.index }})">
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </section>
-                {% endif %}
+		<!-- Hero Image (Remonte sous l'en-tête transparent) -->
+		<div class="position-relative" style="height: 50vh; min-height: 400px; margin-top: -76px;">
+			<img id="main-hero-img" src="{{ photos_array[0] }}" class="w-100 h-100 object-fit-cover" alt="Couverture" style="cursor: pointer;" onclick="handleHeroClick()">
 
-                <!-- Équipements -->
-                {% if announce.equipment %}
-                    <section class="mb-4">
-                        <h2 class="h5 fw-bold mb-3">Équipements</h2>
-                        <div class="d-flex flex-wrap gap-2">
-                            {% for equipment in announce.equipment %}
-                                <span class="badge bg-secondary rounded-pill p-2"><i class="bi bi-check-circle me-1"></i>{{ equipment.nom }}</span> 
-                            {% endfor %}
-                        </div>
-                    </section>
-                {% endif %}
+			<div id="desktop-photo-count" class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-3 py-1 m-3 rounded-pill fw-semibold small">
+				1 /
+				{{ photos_array|length }}
+			</div>
 
-                <!-- Dates mobile -->
-                <section class="d-lg-none mb-4">
-                    <h2 class="h5 fw-bold mb-3">Dates</h2>
-                    <span class="badge bg-light text-dark p-3 rounded-3">
-                        <i class="bi bi-calendar3"></i>
-                        {{ announce.disponibiliteDebut|date('d M') }} - {{ announce.disponibiliteFin|date('d M Y') }}
-                    </span>
-                </section>
+			<!-- Bouton de retour -->
+			<a href="{{ path('app_announce') }}" class="position-absolute top-50 start-0 translate-middle-y m-3 btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 2;">
+				<i class="bi bi-arrow-left fs-5"></i>
+			</a>
 
-                <!-- Map -->
-                {% if announce.latitude != 0 and announce.longitude != 0 %}
-                    <div id="map" class="rounded-4 shadow" style="height:300px;"></div>
-                {% endif %}
-            </div>
+			<!-- Navigation Carousel Image -->
+			{% if photos_array|length > 1 %}
+				<div class="position-absolute bottom-0 end-0 mb-5 pb-3 me-3 d-flex gap-2">
+					<button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(-1, event)">
+						<i class="bi bi-chevron-left"></i>
+					</button>
+					<button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(1, event)">
+						<i class="bi bi-chevron-right"></i>
+					</button>
+				</div>
+			{% endif %}
+		</div>
 
-            <!-- Sidebar Desktop -->
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top" style="top:100px;">
-                    <div class="d-flex justify-content-between align-items-end mb-3">
-                        <div>
-                            <span class="h2 fw-bold">{{ announce.prix }}€</span>
-                            <span class="text-muted">/ mois</span>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-light rounded-3 p-3 mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Arrivée</span>
-                            <span class="fw-bold">{{ announce.disponibiliteDebut|date('d/m/Y') }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span>Départ</span>
-                            <span class="fw-bold">{{ announce.disponibiliteFin|date('d/m/Y') }}</span>
-                        </div>
-                    </div>
+		<div
+			class="container py-5">
+			<!-- Conteneur centré sur une seule colonne -->
+			<div class="row justify-content-center">
+				<div
+					class="col-12 col-lg-10 col-xl-9">
 
-                    {% if app.user %}
-                        <a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn btn-dark btn-lg w-100 rounded-pill mb-2">Réserver</a>
-                    {% else %}
-                        <a href="{{ path('app_login') }}" class="btn btn-dark btn-lg w-100 rounded-pill mb-2">Connexion requise</a>
-                    {% endif %}
-                    <a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn btn-outline-dark w-100 rounded-pill">Contacter l'hôte</a>
-                </div>
-            </div>
-        </div>
-    </div>
+					<!-- Titre, Badges et Bouton Like -->
+					<div class="d-flex justify-content-between align-items-start mb-4">
+						<div>
+							<h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
+							<p class="text-muted fs-5 mb-3">
+								<i class="bi bi-geo-alt-fill text-primary"></i>
+								{{ announce.ville }}</p>
+							<div class="d-flex gap-2 flex-wrap">
+								<span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.type }}</span>
+								{% if announce.surface %}
+									<span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.surface }}
+										m²</span>
+								{% endif %}
+								{% if announce.nbPieces %}
+									<span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.nbPieces }}
+										pièces</span>
+								{% endif %}
+							</div>
+						</div>
 
-    <!-- Mobile Bottom Bar -->
-    <div class="d-lg-none position-fixed bottom-0 start-0 end-0 bg-white shadow-lg py-3 px-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <span class="h4 fw-bold">{{ announce.prix }}€</span>
-                <span class="text-muted small">/ mois</span>
-            </div>
-            <div class="d-flex gap-2">
-                <a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn btn-outline-dark rounded-pill">Contacter</a>
-                {% if app.user %}
-                    <a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn btn-dark rounded-pill">Réserver</a>
-                {% else %}
-                    <a href="{{ path('app_login') }}" class="btn btn-dark rounded-pill">Réserver</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+						{% set isLiked = false %}
+						{% if app.user %}
+							{% for like in announce.likes %}
+								{% if like.utilisateur == app.user %}
+									{% set isLiked = true %}
+								{% endif %}
+							{% endfor %}
+						{% endif %}
 
-    <!-- Lightbox -->
-    <div id="lightbox" class="position-fixed top-0 start-0 w-100 h-100 bg-black d-none align-items-center justify-content-center z-3">
-        <button class="position-absolute top-0 end-0 m-4 btn btn-light rounded-circle" onclick="closeLightbox()">&times;</button>
-        <img id="lightbox-img" src="" class="w-75 h-75 object-contain" alt="Plein écran">
-        <button class="position-absolute start-0 m-4 btn btn-light rounded-circle" onclick="prevImage()"><i class="bi bi-chevron-left"></i></button>
-        <button class="position-absolute end-0 m-4 btn btn-light rounded-circle" onclick="nextImage()"><i class="bi bi-chevron-right"></i></button>
-        <div id="lightbox-counter" class="position-absolute bottom-0 start-50 translate-middle-x text-white mb-4">1 / 1</div>
-    </div>
+						<button class="btn bg-transparent border-0 p-0 shadow-none d-inline-flex align-items-center justify-content-center ms-3" onclick="toggleLike(event, {{ announce.id }})">
+							<i class="bi {{ isLiked ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' }} fs-1" style="transition: transform 0.2s ease-in-out;"></i>
+						</button>
+					</div>
 
-    <script src="{{ asset('js/announce_show.js') }}"></script>
+					<!-- CARTE DE RÉSERVATION (Prix, Dates, Boutons) intégrée sous le titre -->
+					<div class="card bg-light border-0 shadow-sm rounded-4 p-4 mb-5">
+						<div
+							class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
 
-    {% if announce.latitude != 0 and announce.longitude != 0 %}
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script src="{{ asset('js/announce_show_map.js') }}"></script>
-    {% endif %}
+							<!-- Informations : Prix et Dates -->
+							<div class="flex-grow-1">
+								<div class="fs-1 fw-bold text-dark mb-3">
+									{{ announce.prix }}€
+									<span class="fs-5 text-muted fw-normal">/ mois</span>
+								</div>
+								<div class="d-inline-flex align-items-center gap-3 bg-white border rounded-pill px-4 py-2 shadow-sm">
+									<div>
+										<span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Arrivée</span>
+										<span class="fw-bold">{{ announce.disponibiliteDebut|date('d/m/Y') }}</span>
+									</div>
+									<i class="bi bi-arrow-right text-muted"></i>
+									<div>
+										<span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Départ</span>
+										<span class="fw-bold">{{ announce.disponibiliteFin|date('d/m/Y') }}</span>
+									</div>
+								</div>
+							</div>
 
+							<!-- Actions : Boutons -->
+							<div class="d-flex flex-column gap-2" style="min-width: 250px;">
+								{% if app.user %}
+									<a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Réserver ce logement</a>
+								{% else %}
+									<a href="{{ path('app_login') }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Connectez-vous pour réserver</a>
+								{% endif %}
+								<a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn btn-outline-dark btn-white-bg rounded-pill fw-semibold shadow-sm">Contacter l'hôte</a>
+							</div>
+						</div>
+					</div>
+
+					<!-- Hôte -->
+					{% if announce.utilisateur %}
+						<div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
+							<div class="d-flex align-items-center gap-3">
+								<img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
+								<div>
+									<h3 class="h5 fw-bold mb-1">Hôte :
+										{{ announce.utilisateur.prenom }}</h3>
+									<span class="text-muted small">
+										<i class="bi bi-shield-check text-success me-1"></i>Inscrit en
+										{{ announce.utilisateur.dateCreationCompte|date('Y') }}</span>
+								</div>
+							</div>
+						</div>
+					{% endif %}
+
+					<!-- Description -->
+					<section class="mb-5">
+						<h2 class="h4 fw-bold mb-4">À propos de ce logement</h2>
+						<p class="text-secondary lh-lg">{{ announce.description }}</p>
+					</section>
+
+					<!-- Photos -->
+					{% if announce.photos|length > 1 %}
+						<section class="mb-5">
+							<h2 class="h4 fw-bold mb-4">Toutes les photos</h2>
+							<div class="row g-3">
+								{% for photo in announce.photos|slice(1) %}
+									<div class="col-6 col-md-4 col-lg-3">
+										<img src="{{ photo.contenu }}" alt="Photo" class="rounded-3 w-100 shadow-sm object-fit-cover" style="height: 140px; cursor: pointer;" onclick="openLightbox({{ loop.index }})">
+									</div>
+								{% endfor %}
+							</div>
+						</section>
+					{% endif %}
+
+					<!-- Équipements -->
+					{% if announce.equipment %}
+						<section class="mb-5">
+							<h2 class="h4 fw-bold mb-4">Ce que propose ce logement</h2>
+							<div class="d-flex flex-wrap gap-3">
+								{% for equipment in announce.equipment %}
+									<div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
+										<i class="bi bi-check-circle-fill text-dark"></i>
+										<span>{{ equipment.nom }}</span>
+									</div>
+								{% endfor %}
+							</div>
+						</section>
+					{% endif %}
+
+					<!-- Carte (Map) -->
+					{% if announce.latitude != 0 and announce.longitude != 0 %}
+						<section class="mb-5">
+							<h2 class="h4 fw-bold mb-4">Où se situe le logement</h2>
+							<div id="map" class="rounded-4 shadow-sm border" style="height: 400px; z-index: 1;"></div>
+						</section>
+					{% endif %}
+
+				</div>
+			</div>
+		</div>
+
+		<!-- Lightbox (Plein écran pour les images) -->
+		<div id="lightbox" class="position-fixed top-0 start-0 w-100 h-100 bg-black bg-opacity-75 d-none align-items-center justify-content-center" style="z-index: 9999;">
+			<button class="position-absolute top-0 end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="closeLightbox()">
+				<i class="bi bi-x-lg"></i>
+			</button>
+
+			<button class="position-absolute start-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="prevImage(event)">
+				<i class="bi bi-chevron-left"></i>
+			</button>
+
+			<img id="lightbox-img" src="" class="w-100 h-75 object-fit-contain" alt="Plein écran">
+
+			<button class="position-absolute end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="nextImage(event)">
+				<i class="bi bi-chevron-right"></i>
+			</button>
+
+			<div id="lightbox-counter" class="position-absolute bottom-0 start-50 translate-middle-x text-white bg-dark bg-opacity-50 px-3 py-1 rounded-pill mb-4">1 / 1</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/announce_show.js') }}"></script>
+	{% if announce.latitude != 0 and announce.longitude != 0 %}
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+		<script src="{{ asset('js/announce_show_map.js') }}"></script>
+	{% endif %}
 {% endblock %}

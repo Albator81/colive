@@ -1,75 +1,121 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réserver - {{ announce.titre }}{% endblock %}
+{# Variables pour base.html.twig : Fond image + Header transparent #}
+{% set bg_image = true %}
+{% set header_transparent = true %}
+
+{% block title %}Réserver -
+	{{ announce.titre }}
+{% endblock %}
+
 
 {% block body_data %}
-    data-unavailable-dates="{{ unavailableDates|default('[]')|escape('html_attr') }}"
-    data-min-date="{{ minDateCalculated|default(announce.disponibiliteDebut)|date('Y-m-d') }}"
-    data-max-date="{{ announce.disponibiliteFin|date('Y-m-d') }}"
+data-unavailable-dates="{{ unavailableDates|default('[]')|escape('html_attr') }}"
+		    data-min-date="{{ minDateCalculated|default(announce.disponibiliteDebut)|date('Y-m-d') }}"
+		    data-max-date="{{ announce.disponibiliteFin|date('Y-m-d') }}"
+
 {% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
+{{ parent() }}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
+
+<style>
+	/* Surcharge pour nettoyer l'affichage de Flatpickr */
+	.flatpickr-calendar.inline {
+		border: none;
+		box-shadow: none;
+		margin: 0 auto; /* Centre parfaitement le calendrier */
+	}
+</style>
+
 {% endblock %}
 
 {% block body %}
-    <div class="container py-5" style="max-width:600px;">
-        <a href="{{ path('app_announce_show', {'id': announce.id}) }}" class="btn btn-outline-dark rounded-pill mb-4 d-inline-flex align-items-center">
-            <i class="bi bi-arrow-left me-2"></i>Retour à l'annonce
-        </a>
+{# MODIFICATION : max-width passe de 650px à 850px pour élargir la carte #}
+<div
+	class="container py-4" style="max-width: 850px;">
 
-        <div class="card border-0 shadow-lg rounded-4 p-4">
-            <div class="d-flex justify-content-between align-items-start mb-4">
-                <div>
-                    <h1 class="h4 fw-bold mb-1">{{ announce.titre }}</h1>
-                    <p class="text-muted mb-0">Jusqu'au {{ announce.disponibiliteFin|date('d F Y') }}</p>
-                </div>
-                <div class="text-end">
-                    <span class="h3 fw-bold">{{ announce.prix }}€</span>
-                    <span class="text-muted small">/ nuit</span>
-                </div>
-            </div>
+	<!-- Bouton Retour -->
+	<a href="{{ path('app_announce_show', {'id': announce.id}) }}" class="btn bg-white text-dark border-0 shadow-sm rounded-pill mb-3 px-4 py-2 d-inline-flex align-items-center fw-semibold transition-all">
+		<i class="bi bi-arrow-left me-2"></i>Retour à l'annonce
+	</a>
 
-            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-            <div class="d-flex gap-2 mb-3">
-                <div class="flex-fill p-3 border rounded-3" id="box_start" style="cursor:pointer;border-color:var(--bs-primary);">
-                    <small class="text-muted d-block fw-bold text-uppercase">Arrivée</small>
-                    <span class="fw-bold" id="text_start">Ajouter une date</span>
-                </div>
-                <div class="flex-fill p-3 border rounded-3" id="box_end" style="cursor:pointer;">
-                    <small class="text-muted d-block fw-bold text-uppercase">Départ</small>
-                    <span class="fw-bold" id="text_end">Ajouter une date</span>
-                </div>
-            </div>
+<!-- Carte de réservation -->
+{# MODIFICATION : p-md-5 devient p-md-4 pour réduire la hauteur interne #}
+	<div
+	class="card bg-white border-0 shadow-lg rounded-4 p-3 p-md-4"> {# MODIFICATION : mb-4 devient mb-3 #}
+	<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-3 border-bottom gap-3">
+		<div>
 
-            <div id="inline_calendar" class="mb-3"></div>
+<h1 class="h3 fw-bold mb-1">{{ announce.titre }}</h1>
+<p class="text-muted mb-0 small">
+	<i class="bi bi-calendar-check text-primary me-1"></i>Disponible jusqu'au
+	{{ announce.disponibiliteFin|date('d/m/Y') }}</p></div>
 
-            <div class="d-none">
-                {{ form_widget(form.dateDebut) }}
-                {{ form_widget(form.dateFin) }}
-            </div>
+<div class="text-md-end bg-light rounded-3 px-4 py-2 border">
+	<span class="h3 fw-bold text-dark mb-0">{{ announce.prix }}€</span>
+	<span class="text-muted small d-block">/ nuit</span>
+</div></div>
 
-            <div class="text-danger small fw-bold mb-3">
-                {{ form_errors(form.dateDebut) }}
-                {{ form_errors(form.dateFin) }}
-            </div>
 
-            <div class="d-flex gap-2 align-items-center">
-                <button type="button" class="btn btn-outline-secondary rounded-pill" id="btn_clear">Effacer</button>
-                {{ form_widget(form.submit, {'attr': {'class': 'btn btn-dark btn-lg rounded-pill flex-fill'}, 'label': 'Confirmer la réservation'}) }}
-            </div>
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-            {{ form_end(form) }}
-        </div>
 
-        <p class="text-center text-muted small mt-3 pb-5 mb-0">
-            Votre réservation n'est pas encore confirmée. Vous ne serez débité qu'après validation.
-        </p>
-    </div>
+<!-- Sélecteurs de date -->
+<div class="d-flex flex-column flex-sm-row gap-3 mb-3">
+	<div class="flex-fill p-3 border border-2 border-primary rounded-3 bg-white shadow-sm" id="box_start" style="cursor:pointer; transition: 0.2s ease;">
+		<small class="text-muted d-block fw-bold text-uppercase mb-1" style="font-size: 0.75rem;">Arrivée</small>
+		<span class="fs-5 fw-bold text-dark" id="text_start">Ajouter une date</span>
+	</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/fr.min.js"></script>
-    <script src="{{ asset('js/reservation_book.js') }}"></script>
+<div class="flex-fill p-3 border border-2 border-light rounded-3 bg-light" id="box_end" style="cursor:pointer; transition: 0.2s ease;">
+	<small class="text-muted d-block fw-bold text-uppercase mb-1" style="font-size: 0.75rem;">Départ</small>
+	<span class="fs-5 fw-bold text-muted" id="text_end">Ajouter une date</span>
+</div></div>
+
+
+<!-- Calendrier -->
+{# MODIFICATION : Suppression des classes bg-light, border, p-2 qui créaient la barre grise étrange #}<div id="inline_calendar" class="mb-3 d-flex justify-content-center"> </div>
+
+
+<div class="d-none">
+	{{ form_widget(form.dateDebut) }}
+	{{ form_widget(form.dateFin) }}
+</div>
+
+
+<div class="text-danger small fw-bold mb-3 text-center">
+	{{ form_errors(form.dateDebut) }}
+	{{ form_errors(form.dateFin) }}
+</div>
+
+
+<!-- Actions -->
+<div
+	class="d-flex flex-column flex-sm-row gap-3 align-items-center mt-2">
+	{# MODIFICATION : py-3 retiré pour des boutons moins hauts #}
+	<button type="button" class="btn btn-light border bg-white rounded-pill px-4 py-2 fw-semibold shadow-sm w-100 w-sm-auto" id="btn_clear">Effacer les dates</button>
+	{{ form_widget(form.submit, {'attr': {'class': 'btn btn-dark btn-lg rounded-pill flex-fill fw-bold shadow-sm w-100 py-2'}, 'label': 'Confirmer la réservation'}) }}
+</div>
+
+
+{{ form_end(form) }}</div>
+
+
+<!-- Message d'info -->
+<div class="text-center mt-4 mb-3">
+	<span class="d-inline-block text-white bg-dark bg-opacity-75 rounded-pill px-4 py-2 small shadow-sm">
+		<i class="bi bi-info-circle me-2"></i>Votre réservation n'est pas encore confirmée. Vous ne serez débité qu'après validation.
+	</span>
+</div></div>
+
+
+<!-- Scripts Flatpickr -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/fr.min.js"></script>
+<script src="{{ asset('js/reservation_book.js') }}"></script>
+
 {% endblock %}

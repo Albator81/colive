@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const textEnd = document.getElementById('text_end');
     const btnClear = document.getElementById('btn_clear');
 
+    // Utilitaires pour basculer les classes Bootstrap (Actif / Inactif)
+    function setActiveBox(box, textElem) {
+        box.className = 'flex-fill p-3 border border-2 border-primary rounded-3 bg-white shadow-sm';
+        textElem.classList.remove('text-muted');
+        textElem.classList.add('text-dark');
+    }
+
+    function setInactiveBox(box, textElem) {
+        box.className = 'flex-fill p-3 border border-2 border-light rounded-3 bg-light shadow-none';
+        textElem.classList.remove('text-dark');
+        textElem.classList.add('text-muted');
+    }
+
     const fp = flatpickr("#inline_calendar", {
         inline: true,
         mode: "range",
@@ -23,63 +36,67 @@ document.addEventListener('DOMContentLoaded', function() {
         showMonths: window.innerWidth < 768 ? 1 : 2,
 
         onChange: function(selectedDates, dateStr, instance) {
+            // Remplissage Date Arrivée
             if (selectedDates.length > 0) {
                 textStart.textContent = instance.formatDate(selectedDates[0], "d M Y");
-                textStart.classList.add('filled');
                 if (startInput) startInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
             } else {
                 textStart.textContent = "Ajouter une date";
-                textStart.classList.remove('filled');
                 if (startInput) startInput.value = "";
             }
 
+            // Remplissage Date Départ
             if (selectedDates.length > 1) {
                 textEnd.textContent = instance.formatDate(selectedDates[1], "d M Y");
-                textEnd.classList.add('filled');
                 if (endInput) endInput.value = instance.formatDate(selectedDates[1], "Y-m-d");
             } else {
                 textEnd.textContent = "Ajouter une date";
-                textEnd.classList.remove('filled');
                 if (endInput) endInput.value = "";
             }
 
+            // Gestion de l'affichage (Quelle boîte est active visuellement)
             if (selectedDates.length === 0 || selectedDates.length === 2) {
                 if(selectedDates.length === 2) {
-                    boxStart.classList.remove('active');
-                    boxEnd.classList.add('active');
+                    setInactiveBox(boxStart, textStart);
+                    setActiveBox(boxEnd, textEnd);
                 } else {
-                    boxStart.classList.add('active');
-                    boxEnd.classList.remove('active');
+                    setActiveBox(boxStart, textStart);
+                    setInactiveBox(boxEnd, textEnd);
                 }
             } else if (selectedDates.length === 1) {
-                boxStart.classList.remove('active');
-                boxEnd.classList.add('active');
+                setInactiveBox(boxStart, textStart);
+                setActiveBox(boxEnd, textEnd);
             }
         }
     });
 
+    // Effacer
     btnClear.addEventListener('click', () => {
         fp.clear();
-        boxStart.classList.add('active');
-        boxEnd.classList.remove('active');
+        setActiveBox(boxStart, textStart);
+        setInactiveBox(boxEnd, textEnd);
     });
 
-
+    // Clic manuel sur la boîte Arrivée
     boxStart.addEventListener('click', () => {
-        boxStart.classList.add('active');
-        boxEnd.classList.remove('active');
-        if(fp.selectedDates.length === 2) fp.clear();
-    });
-
-    boxEnd.addEventListener('click', () => {
-        if(fp.selectedDates.length === 0) {
-            boxStart.classList.add('active');
-        } else {
-            boxStart.classList.remove('active');
-            boxEnd.classList.add('active');
+        setActiveBox(boxStart, textStart);
+        setInactiveBox(boxEnd, textEnd);
+        if(fp.selectedDates.length === 2) {
+            fp.clear();
         }
     });
 
+    // Clic manuel sur la boîte Départ
+    boxEnd.addEventListener('click', () => {
+        if(fp.selectedDates.length === 0) {
+            setActiveBox(boxStart, textStart);
+        } else {
+            setInactiveBox(boxStart, textStart);
+            setActiveBox(boxEnd, textEnd);
+        }
+    });
+
+    // Rendre le calendrier responsive si l'utilisateur redimensionne la fenêtre
     window.addEventListener('resize', () => {
         if(window.innerWidth < 768 && fp.config.showMonths !== 1) {
             fp.set('showMonths', 1);

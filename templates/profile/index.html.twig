@@ -1,282 +1,236 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil - CoLive{% endblock %}
+{% set bg_image = false %}
+{% set header_transparent = false %}
+{% set show_btn_logout = true %}
+{% set show_btn_bot = true %}
+{% set show_btn_message = true %}
+{% set show_btn_notif = true %}
+{% set show_btn_profile = false %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-{% endblock %}
-
-{% block btn_bot %}{% endblock %}
-{% block btn_message %}{% endblock %}
-{% block btn_profile %}{% endblock %}
-
-{% block header_buttons %}
-    <a href="{{ path('app_logout') }}" class="btn btn-outline-dark rounded-pill px-4">Se déconnecter</a>
+{% block title %}Mon Profil - CoLive
 {% endblock %}
 
 {% block body %}
+	<div class="container py-5">
+		<div class="mb-5">
+			<h1 class="fw-bold display-6">Mon Profil</h1>
+			<p class="text-muted lead">Gérez vos informations personnelles et vos annonces.</p>
+		</div>
+		<div class="row g-4">
+			<div class="col-lg-4">
+				<div class="card border shadow-sm rounded-4 p-4 text-center">
+					<div class="mb-3 position-relative d-inline-block mx-auto">
+						{% if user.avatar %}
+							<img src="{{ user.avatar }}" alt="Avatar" class="rounded-circle shadow-sm object-fit-cover" width="140" height="140">
+						{% else %}
+							<img src="https://ui-avatars.com/api/?name={{ user.prenom }}+{{ user.nom }}&background=000&color=fff&size=140" alt="Avatar" class="rounded-circle shadow-sm" width="140">
+						{% endif %}
+					</div>
 
-<div class="bg-light min-vh-100 py-5">
-    <div class="container">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-sm rounded-4 text-center p-4">
-                    <div class="avatar-container mb-3">
-                        {% if user.avatar %}
-                            <img src="{{ user.avatar }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width:140px;height:140px;">
-                        {% else %}
-                            <img src="https://ui-avatars.com/api/?name={{ user.prenom }}+{{ user.nom }}&background=000&color=fff&size=256&font-size=0.33" alt="Avatar" class="rounded-circle object-fit-cover" style="width:140px;height:140px;">
-                        {% endif %}
-                    </div>
-                    
-                    {% if nbNotes != 0 %}
-                        <a href="{{ path('app_host_reviews', {'id': user.id}) }}" class="text-decoration-none">
-                            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
-                                {% for i in 1..5 %}
-                                    {% if i <= averageRating %}
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    {% else %}
-                                        <i class="bi bi-star text-secondary"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                            <span class="text-muted">({{ nbNotes }} avis)</span>
-                        </a>
-                    {% endif %}
-                    
-                    <h2 class="h4 fw-bold mb-1">{{ user.prenom }} {{ user.nom }}</h2>
-                    <p class="text-muted mb-3">Membre depuis {{ user.dateCreationCompte|date('Y') }}</p>
-                    
-                    <div class="text-start ps-3 mb-3">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <div class="bg-light rounded p-2"><i class="bi bi-envelope"></i></div>
-                            <span class="small text-muted text-truncate">{{ user.email }}</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="bg-light rounded p-2"><i class="bi bi-telephone"></i></div>
-                            <span class="small text-muted">{{ user.tel|default('Non renseigné') }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-around border-top pt-3">
-                        <div class="text-center">
-                            <span class="h4 fw-bold d-block">{{ user.annonces|length }}</span>
-                            <span class="small text-muted">Annonces</span>
-                        </div>
-                        <div class="text-center">
-                            <span class="h4 fw-bold d-block">{{ user.likes|length }}</span>
-                            <span class="small text-muted">Favoris</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Contenu principal -->
-            <div class="col-lg-8">
-                <ul class="nav nav-pills nav-fill mb-3 p-1 bg-white rounded-pill shadow-sm" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#infos" type="button">Informations</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#annonces" type="button">Mes annonces ({{ user.annonces|length }})</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#favoris" type="button">Réservations et favoris</button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content">
-                    <!-- Informations -->
-                    <div class="tab-pane fade show active" id="infos">
-                        <div class="card border-0 shadow-sm rounded-4 p-4">
-                            <h3 class="h5 fw-bold mb-4">Informations personnelles</h3>
-                            {{ form_start(form) }}
-                            <div class="bg-light rounded-3 p-3 mb-4">
-                                {{ form_label(form.avatarFile, 'Changer ma photo de profil', {'label_attr': {'class': 'd-block mb-2 fw-bold'}}) }}
-                                {{ form_widget(form.avatarFile, {'attr': {'class': 'form-control w-100'}}) }}
-                                <div class="text-danger small mt-1">{{ form_errors(form.avatarFile) }}</div>
-                            </div>
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    {{ form_label(form.prenom) }}{{ form_widget(form.prenom, {'attr': {'class': 'form-control rounded-3'}}) }}
-                                </div>
-                                <div class="col-md-6">
-                                    {{ form_label(form.nom) }}{{ form_widget(form.nom, {'attr': {'class': 'form-control rounded-3'}}) }}
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                {{ form_label(form.email) }}{{ form_widget(form.email, {'attr': {'class': 'form-control rounded-3'}}) }}
-                            </div>
-                            <div class="mb-4">
-                                {{ form_label(form.tel) }}{{ form_widget(form.tel, {'attr': {'class': 'form-control rounded-3'}}) }}
-                            </div>
-                            <div class="text-end">
-                                <button type="submit" class="btn btn-dark rounded-pill px-4">Enregistrer</button>
-                            </div>
-                            {{ form_end(form) }}
-                            
-                            <hr class="my-4">
-                            
-                            <div class="border border-2 border-danger rounded-3 p-3">
-                                <h4 class="text-danger fw-bold mb-2">Zone Dangereuse</h4>
-                                <p class="text-muted mb-3">La suppression de votre compte est définitive. Toutes vos données seront perdues.</p>
-                                <form method="post" action="{{ path('app_profile_delete') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
-                                    <button type="submit" class="btn btn-outline-danger rounded-pill">
-                                        <i class="bi bi-trash"></i> Supprimer mon compte
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Mes annonces -->
-                    <div class="tab-pane fade" id="annonces">
-                        <div class="card border-0 shadow-sm rounded-4 p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h3 class="h5 fw-bold mb-0">Mes annonces</h3>
-                                <a href="{{ path('app_announce_create') }}" class="btn btn-dark rounded-pill">
-                                    <i class="bi bi-plus-lg"></i> Nouvelle annonce
-                                </a>
-                            </div>
-                            
-                            {% if user.annonces is empty %}
-                                <p class="text-muted text-center py-4">Vous n'avez posté aucune annonce.</p>
-                            {% else %}
-                                {% for annonce in user.annonces %}
-                                    <div class="card border rounded-3 mb-3 p-3 hover-shadow">
-                                        <div class="d-flex gap-3">
-                                            <div style="width:80px;height:80px;flex-shrink:0;">
-                                                {% if annonce.photos is not empty %}
-                                                    <img src="{{ annonce.photos|first.contenu }}" alt="Photo" class="rounded-3 w-100 h-100 object-fit-cover">
-                                                {% else %}
-                                                    <div class="bg-light rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
-                                                        <i class="bi bi-image text-muted"></i>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h4 class="h6 fw-bold mb-1">{{ annonce.titre }}</h4>
-                                                <p class="text-muted small mb-2">{{ annonce.ville }} • {{ annonce.prix }}€/mois</p>
-                                                <span class="badge bg-success rounded-pill">{{ annonce.likes|length }} J'aime</span>
-                                            </div>
-                                            <div class="d-flex flex-column gap-2">
-                                                <a href="{{ path('app_announce_edit', {'id': annonce.id}) }}" class="btn btn-outline-dark btn-sm rounded-3">
-                                                    <i class="bi bi-pencil"></i> Modifier
-                                                </a>
-                                                <form method="post" action="{{ path('app_announce_delete', {'id': annonce.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce définitivement ?');">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ annonce.id) }}">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-3 w-100">
-                                                        <i class="bi bi-trash"></i> Supprimer
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Réservations et favoris -->
-                    <div class="tab-pane fade" id="favoris">
-                        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-                            <h3 class="h5 fw-bold mb-4"><i class="bi bi-calendar-check"></i> Mes réservations</h3>
-                            
-                            {% if user.reservations is defined and user.reservations is not empty %}
-                                {% for reservation in user.reservations %}
-                                    {% set isFinished = reservation.dateFin < date() and reservation.statut == 'CONFIRMED' %}
-                                    <div class="card border rounded-3 mb-3 p-3 {% if reservation.statut == 'CANCELLED' or isFinished %}opacity-75{% endif %}">
-                                        <div class="d-flex gap-3">
-                                            <div style="width:80px;height:80px;flex-shrink:0;">
-                                                {% if reservation.announce.photos is not empty %}
-                                                    <img src="{{ reservation.announce.photos|first.contenu }}" alt="Photo" class="rounded-3 w-100 h-100 object-fit-cover">
-                                                {% else %}
-                                                    <div class="bg-light rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
-                                                        <i class="bi bi-image text-muted"></i>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <a href="{{ path('app_announce_show', {'id': reservation.announce.id}) }}" class="text-decoration-none">
-                                                    <h4 class="h6 fw-bold text-dark mb-1">{{ reservation.announce.titre }}</h4>
-                                                </a>
-                                                <p class="text-muted small mb-2">
-                                                    <i class="bi bi-calendar-event"></i>
-                                                    Du {{ reservation.dateDebut|date('d/m/Y') }} au {{ reservation.dateFin|date('d/m/Y') }}
-                                                </p>
-                                                <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                    {% set statusClass = reservation.statut == 'PENDING' ? 'bg-warning text-dark' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'bg-secondary' : 'bg-success') : 'bg-danger') %}
-                                                    {% set statusText = reservation.statut == 'PENDING' ? 'En attente' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'Terminée' : 'Confirmée') : 'Annulée') %}
-                                                    <span class="badge {{ statusClass }} rounded-pill">{{ statusText }}</span>
-                                                    <span class="small text-muted">Loyer: {{ reservation.announce.prix }}€/mois</span>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex flex-column gap-2 align-items-end">
-                                                <small class="text-muted">Créée le {{ reservation.createdAt|date('d/m/Y') }}</small>
-                                                {% if reservation.statut == 'CANCELLED' %}
-                                                    <span class="badge bg-danger rounded-pill"><i class="bi bi-calendar-x"></i> Annulée</span>
-                                                {% elseif isFinished %}
-                                                    <span class="badge bg-secondary rounded-pill"><i class="bi bi-check-circle"></i> Terminée</span>
-                                                {% else %}
-                                                    <a href="{{ path('app_message_conversation', {id: reservation.announce.utilisateur.id}) }}" class="btn btn-dark btn-sm rounded-pill">Contacter l'hôte</a>
-                                                    <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">Annuler</button>
-                                                    </form>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-center py-4">
-                                    <p class="text-muted mb-3">Vous n'avez aucune réservation en cours.</p>
-                                    <a href="{{ path('app_home') }}" class="btn btn-outline-dark rounded-pill">Explorer les logements</a>
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="card border-0 shadow-sm rounded-4 p-4">
-                            <h3 class="h5 fw-bold mb-4"><i class="bi bi-heart-fill text-danger"></i> Mes favoris</h3>
-                            
-                            {% if user.likes is empty %}
-                                <p class="text-muted text-center py-4">Aucun coup de cœur pour le moment.</p>
-                            {% else %}
-                                {% for like in user.likes %}
-                                    <div class="card border rounded-3 mb-3 p-3">
-                                        <div class="d-flex gap-3">
-                                            <div style="width:80px;height:80px;flex-shrink:0;">
-                                                {% if like.annonce.photos is not empty %}
-                                                    <img src="{{ like.annonce.photos|first.contenu }}" alt="Photo" class="rounded-3 w-100 h-100 object-fit-cover">
-                                                {% else %}
-                                                    <div class="bg-light rounded-3 w-100 h-100 d-flex align-items-center justify-content-center">
-                                                        <i class="bi bi-image text-muted"></i>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h4 class="h6 fw-bold mb-1">{{ like.annonce.titre }}</h4>
-                                                    <p class="text-muted small mb-0">{{ like.annonce.ville }} • {{ like.annonce.prix }}€/mois</p>
-                                                </div>
-                                                <button class="btn btn-danger btn-sm rounded-circle" onclick="toggleLike(event, {{ like.annonce.id }})" title="Retirer des favoris">
-                                                    <i class="bi bi-heart-fill"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+					{% if nbNotes != 0 %}
+						<a href="{{ path('app_host_reviews', {'id': user.id}) }}" class="text-decoration-none text-dark d-block mb-3">
+							<div class="text-warning mb-1">
+								{% for i in 1..5 %}
+									<i class="bi bi-star{{ i <= averageRating ? '-fill' : '' }}"></i>
+								{% endfor %}
+							</div>
+							<small class="fw-bold text-muted">({{ nbNotes }}
+								avis)</small>
+						</a>
+					{% endif %}
 
-<script src="{{ asset('js/profile_index.js') }}"></script>
+					<h2 class="h4 fw-bold mb-1">{{ user.prenom }}
+						{{ user.nom }}</h2>
+					<p class="text-muted small mb-4">Membre depuis
+						{{ user.dateCreationCompte|date('Y') }}</p>
+
+					<div class="text-start border-top pt-4 mb-4">
+						<div class="d-flex align-items-center gap-3 mb-3">
+							<div class="bg-light rounded-circle p-2 d-flex align-items-center justify-content-center" style="width:35px; height:35px;">
+								<i class="bi bi-envelope small"></i>
+							</div>
+							<span class="text-truncate small fw-semibold">{{ user.email }}</span>
+						</div>
+						<div class="d-flex align-items-center gap-3">
+							<div class="bg-light rounded-circle p-2 d-flex align-items-center justify-content-center" style="width:35px; height:35px;">
+								<i class="bi bi-telephone small"></i>
+							</div>
+							<span class="small fw-semibold">{{ user.tel|default('Non renseigné') }}</span>
+						</div>
+					</div>
+
+					<div class="row g-0 border-top pt-4">
+						<div class="col-6 border-end">
+							<div class="h5 fw-bold mb-0">{{ user.annonces|length }}</div>
+							<div class="text-muted" style="font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;">Annonces</div>
+						</div>
+						<div class="col-6">
+							<div class="h5 fw-bold mb-0">{{ user.likes|length }}</div>
+							<div class="text-muted" style="font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;">Favoris</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-8">
+				<div class="card border shadow-sm rounded-4">
+					<div class="card-header bg-white border-0 p-3">
+						<ul class="nav nav-pills nav-fill gap-2" id="profileTabs">
+							<li class="nav-item">
+								<button class="nav-link active rounded-pill fw-bold" data-bs-toggle="pill" data-bs-target="#tab-infos">Informations</button>
+							</li>
+							<li class="nav-item">
+								<button class="nav-link rounded-pill fw-bold" data-bs-toggle="pill" data-bs-target="#tab-annonces">Mes annonces</button>
+							</li>
+							<li class="nav-item">
+								<button class="nav-link rounded-pill fw-bold" data-bs-toggle="pill" data-bs-target="#tab-favoris">Réservations</button>
+							</li>
+						</ul>
+					</div>
+
+					<div class="card-body p-4 tab-content">
+						<div class="tab-pane fade show active" id="tab-infos">
+							<h3 class="h5 fw-bold mb-4">Informations personnelles</h3>
+							{{ form_start(form) }}
+							<div class="mb-4 p-3 bg-light rounded-3 border border-dashed">
+								{{ form_label(form.avatarFile, 'Photo de profil', {'label_attr': {'class': 'form-label fw-bold small text-muted'}}) }}
+								{{ form_widget(form.avatarFile, {'attr': {'class': 'form-control border-0 bg-white'}}) }}
+								<div class="text-danger small mt-1">{{ form_errors(form.avatarFile) }}</div>
+							</div>
+							<div class="row g-3 mb-3">
+								<div class="col-md-6">
+									{{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label fw-bold small text-muted'}}) }}
+									{{ form_widget(form.prenom, {'attr': {'class': 'form-control rounded-3 py-2'}}) }}
+								</div>
+								<div class="col-md-6">
+									{{ form_label(form.nom, null, {'label_attr': {'class': 'form-label fw-bold small text-muted'}}) }}
+									{{ form_widget(form.nom, {'attr': {'class': 'form-control rounded-3 py-2'}}) }}
+								</div>
+							</div>
+							<div class="mb-3">
+								{{ form_label(form.email, null, {'label_attr': {'class': 'form-label fw-bold small text-muted'}}) }}
+								{{ form_widget(form.email, {'attr': {'class': 'form-control rounded-3 py-2'}}) }}
+							</div>
+							<div class="mb-4">
+								{{ form_label(form.tel, null, {'label_attr': {'class': 'form-label fw-bold small text-muted'}}) }}
+								{{ form_widget(form.tel, {'attr': {'class': 'form-control rounded-3 py-2'}}) }}
+							</div>
+							<button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm py-2">Mettre à jour</button>
+							{{ form_end(form) }}
+
+							<div class="mt-5 pt-4 border-top">
+								<h4 class="h6 fw-bold text-danger mb-3">Zone de danger</h4>
+								<div class="p-3 border border-danger rounded-4 bg-danger bg-opacity-10 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+									<p class="small mb-0 fw-medium">La suppression de votre compte est définitive et irréversible.</p>
+									<form method="post" action="{{ path('app_profile_delete') }}" onsubmit="return confirm('Confirmer la suppression du compte ?');">
+										<input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
+										<button type="submit" class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">Supprimer mon compte</button>
+									</form>
+								</div>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="tab-annonces">
+							<div class="d-flex justify-content-between align-items-center mb-4">
+								<h3 class="h5 fw-bold mb-0">Mes annonces</h3>
+								<a href="{{ path('app_announce_create') }}" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">Nouvelle +</a>
+							</div>
+							{% for announce in user.annonces %}
+								<div class="d-flex align-items-center gap-3 p-3 border rounded-4 mb-3 shadow-sm bg-white">
+									<img src="{{ announce.photos|length > 0 ? announce.photos|first.contenu : 'https://via.placeholder.com/80' }}" class="rounded-3 object-fit-cover" width="85" height="85">
+									<div class="flex-grow-1">
+										<h4 class="h6 fw-bold mb-1">{{ announce.titre }}</h4>
+										<div class="small text-muted mb-2">{{ announce.ville }}
+											•
+											{{ announce.prix }}€/mois</div>
+										<div class="d-flex gap-2">
+											<span class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold" style="font-size: 0.65rem;">ACTIF</span>
+											<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill fw-bold d-flex align-items-center gap-1" style="font-size: 0.65rem;">
+												<i class="bi bi-heart-fill"></i>
+												{{ announce.likes|length }}
+											</span>
+										</div>
+									</div>
+									<div class="text-end d-flex flex-column gap-2">
+										<a href="{{ path('app_announce_edit', {'id': announce.id}) }}" class="btn btn-light btn-sm rounded-pill fw-bold border py-1 px-3">Modifier</a>
+										<form method="post" action="{{ path('app_announce_delete', {'id': announce.id}) }}" onsubmit="return confirm('Supprimer l\'annonce ?');">
+											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ announce.id) }}">
+											<button type="submit" class="btn btn-link btn-sm text-danger text-decoration-none p-0 fw-bold small">Supprimer</button>
+										</form>
+									</div>
+								</div>
+							{% else %}
+								<div class="text-center py-5 text-muted small">Aucune annonce publiée.</div>
+							{% endfor %}
+						</div>
+
+						<div class="tab-pane fade" id="tab-favoris">
+							<h3 class="h5 fw-bold mb-4">Mes réservations</h3>
+							{% for reservation in user.reservations|default([]) %}
+								{% set isFinished = reservation.dateFin < date() and reservation.statut == 'CONFIRMED' %}
+								<div class="p-3 border rounded-4 mb-3 shadow-sm {{ (reservation.statut == 'CANCELLED' or isFinished) ? 'bg-light opacity-50' : 'bg-white' }}">
+									<div class="row align-items-center g-3">
+										<div class="col-auto">
+											<img src="{{ reservation.announce.photos|length > 0 ? reservation.announce.photos|first.contenu : 'https://via.placeholder.com/70' }}" class="rounded-3 object-fit-cover" width="70" height="70">
+										</div>
+										<div class="col">
+											<h4 class="h6 fw-bold mb-1">{{ reservation.announce.titre }}</h4>
+											<div class="small text-muted mb-2">
+												<i class="bi bi-calendar3 me-1"></i>Du
+												{{ reservation.dateDebut|date('d/m/Y') }}
+												au
+												{{ reservation.dateFin|date('d/m/Y') }}</div>
+											<div class="d-flex gap-2 align-items-center">
+												{% set statusColor = reservation.statut == 'PENDING' ? 'warning' : (reservation.statut == 'CONFIRMED' ? (isFinished ? 'secondary' : 'success') : 'danger') %}
+												<span class="badge bg-{{ statusColor }} bg-opacity-10 text-{{ statusColor }} rounded-pill" style="font-size: 0.65rem;">{{ reservation.statut }}</span>
+												<span class="small fw-bold">{{ reservation.announce.prix }}
+													€/mois</span>
+											</div>
+										</div>
+										<div class="col-md-auto text-md-end">
+											{% if reservation.statut != 'CANCELLED' and not isFinished %}
+												<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Annuler ?');">
+													<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+													<button type="submit" class="btn btn-outline-danger btn-sm rounded-pill fw-bold">Annuler</button>
+												</form>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							{% else %}
+								<div class="text-center py-4 text-muted small">Aucune réservation.</div>
+							{% endfor %}
+
+							<h3 class="h5 fw-bold mt-5 mb-4">Mes favoris</h3>
+							<div class="row g-3">
+								{% for like in user.likes %}
+									<div class="col-12">
+										<div class="d-flex align-items-center gap-3 p-2 border rounded-4 bg-white shadow-sm">
+											<img src="{{ like.annonce.photos|length > 0 ? like.annonce.photos|first.contenu : 'https://via.placeholder.com/60' }}" class="rounded-3 object-fit-cover" width="60" height="60">
+											<div class="flex-grow-1">
+												<h4 class="h6 fw-bold mb-0 text-truncate" style="max-width: 200px;">{{ like.annonce.titre }}</h4>
+												<small class="text-muted">{{ like.annonce.ville }}</small>
+											</div>
+											<button class="btn btn-light rounded-circle border-0 shadow-sm me-2" onclick="toggleLike(event, {{ like.annonce.id }})">
+												<i class="bi bi-heart-fill text-danger"></i>
+											</button>
+										</div>
+									</div>
+								{% else %}
+									<div class="text-center py-4 text-muted small w-100">Aucun favori.</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/profile_index.js') }}"></script>
 {% endblock %}

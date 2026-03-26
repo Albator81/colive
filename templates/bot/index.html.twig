@@ -1,42 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Assistant CoLive{% endblock %}
+{% set bg_image = false %}
+{% set header_transparent = false %}
+{% set show_btn_bot = false %}
 
-{% block stylesheets %}
-    {{ parent() }}
+{% block title %}Assistant CoLive
 {% endblock %}
 
 {% block body %}
-    <div class="min-vh-100 d-flex align-items-center justify-content-center bg-light p-4">
-        <div class="card border-0 shadow-lg rounded-4" style="width:100%;max-width:600px;height:80vh;">
-            <div class="card-header bg-dark text-white rounded-top-4 p-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px;height:40px;font-weight:bold;">C</div>
-                    <div>
-                        <h3 class="h6 fw-bold mb-0">Assistant CoLive</h3>
-                        <small class="opacity-75">En ligne (IA)</small>
-                    </div>
-                </div>
-            </div>
+	<div class="container d-flex justify-content-center py-5">
+		<div class="card border-0 shadow-lg rounded-4 w-100" style="max-width:600px; height:75vh;">
+			<div class="card-header bg-dark text-white rounded-top-4 p-3 border-0">
+				<div class="d-flex align-items-center gap-3">
+					<div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px;height:40px;font-weight:bold;">C</div>
+					<div>
+						<h3 class="h6 fw-bold mb-0">Assistant CoLive</h3>
+						<small class="opacity-75">En ligne (IA)</small>
+					</div>
+				</div>
+			</div>
+			<div class="card-body overflow-auto d-flex flex-column gap-3 p-4 bg-light" id="chatBox">
+				<div class="d-flex justify-content-start">
+					<div class="bg-white border rounded-3 p-3 shadow-sm" style="max-width:80%;">
+						<p class="mb-0">Bonjour ! Je suis l'IA de CoLive. Une question sur le site ?</p>
+					</div>
+				</div>
+			</div>
 
-            <div class="card-body overflow-auto d-flex flex-column gap-3 p-4" id="chatBox" style="background:#f8f9fa;">
-                <div class="d-flex justify-content-start">
-                    <div class="bg-white rounded-3 p-3 shadow-sm" style="max-width:80%;">
-                        <p class="mb-0">Bonjour ! Je suis l'IA de CoLive. Une question sur le site ?</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card-footer p-3 bg-white rounded-bottom-4">
-                <div class="input-group">
-                    <input type="text" id="userInput" class="form-control rounded-pill" placeholder="Posez votre question...">
-                    <button class="btn btn-dark rounded-pill px-4" onclick="sendMessage()">Envoyer</button>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="card-footer p-3 bg-white border-0 rounded-bottom-4 shadow-sm">
+				<div class="input-group">
+					<input type="text" id="userInput" class="form-control rounded-start-pill py-2 ps-4" placeholder="Posez votre question...">
+					<button class="btn btn-dark rounded-end-pill px-4 fw-bold" onclick="sendMessage()">Envoyer</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    {% block javascripts %}
-        <script src="{{ asset('js/bot_index.js') }}"></script>
-    {% endblock %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/bot_index.js') }}"></script>
 {% endblock %}
