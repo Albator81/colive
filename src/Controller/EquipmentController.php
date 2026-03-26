@@ -12,7 +12,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class EquipmentController extends AbstractController
 {
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/api/user-equipment', name: 'app_equipment_create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em): JsonResponse
     {
