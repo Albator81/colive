@@ -50,7 +50,7 @@ class AnnounceType extends AbstractType
                 'class' => Equipment::class,
                 'choice_label' => 'nom',
                 'multiple' => true,
-                'expanded' => true,
+                'expanded' => false,
             ])
             ->add('regle', TextareaType::class, [
                 'required' => false,
