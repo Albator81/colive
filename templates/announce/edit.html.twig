@@ -1,184 +1,158 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier l'annonce - {{ annonce.titre }}{% endblock %}
+{% set bg_image = true %}
+{% set header_transparent = true %}
+{% set show_btn_bot = true %}
+{% set show_btn_message = true %}
+{% set show_btn_profile = true %}
+{% set show_btn_notif = true %}
+{% set show_btn_logout = false %}
+{% set show_btn_login = false %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('styles/editannounce.css') }}">
-
+{% block title %}Modifier l'annonce -
+	{{ annonce.titre }}
 {% endblock %}
 
 {% block body %}
-    <div style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{{ asset('img/home.png') }}') no-repeat center center fixed; background-size: cover; min-height: 100vh; padding-top: 3rem; padding-bottom: 5rem;">
-        <div class="container" style="max-width: 53rem;">
+	<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-n1" style="backdrop-filter: blur(5px);"></div>
+	<div class="container py-5" style="max-width:850px;">
+		<div class="text-center mb-5 text-white">
+			<h1 class="fw-bold display-5">Modifier l'annonce</h1>
+			<p class="lead opacity-75">{{ annonce.titre }}</p>
+		</div>
 
-            <div class="mb-4 d-flex justify-content-between align-items-center">
-                <a href="{{ path('app_profile') }}" class="text-decoration-none">
-                    <span class="bg-black text-white d-inline-flex align-items-center justify-content-center rounded-3 fw-bold" style="width: 2.5rem; height: 2.5rem; font-size: 1.2rem;">C</span>
-                </a>
-                <h2 class="text-white fw-bold m-0">Modifier l'annonce</h2>
-            </div>
+		{{ form_start(formAnnonce) }}
 
-            {{ form_start(formAnnonce) }}
+		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+			<h4 class="fw-bold mb-1">Informations de base</h4>
+			<p class="text-muted small mb-4">Mettez à jour les détails principaux de votre logement</p>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Informations de base</h5>
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">Titre</label>
-                            {{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">Type</label>
-                            {{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select'}}) }}
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label fw-bold small">Nombre de pièces</label>
-                            {{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Description</label>
-                        {{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control', 'style': 'height: 14rem; resize: none;'}}) }}
-                    </div>
-                </div>
-            </div>
+			<div class="row g-4">
+				<div class="col-md-6 d-flex flex-column gap-3">
+					<div>
+						<label class="form-label fw-bold">Titre de l'annonce</label>
+						{{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+					</div>
+					<div>
+						<label class="form-label fw-bold">Type de logement</label>
+						{{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select form-select-lg rounded-3 bg-light border-0'}}) }}
+					</div>
+					<div>
+						<label class="form-label fw-bold">Nombre de pièces</label>
+						{{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+					</div>
+				</div>
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Description</label>
+					{{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control rounded-3 bg-light border-0', 'style': 'height: 100%; min-height: 200px; resize: none;'}}) }}
+				</div>
+			</div>
+		</div>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Photos</h5>
-                <p class="text-muted small mb-2">Photos enregistrées:</p>
-                <div class="d-flex gap-3 flex-wrap mb-4" id="existing-photos">
-                    {% for photo in annonce.photos %}
-                        <div class="image-wrapper" id="photo-{{ photo.id }}">
-                            <img src="{{ photo.contenu }}">
-                            <button type="button" class="btn-delete-existing" onclick="deleteExistingPhoto({{ photo.id }})">
-                                &times;
-                            </button>
-                        </div>
-                    {% endfor %}
-                </div>
+		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+			<h4 class="fw-bold mb-1">Photos</h4>
+			<p class="text-muted small mb-3">Gérez les visuels de votre annonce</p>
 
-                <p class="text-muted small mb-2">Ajouter de nouvelles photos :</p>
-                <div class="d-none">{{ form_widget(formAnnonce.images) }}</div>
-                <div class="upload-area rounded-4 p-4 text-center bg-white" id="drop-zone">
-                    <p class="text-muted small mb-0">Cliquez ici pour sélectionner des images</p>
-                    <div id="preview-container" class="preview-container"></div>
-                </div>
-            </div>
+			<div class="mb-4">
+				<label class="form-label fw-bold small text-uppercase text-muted mb-3">Photos actuelles</label>
+				<div class="d-flex gap-3 flex-wrap" id="existing-photos">
+					{% for photo in annonce.photos %}
+						<div class="position-relative group" id="photo-{{ photo.id }}">
+							<img src="{{ photo.contenu }}" class="rounded-3 shadow-sm" style="width:120px;height:120px;object-fit:cover;">
+							<button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-1 shadow" onclick="deleteExistingPhoto({{ photo.id }})" style="width:28px;height:28px;padding:0;">
+								<i class="bi bi-x-lg" style="font-size: 0.8rem;"></i>
+							</button>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Localisation</h5>
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Adresse</label>
-                    {{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Ville</label>
-                        {{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Code postal</label>
-                        {{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-            </div>
+			<label class="form-label fw-bold small text-uppercase text-muted mb-3">Ajouter de nouvelles photos</label>
+			<div class="d-none">{{ form_widget(formAnnonce.images) }}</div>
+			<div class="border border-2 border-dashed rounded-4 p-5 text-center bg-light" id="drop-zone" style="cursor: pointer;">
+				<div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+					<i class="bi bi-plus-lg fs-4 text-primary"></i>
+				</div>
+				<p class="text-muted small mb-0 fw-bold">Cliquez ou glissez vos nouvelles images ici</p>
+				<div id="preview-container" class="d-flex gap-3 flex-wrap mt-4 justify-content-center"></div>
+			</div>
+		</div>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Tarification & Surface</h5>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Surface (m²)</label>
-                        {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Prix par mois (€)</label>
-                        {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-            </div>
+		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+			<h4 class="fw-bold mb-1">Localisation</h4>
+			<div class="mb-3 mt-3">
+				<label class="form-label fw-bold">Adresse</label>
+				{{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+			</div>
+			<div class="row g-3">
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Ville</label>
+					{{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+				</div>
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Code postal</label>
+					{{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+				</div>
+			</div>
+		</div>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Détails supplémentaires</h5>
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Équipements</label>
-                    {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="mb-0">
-                    <label class="form-label fw-bold small">Règles</label>
-                    {{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control'}}) }}
-                </div>
-            </div>
+		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+			<h4 class="fw-bold mb-1">Tarification & Surface</h4>
+			<div class="row g-3 mt-2">
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Surface (m²)</label>
+					<div class="input-group input-group-lg">
+						{{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control rounded-start-3 bg-light border-0'}}) }}
+						<span class="input-group-text bg-light border-0 rounded-end-3">m²</span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Prix par mois</label>
+					<div class="input-group input-group-lg">
+						{{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control rounded-start-3 bg-light border-0'}}) }}
+						<span class="input-group-text bg-light border-0 rounded-end-3">€</span>
+					</div>
+				</div>
+			</div>
+		</div>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Disponibilité</h5>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Du</label>
-                        {{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Au</label>
-                        {{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-            </div>
+		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+			<h4 class="fw-bold mb-3">Détails & Disponibilité</h4>
+			<div class="row g-4 mb-4">
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Équipements</label>
+					{{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-select form-select-lg rounded-3 bg-light border-0', 'style': 'min-height:150px;'}}) }}
+				</div>
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Règles</label>
+					{{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control rounded-3 bg-light border-0', 'style': 'height: 150px; resize: none;'}}) }}
+				</div>
+			</div>
+			<div class="row g-4">
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Du</label>
+					{{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+				</div>
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Au</label>
+					{{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+				</div>
+			</div>
+		</div>
 
-            <div class="text-center pb-5">
-                <button type="submit" class="btn btn-light bg-white fw-bold px-5 py-3 rounded-pill shadow-lg border-0" style="font-size: 1.1rem;">
-                    Enregistrer les modifications
-                </button>
-            </div>
+		<div class="text-center mt-5 mb-5">
+			<button type="submit" class="btn btn-light btn-lg fw-bold px-5 py-3 rounded-pill shadow-lg">
+				<i class="bi bi-check-circle-fill me-2"></i>
+				Enregistrer les modifications
+			</button>
+		</div>
 
-            {{ form_end(formAnnonce) }}
-        </div>
-    </div>
+		{{ form_end(formAnnonce) }}
+	</div>
 
-    <script>
-        function deleteExistingPhoto(photoId) {
-            if (confirm('Voulez-vous vraiment supprimer cette photo ?')) {
-                fetch('/announce/picture/' + photoId + '/delete', {
-                    method: 'DELETE',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Supprimer l'élément du DOM
-                            document.getElementById('photo-' + photoId).remove();
-                        } else {
-                            alert('Erreur lors de la suppression');
-                        }
-                    })
-                    .catch(error => console.error('Erreur:', error));
-            }
-        }
+{% endblock %}
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropZone = document.getElementById('drop-zone');
-            const fileInput = document.getElementById('announce_images');
-            const previewContainer = document.getElementById('preview-container');
-
-            dropZone.addEventListener('click', () => fileInput.click());
-
-            fileInput.addEventListener('change', function() {
-                previewContainer.innerHTML = '';
-                Array.from(this.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'preview-image';
-                        previewContainer.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            });
-        });
-    </script>
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/announce_edit.js') }}"></script>
 {% endblock %}

@@ -1,324 +1,166 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer une annonce{% endblock %}
+{% set bg_image = true %}
+{% set header_transparent = true %}
+{% set show_btn_bot = true %}
+{% set show_btn_message = true %}
+{% set show_btn_profile = true %}
+{% set show_btn_notif = true %}
+{% set show_btn_logout = false %}
+{% set show_btn_login = false %}
 
-{% block stylesheets %}
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .form-control, .form-select {
-            background-color: #f8f9fa;
-            border: 0.0625rem solid #e9ecef;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-        }
-        .form-control:focus, .form-select:focus {
-            background-color: #fff;
-            box-shadow: 0 0 0 0.25rem rgba(0,0,0,0.05);
-            border-color: #dee2e6;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 0.25rem 1.5rem rgba(0,0,0,0.06);
-        }
-        .upload-area {
-            border: 0.125rem dashed #dee2e6;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-        .upload-area:hover, .upload-area.dragover {
-            border-color: #adb5bd;
-            background-color: #f8f9fa;
-        }
-        .preview-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-            width: 100%;
-        }
-        .preview-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100px;
-        }
-        .preview-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .btn-remove-image {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 14px;
-            line-height: 24px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-remove-image:hover {
-            background-color: #bb2d3b;
-            transform: scale(1.1);
-        }
-    </style>
+{% block title %}Créer une annonce
 {% endblock %}
 
 {% block body %}
+	<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-n1" style="backdrop-filter: blur(5px);"></div>
+	<div class="container py-5" style="max-width:850px;">
+		<div class="text-center mb-5 text-white">
+			<h1 class="fw-bold display-5">Publier une annonce</h1>
+			<p class="lead opacity-75">Partagez votre logement avec la communauté CoLive</p>
+		</div>
 
-    <div style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{{ asset('img/home.png') }}') no-repeat center center fixed; background-size: cover; min-height: 100vh; padding-top: 3rem; padding-bottom: 5rem;">
+		{{ form_start(formAnnonce) }}
 
-        <div class="container" style="max-width: 53rem;">
+		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+			<h4 class="fw-bold mb-1">Informations de base</h4>
+			<p class="text-muted small mb-4">Décrivez votre logement en quelques mots</p>
 
-            <div class="mb-4 text-start">
-                <a href="{{ path('app_home') }}" class="text-decoration-none">
-                    <span class="bg-black text-white d-inline-flex align-items-center justify-content-center rounded-3 fw-bold" style="width: 2.5rem; height: 2.5rem; font-size: 1.2rem;">C</span>
-                </a>
+			<div class="row g-4">
+				<div class="col-md-6 d-flex flex-column gap-3">
+					<div>
+						<label class="form-label fw-bold">Titre de l'annonce
+							<span class="text-danger">*</span>
+						</label>
+						{{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : Chambre confortable...'}}) }}
+					</div>
+					<div>
+						<label class="form-label fw-bold">Type de logement
+							<span class="text-danger">*</span>
+						</label>
+						{{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select form-select-lg rounded-3 bg-light border-0'}}) }}
+					</div>
+					<div>
+						<label class="form-label fw-bold">Nombre de pièces
+							<span class="text-danger">*</span>
+						</label>
+						{{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : 2'}}) }}
+					</div>
+				</div>
+				<div class="col-md-6">
+					<label class="form-label fw-bold">Description
+						<span class="text-danger">*</span>
+					</label>
+					{{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control rounded-3 bg-light border-0', 'style': 'height: 100%; min-height: 200px; resize: none;', 'placeholder': 'Décrivez votre logement, l\'ambiance, les avantages...'}}) }}
             </div>
-
-            {{ form_start(formAnnonce) }}
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Informations de base</h5>
-                <p class="text-muted small mb-4">Décrivez votre logement en quelques mots</p>
-
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">Titre de l'annonce <span class="text-danger">*</span></label>
-                            {{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control', 'placeholder': 'Ex : Chambre confortable près de l\'université'}}) }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">Type de logement <span class="text-danger">*</span></label>
-                            {{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select'}}) }}
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label fw-bold small">Nombre de pièces <span class="text-danger">*</span></label>
-                            {{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control', 'placeholder': 'Nombre de pièces'}}) }}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div>
-                            <label class="form-label fw-bold small">Description <span class="text-danger">*</span></label>
-                            {{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control', 'style': 'height: 14rem; resize: none;', 'placeholder': 'Décrivez votre logement, l\'ambiance, les avantages...'}}) }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Localisation</h5>
-                <p class="text-muted small mb-4">Où se trouve votre logement ?</p>
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Adresse <span class="text-danger">*</span></label>
-                    {{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Numéro et nom de rue'}}) }}
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Ville <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Code postal <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control', 'placeholder': 'Code postal'}}) }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Tarification</h5>
-                <p class="text-muted small mb-4">Définissez le prix de votre logement</p>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Surface (m²) <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control', 'placeholder': '25'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Prix par mois (€) <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control', 'placeholder': '450'}}) }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Photos</h5>
-                <p class="text-muted small mb-4">Ajoutez des photos de votre logement (optionnel)</p>
-
-                <div class="d-none">
-                    {{ form_widget(formAnnonce.images) }}
-                </div>
-
-                <div class="upload-area rounded-4 p-5 text-center d-flex flex-column align-items-center justify-content-center bg-white" id="drop-zone" style="min-height: 12.5rem;">
-                    <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2 mb-3 fw-medium" style="pointer-events: none;">Choisir des fichiers</button>
-                    <p class="text-muted small mb-0">Glissez-déposez vos photos ici ou cliquez pour sélectionner</p>
-                    <div id="preview-container" class="preview-container"></div>
-                </div>
-
-                <div class="text-danger mt-2 small">
-                    {{ form_errors(formAnnonce.images) }}
-                </div>
-            </div>
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Équipements et services</h5>
-                <p class="text-muted small mb-4">Quels équipements sont disponibles ?</p>
-                <label class="form-label fw-bold small">Liste des équipements <span class="text-danger">*</span></label>
-                {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Wifi, Cuisine équipée, Lave-linge...'}}) }}
-            </div>
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Disponibilité</h5>
-                <p class="text-muted small mb-4">Quand votre logement est-il disponible ?</p>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Disponible à partir du <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Disponible jusqu'au <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Règles du logement</h5>
-                <p class="text-muted small mb-4">Y a-t-il des règles particulières à respecter ?</p>
-                <label class="form-label fw-bold small">Règles et informations complémentaires</label>
-                {{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control', 'placeholder': 'Ex : Pas de fêtes, respect du calme après 22h, etc.'}}) }}
-            </div>
-
-            <div class="text-center pb-5">
-                <button type="submit" class="btn btn-light bg-white fw-bold px-5 py-3 rounded-pill shadow-lg border-0" style="font-size: 1.1rem;">
-                    Publier l'annonce
-                </button>
-            </div>
-
-            {{ form_end(formAnnonce) }}
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropZone = document.getElementById('drop-zone');
-            const fileInput = document.getElementById('announce_images');
-            const previewContainer = document.getElementById('preview-container');
 
-            let filesArray = [];
+    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+        <h4 class="fw-bold mb-1">Localisation</h4>
+        <p class="text-muted small mb-4">Où se trouve votre logement ?</p>
+        
+        <div class="mb-3">
+            <label class="form-label fw-bold">Adresse <span class="text-danger">*</span></label>
+            {{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Numéro et nom de rue'}}) }}
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Ville <span class="text-danger">*</span></label>
+                {{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : Paris'}}) }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Code postal <span class="text-danger">*</span></label>
+                {{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : 75001'}}) }}
+            </div>
+        </div>
+    </div>
 
-            dropZone.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-remove-image')) return;
-                fileInput.click();
-            });
+    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+        <h4 class="fw-bold mb-1">Tarification & Surface</h4>
+        <p class="text-muted small mb-4">Définissez les caractéristiques principales</p>
+        
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Surface (m²) <span class="text-danger">*</span></label>
+                <div class="input-group input-group-lg">
+                    {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control rounded-start-3 bg-light border-0', 'placeholder': '25'}}) }}
+                    <span class="input-group-text bg-light border-0 rounded-end-3">m²</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Prix par mois <span class="text-danger">*</span></label>
+                <div class="input-group input-group-lg">
+                    {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control rounded-start-3 bg-light border-0', 'placeholder': '450'}}) }}
+                    <span class="input-group-text bg-light border-0 rounded-end-3">€</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-            });
+    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+        <h4 class="fw-bold mb-1">Photos</h4>
+        <p class="text-muted small mb-4">Ajoutez des photos attrayantes de votre logement (optionnel)</p>
 
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+        <div class="d-none">
+            {{ form_widget(formAnnonce.images) }}
+        </div>
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-            });
+        <div class="border border-2 border-dashed rounded-4 p-5 text-center d-flex flex-column align-items-center justify-content-center bg-light" id="drop-zone" style="cursor: pointer; transition: all 0.2s;">
+            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                <i class="bi bi-cloud-arrow-up-fill fs-3 text-primary"></i>
+            </div>
+            <button type="button" class="btn btn-dark rounded-pill px-4 py-2 mb-2 fw-bold">Parcourir les fichiers</button>
+            <p class="text-muted small mb-0">ou glissez-déposez vos photos ici</p>
+            <div id="preview-container" class="d-flex gap-3 flex-wrap mt-4 justify-content-center"></div>
+        </div>
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-            });
+        <div class="text-danger mt-2 small fw-bold text-center">
+            {{ form_errors(formAnnonce.images) }}
+        </div>
+    </div>
 
-            dropZone.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                const newFiles = Array.from(dt.files);
-                addFiles(newFiles);
-            });
+    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+        <h4 class="fw-bold mb-1">Équipements et services</h4>
+        <p class="text-muted small mb-4">Sélectionnez les équipements disponibles</p>
+        
+        {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-select form-select-lg rounded-3 bg-light border-0', 'style': 'min-height:150px;'}}) }}
+    </div>
 
-            fileInput.addEventListener('change', function() {
-                const newFiles = Array.from(this.files);
-                addFiles(newFiles);
-            });
+    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
+        <h4 class="fw-bold mb-1">Disponibilité & Règles</h4>
+        <p class="text-muted small mb-4">Précisez vos conditions</p>
+        
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Disponible à partir du <span class="text-danger">*</span></label>
+                {{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Disponible jusqu'au <span class="text-danger">*</span></label>
+                {{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
+				</div>
+			</div>
 
-            function addFiles(newFiles) {
-                filesArray = filesArray.concat(newFiles);
-                updateInputFiles();
-                renderPreview();
-            }
+			<div>
+				<label class="form-label fw-bold">Règles et informations complémentaires</label>
+				{{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : Animaux non autorisés, non-fumeur...'}}) }}
+			</div>
+		</div>
 
-            function removeFile(index) {
-                filesArray.splice(index, 1);
-                updateInputFiles();
-                renderPreview();
-            }
+		<div class="text-center mt-5 mb-5">
+			<button type="submit" class="btn btn-light btn-lg fw-bold px-5 py-3 rounded-pill shadow-lg">
+				<i class="bi bi-send-fill me-2"></i>
+				Publier mon annonce
+			</button>
+		</div>
 
-            function updateInputFiles() {
-                const dataTransfer = new DataTransfer();
-                filesArray.forEach(file => {
-                    dataTransfer.items.add(file);
-                });
-                fileInput.files = dataTransfer.files;
-            }
+		{{ form_end(formAnnonce) }}
+	</div>
 
-            function renderPreview() {
-                previewContainer.innerHTML = '';
+{% endblock %}
 
-                const btn = dropZone.querySelector('button');
-                const txt = dropZone.querySelector('p');
-
-                if (filesArray.length > 0) {
-                    btn.style.display = 'none';
-                    txt.style.display = 'none';
-                } else {
-                    btn.style.display = 'block';
-                    txt.style.display = 'block';
-                }
-
-                filesArray.forEach((file, index) => {
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'preview-wrapper';
-
-                        const img = document.createElement('img');
-                        img.className = 'preview-image';
-
-                        // Bouton supprimer
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'btn-remove-image';
-                        removeBtn.innerHTML = '&times;';
-                        removeBtn.type = 'button';
-                        removeBtn.onclick = (e) => {
-                            e.stopPropagation();
-                            removeFile(index);
-                        };
-
-                        reader.onloadend = function() {
-                            img.src = reader.result;
-                        }
-
-                        wrapper.appendChild(img);
-                        wrapper.appendChild(removeBtn);
-                        previewContainer.appendChild(wrapper);
-                    }
-                });
-            }
-        });
-    </script>
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/announce_create.js') }}"></script>
 {% endblock %}

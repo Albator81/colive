@@ -3,46 +3,45 @@
 {% block title %}Dashboard Admin - CoLive{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('styles/admin.css') }}">
+    {{ parent() }}
 {% endblock %}
 
 {% block body %}
-    <div class="container admin-container">
-
-        <div class="dashboard-header d-flex justify-content-between align-items-center">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
-                <h1>Espace Admin</h1>
-                <p class="text-muted">Gérez les annonces et la communauté CoLive.</p>
+                <h1 class="h2 fw-bold">Espace Admin</h1>
+                <p class="text-muted mb-0">Gérez les annonces et la communauté CoLive.</p>
             </div>
-            <a href="{{ path('app_home') }}" class="btn btn-colive-outline">Retour au site</a>
+            <a href="{{ path('app_home') }}" class="btn btn-outline-dark rounded-pill">Retour au site</a>
         </div>
 
-        <div class="row">
+        <div class="row g-4 mb-5">
             <div class="col-md-4">
-                <div class="stat-card">
-                    <span class="stat-label">Annonces en attente</span>
-                    <span class="stat-number">{{ pendingAnnounces|length }}</span>
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <span class="text-muted small">Annonces en attente</span>
+                    <span class="h2 fw-bold d-block text-warning">{{ pendingAnnounces|length }}</span>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="stat-card">
-                    <span class="stat-label">Total Avis</span>
-                    <span class="stat-number">{{ reviews|length }}</span>
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <span class="text-muted small">Total Avis</span>
+                    <span class="h2 fw-bold d-block">{{ reviews|length }}</span>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="stat-card">
-                    <span class="stat-label">Statut Système</span>
-                    <span class="stat-number text-success" style="font-size: 1.2rem; margin-top: 15px;">● Opérationnel</span>
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <span class="text-muted small">Statut Système</span>
+                    <span class="h5 fw-bold d-block text-success"><span class="me-1">●</span>Opérationnel</span>
                 </div>
             </div>
         </div>
 
-        <div class="admin-card">
-            <h2>Modération des annonces</h2>
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <h2 class="h5 fw-bold mb-4">Modération des annonces</h2>
             <div class="table-responsive">
-                <table class="custom-table">
-                    <thead>
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
                     <tr>
                         <th>Logement</th>
                         <th>Localisation</th>
@@ -56,12 +55,12 @@
                         <tr>
                             <td class="fw-bold">{{ announce.titre }}</td>
                             <td>{{ announce.ville }}</td>
-                            <td><span class="badge-price">{{ announce.prix }}€</span></td>
-                            <td>{{ announce.utilisateur.email }}</td>
+                            <td><span class="badge bg-dark rounded-pill">{{ announce.prix }}€</span></td>
+                            <td class="text-muted">{{ announce.utilisateur.email }}</td>
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ path('app_admin_announce_validate', {id: announce.id}) }}" class="btn btn-colive-black">Valider</a>
-                                    <a href="{{ path('app_admin_announce_delete', {id: announce.id}) }}" class="btn btn-colive-outline btn-sm" onclick="return confirm('Supprimer ?')">Refuser</a>
+                                    <a href="{{ path('app_admin_announce_validate', {id: announce.id}) }}" class="btn btn-success btn-sm rounded-pill">Valider</a>
+                                    <a href="{{ path('app_admin_announce_delete', {id: announce.id}) }}" class="btn btn-outline-danger btn-sm rounded-pill" onclick="return confirm('Supprimer ?')">Refuser</a>
                                 </div>
                             </td>
                         </tr>
@@ -75,11 +74,11 @@
             </div>
         </div>
 
-        <div class="admin-card">
-            <h2>Derniers commentaires</h2>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h2 class="h5 fw-bold mb-4">Derniers commentaires</h2>
             <div class="table-responsive">
-                <table class="custom-table">
-                    <thead>
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
                     <tr>
                         <th>Auteur</th>
                         <th>Commentaire</th>
@@ -91,14 +90,14 @@
                     {% for review in reviews %}
                         <tr>
                             <td><strong>{{ review.utilisateur.prenom }}</strong></td>
-                            <td class="text-muted italic">"{{ review.commentaire }}"</td>
+                            <td class="fst-italic text-muted">"{{ review.commentaire }}"</td>
                             <td>
                                 {% for i in 1..5 %}
-                                    <span style="color: {{ i <= review.note ? 'black' : '#ddd' }};">★</span>
+                                    <i class="bi bi-star-fill {{ i <= review.note ? 'text-warning' : 'text-muted' }}"></i>
                                 {% endfor %}
                             </td>
                             <td class="text-end">
-                                <a href="{{ path('app_admin_review_delete', {id: review.id}) }}" class="btn btn-colive-outline btn-sm" onclick="return confirm('Supprimer cet avis ?')">Supprimer</a>
+                                <a href="{{ path('app_admin_review_delete', {id: review.id}) }}" class="btn btn-outline-danger btn-sm rounded-pill" onclick="return confirm('Supprimer cet avis ?')">Supprimer</a>
                             </td>
                         </tr>
                     {% endfor %}
