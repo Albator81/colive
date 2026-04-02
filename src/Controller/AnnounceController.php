@@ -33,7 +33,7 @@ final class AnnounceController extends AbstractController
     public function create(Request $request, EntityManagerInterface $em, HttpClientInterface $httpClient): Response
     {
         $annonce = new Announce();
-        $form = $this->createForm(AnnounceType::class, $annonce);
+        $form = $this->createForm(AnnounceType::class, $annonce, ['user' => $this->getUser()]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $annonce->setUtilisateur($this->getUser());
@@ -124,7 +124,7 @@ final class AnnounceController extends AbstractController
             return $this->redirectToRoute('app_profile');
         }
 
-        $form = $this->createForm(AnnounceType::class, $annonce);
+        $form = $this->createForm(AnnounceType::class, $annonce, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -1,230 +1,208 @@
 {% extends 'base.html.twig' %}
 
-{# Configuration pour le base.html.twig #}
 {% set bg_image = false %}
 {% set header_transparent = true %}
 
 {% block title %}
-	{{ announce.titre }}
+    {{ announce.titre }}
 {% endblock %}
 
 {% block stylesheets %}
-	{{ parent() }}
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 {% endblock %}
 
 {% block body %}
 
-	{# Préparation des données pour le JavaScript #}
-	{% set photos_array = [] %}
-	{% if announce.photos is not empty %}
-		{% for photo in announce.photos %}
-			{% set photos_array = photos_array|merge([photo.contenu]) %}
-		{% endfor %}
-	{% else %}
-		{% set photos_array = ['https://picsum.photos/seed/' ~ announce.id ~ '/800/1000'] %}
-	{% endif %}
+    {% set photos_array = [] %}
+    {% if announce.photos is not empty %}
+        {% for photo in announce.photos %}
+            {% set photos_array = photos_array|merge([photo.contenu]) %}
+        {% endfor %}
+    {% else %}
+        {% set photos_array = ['https://picsum.photos/seed/' ~ announce.id ~ '/800/1000'] %}
+    {% endif %}
 
-<div id="announce-data" class="d-none" data-photos="{{ photos_array|json_encode|e('html_attr') }}" data-announce-id="{{ announce.id }}" data-login-url="{{ path('app_login') }}" data-is-logged-in="{{ app.user ? 'true' : 'false' }}" data-lat=" {{ announce.latitude }} " data-lng=" {{ announce.longitude }} " data-address=" {{ announce.adresse }} , {{ announce.codepostal }} - {{ announce.ville }} "></div>
+<div id="announce-data" class="d-none" data-photos="{{ photos_array|json_encode|e('html_attr') }}" data-announce-id="{{ announce.id }}" data-login-url="{{ path('app_login') }}" data-is-logged-in="{{ app.user ? 'true' : 'false' }}" data-lat="{{ announce.latitude }}" data-lng="{{ announce.longitude }}" data-address="{{ announce.adresse }} , {{ announce.codepostal }} - {{ announce.ville }}"></div>
 
+    <div class="bg-white min-vh-100">
 
-	<div
-		class="bg-white min-vh-100">
+        <div class="position-relative" style="height: 50vh; min-height: 400px; margin-top: -76px;">
+            <img id="main-hero-img" src="{{ photos_array[0] }}" class="w-100 h-100 object-fit-cover" alt="Couverture" style="cursor: pointer;" onclick="handleHeroClick()">
 
-		<!-- Hero Image (Remonte sous l'en-tête transparent) -->
-		<div class="position-relative" style="height: 50vh; min-height: 400px; margin-top: -76px;">
-			<img id="main-hero-img" src="{{ photos_array[0] }}" class="w-100 h-100 object-fit-cover" alt="Couverture" style="cursor: pointer;" onclick="handleHeroClick()">
+            <div id="desktop-photo-count" class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-3 py-1 m-3 rounded-pill fw-semibold small">
+                1 / {{ photos_array|length }}
+            </div>
 
-			<div id="desktop-photo-count" class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-3 py-1 m-3 rounded-pill fw-semibold small">
-				1 /
-				{{ photos_array|length }}
-			</div>
+            <a href="{{ path('app_announce') }}" class="position-absolute top-50 start-0 translate-middle-y m-3 btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 2;">
+                <i class="bi bi-arrow-left fs-5"></i>
+            </a>
 
-			<!-- Bouton de retour -->
-			<a href="{{ path('app_announce') }}" class="position-absolute top-50 start-0 translate-middle-y m-3 btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 2;">
-				<i class="bi bi-arrow-left fs-5"></i>
-			</a>
+            {% if photos_array|length > 1 %}
+                <div class="position-absolute bottom-0 end-0 mb-5 pb-3 me-3 d-flex gap-2">
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(-1, event)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(1, event)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            {% endif %}
+        </div>
 
-			<!-- Navigation Carousel Image -->
-			{% if photos_array|length > 1 %}
-				<div class="position-absolute bottom-0 end-0 mb-5 pb-3 me-3 d-flex gap-2">
-					<button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(-1, event)">
-						<i class="bi bi-chevron-left"></i>
-					</button>
-					<button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(1, event)">
-						<i class="bi bi-chevron-right"></i>
-					</button>
-				</div>
-			{% endif %}
-		</div>
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-9">
 
-		<div
-			class="container py-5">
-			<!-- Conteneur centré sur une seule colonne -->
-			<div class="row justify-content-center">
-				<div
-					class="col-12 col-lg-10 col-xl-9">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
+                            <p class="text-muted fs-5 mb-3">
+                                <i class="bi bi-geo-alt-fill text-primary"></i>
+                                {{ announce.ville }}
+                            </p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.type }}</span>
+                                {% if announce.surface %}
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.surface }} m²</span>
+                                {% endif %}
+                                {% if announce.nbPieces %}
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.nbPieces }} pièces</span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-					<!-- Titre, Badges et Bouton Like -->
-					<div class="d-flex justify-content-between align-items-start mb-4">
-						<div>
-							<h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
-							<p class="text-muted fs-5 mb-3">
-								<i class="bi bi-geo-alt-fill text-primary"></i>
-								{{ announce.ville }}</p>
-							<div class="d-flex gap-2 flex-wrap">
-								<span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.type }}</span>
-								{% if announce.surface %}
-									<span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.surface }}
-										m²</span>
-								{% endif %}
-								{% if announce.nbPieces %}
-									<span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.nbPieces }}
-										pièces</span>
-								{% endif %}
-							</div>
-						</div>
+                        {% set isLiked = false %}
+                        {% if app.user %}
+                            {% for like in announce.likes %}
+                                {% if like.utilisateur == app.user %}
+                                    {% set isLiked = true %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
 
-						{% set isLiked = false %}
-						{% if app.user %}
-							{% for like in announce.likes %}
-								{% if like.utilisateur == app.user %}
-									{% set isLiked = true %}
-								{% endif %}
-							{% endfor %}
-						{% endif %}
+                        <button class="btn bg-transparent border-0 p-0 shadow-none d-inline-flex align-items-center justify-content-center ms-3" onclick="toggleLike(event, {{ announce.id }})">
+                            <i class="bi {{ isLiked ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' }} fs-1"></i>
+                        </button>
+                    </div>
 
-						<button class="btn bg-transparent border-0 p-0 shadow-none d-inline-flex align-items-center justify-content-center ms-3" onclick="toggleLike(event, {{ announce.id }})">
-							<i class="bi {{ isLiked ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' }} fs-1" style="transition: transform 0.2s ease-in-out;"></i>
-						</button>
-					</div>
+                    <div class="card bg-light border-0 shadow-sm rounded-4 p-4 mb-5">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+                            <div class="flex-grow-1">
+                                <div class="fs-1 fw-bold text-dark mb-3">
+                                    {{ announce.prix }}€
+                                    <span class="fs-5 text-muted fw-normal">/ mois</span>
+                                </div>
+                                <div class="d-inline-flex align-items-center gap-3 bg-white border rounded-pill px-4 py-2 shadow-sm">
+                                    <div>
+                                        <span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Arrivée</span>
+                                        <span class="fw-bold">{{ announce.disponibiliteDebut|date('d/m/Y') }}</span>
+                                    </div>
+                                    <i class="bi bi-arrow-right text-muted"></i>
+                                    <div>
+                                        <span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Départ</span>
+                                        <span class="fw-bold">{{ announce.disponibiliteFin|date('d/m/Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
 
-					<!-- CARTE DE RÉSERVATION (Prix, Dates, Boutons) intégrée sous le titre -->
-					<div class="card bg-light border-0 shadow-sm rounded-4 p-4 mb-5">
-						<div
-							class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+                            <div class="d-flex flex-column gap-2" style="min-width: 250px;">
+                                {% if app.user %}
+                                    <a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Réserver ce logement</a>
+                                {% else %}
+                                    <a href="{{ path('app_login') }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Connectez-vous pour réserver</a>
+                                {% endif %}
+                                <a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn btn-outline-dark btn-white-bg rounded-pill fw-semibold shadow-sm">Contacter l'hôte</a>
+                            </div>
+                        </div>
+                    </div>
 
-							<!-- Informations : Prix et Dates -->
-							<div class="flex-grow-1">
-								<div class="fs-1 fw-bold text-dark mb-3">
-									{{ announce.prix }}€
-									<span class="fs-5 text-muted fw-normal">/ mois</span>
-								</div>
-								<div class="d-inline-flex align-items-center gap-3 bg-white border rounded-pill px-4 py-2 shadow-sm">
-									<div>
-										<span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Arrivée</span>
-										<span class="fw-bold">{{ announce.disponibiliteDebut|date('d/m/Y') }}</span>
-									</div>
-									<i class="bi bi-arrow-right text-muted"></i>
-									<div>
-										<span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Départ</span>
-										<span class="fw-bold">{{ announce.disponibiliteFin|date('d/m/Y') }}</span>
-									</div>
-								</div>
-							</div>
+                    {% if announce.utilisateur %}
+                        <div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
+                                <div>
+                                    <h3 class="h5 fw-bold mb-1">Hôte : {{ announce.utilisateur.prenom }}</h3>
+                                    <span class="text-muted small">
+                                        <i class="bi bi-shield-check text-success me-1"></i>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
 
-							<!-- Actions : Boutons -->
-							<div class="d-flex flex-column gap-2" style="min-width: 250px;">
-								{% if app.user %}
-									<a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Réserver ce logement</a>
-								{% else %}
-									<a href="{{ path('app_login') }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Connectez-vous pour réserver</a>
-								{% endif %}
-								<a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn btn-outline-dark btn-white-bg rounded-pill fw-semibold shadow-sm">Contacter l'hôte</a>
-							</div>
-						</div>
-					</div>
+                    <section class="mb-5">
+                        <h2 class="h4 fw-bold mb-4">À propos de ce logement</h2>
+                        <p class="text-secondary lh-lg">{{ announce.description }}</p>
+                    </section>
 
-					<!-- Hôte -->
-					{% if announce.utilisateur %}
-						<div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
-							<div class="d-flex align-items-center gap-3">
-								<img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
-								<div>
-									<h3 class="h5 fw-bold mb-1">Hôte :
-										{{ announce.utilisateur.prenom }}</h3>
-									<span class="text-muted small">
-										<i class="bi bi-shield-check text-success me-1"></i>Inscrit en
-										{{ announce.utilisateur.dateCreationCompte|date('Y') }}</span>
-								</div>
-							</div>
-						</div>
-					{% endif %}
+                    {% if announce.equipment|length > 0 or announce.userEquipments|length > 0 %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Ce que propose ce logement</h2>
+                            <div class="d-flex flex-wrap gap-3">
+                                {% for equipment in announce.equipment %}
+                                    <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
+                                        <i class="bi bi-check-circle-fill text-dark"></i>
+                                        <span>{{ equipment.nom }}</span>
+                                    </div>
+                                {% endfor %}
+                                
+                                {% for userEquipment in announce.userEquipments %}
+                                    <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
+                                        <i class="bi bi-plus-circle-fill text-primary"></i>
+                                        <span>{{ userEquipment.nom }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
 
-					<!-- Description -->
-					<section class="mb-5">
-						<h2 class="h4 fw-bold mb-4">À propos de ce logement</h2>
-						<p class="text-secondary lh-lg">{{ announce.description }}</p>
-					</section>
+                    {% if announce.photos|length > 1 %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Toutes les photos</h2>
+                            <div class="row g-3">
+                                {% for photo in announce.photos|slice(1) %}
+                                    <div class="col-6 col-md-4 col-lg-3">
+                                        <img src="{{ photo.contenu }}" alt="Photo" class="rounded-3 w-100 shadow-sm object-fit-cover" style="height: 140px; cursor: pointer;" onclick="openLightbox({{ loop.index }})">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
 
-					<!-- Photos -->
-					{% if announce.photos|length > 1 %}
-						<section class="mb-5">
-							<h2 class="h4 fw-bold mb-4">Toutes les photos</h2>
-							<div class="row g-3">
-								{% for photo in announce.photos|slice(1) %}
-									<div class="col-6 col-md-4 col-lg-3">
-										<img src="{{ photo.contenu }}" alt="Photo" class="rounded-3 w-100 shadow-sm object-fit-cover" style="height: 140px; cursor: pointer;" onclick="openLightbox({{ loop.index }})">
-									</div>
-								{% endfor %}
-							</div>
-						</section>
-					{% endif %}
+                    {% if announce.latitude != 0 and announce.longitude != 0 %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Où se situe le logement</h2>
+                            <div id="map" class="rounded-4 shadow-sm border" style="height: 400px; z-index: 1;"></div>
+                        </section>
+                    {% endif %}
 
-					<!-- Équipements -->
-					{% if announce.equipment %}
-						<section class="mb-5">
-							<h2 class="h4 fw-bold mb-4">Ce que propose ce logement</h2>
-							<div class="d-flex flex-wrap gap-3">
-								{% for equipment in announce.equipment %}
-									<div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
-										<i class="bi bi-check-circle-fill text-dark"></i>
-										<span>{{ equipment.nom }}</span>
-									</div>
-								{% endfor %}
-							</div>
-						</section>
-					{% endif %}
+                </div>
+            </div>
+        </div>
 
-					<!-- Carte (Map) -->
-					{% if announce.latitude != 0 and announce.longitude != 0 %}
-						<section class="mb-5">
-							<h2 class="h4 fw-bold mb-4">Où se situe le logement</h2>
-							<div id="map" class="rounded-4 shadow-sm border" style="height: 400px; z-index: 1;"></div>
-						</section>
-					{% endif %}
-
-				</div>
-			</div>
-		</div>
-
-		<!-- Lightbox (Plein écran pour les images) -->
-		<div id="lightbox" class="position-fixed top-0 start-0 w-100 h-100 bg-black bg-opacity-75 d-none align-items-center justify-content-center" style="z-index: 9999;">
-			<button class="position-absolute top-0 end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="closeLightbox()">
-				<i class="bi bi-x-lg"></i>
-			</button>
-
-			<button class="position-absolute start-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="prevImage(event)">
-				<i class="bi bi-chevron-left"></i>
-			</button>
-
-			<img id="lightbox-img" src="" class="w-100 h-75 object-fit-contain" alt="Plein écran">
-
-			<button class="position-absolute end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="nextImage(event)">
-				<i class="bi bi-chevron-right"></i>
-			</button>
-
-			<div id="lightbox-counter" class="position-absolute bottom-0 start-50 translate-middle-x text-white bg-dark bg-opacity-50 px-3 py-1 rounded-pill mb-4">1 / 1</div>
-		</div>
-	</div>
+        <div id="lightbox" class="position-fixed top-0 start-0 w-100 h-100 bg-black bg-opacity-75 d-none align-items-center justify-content-center" style="z-index: 9999;">
+            <button class="position-absolute top-0 end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="closeLightbox()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <button class="position-absolute start-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="prevImage(event)">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <img id="lightbox-img" src="" class="w-100 h-75 object-fit-contain" alt="Plein écran">
+            <button class="position-absolute end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="nextImage(event)">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+            <div id="lightbox-counter" class="position-absolute bottom-0 start-50 translate-middle-x text-white bg-dark bg-opacity-50 px-3 py-1 rounded-pill mb-4">1 / 1</div>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	<script src="{{ asset('js/announce_show.js') }}"></script>
-	{% if announce.latitude != 0 and announce.longitude != 0 %}
-		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-		<script src="{{ asset('js/announce_show_map.js') }}"></script>
-	{% endif %}
+    {{ parent() }}
+    <script src="{{ asset('js/announce_show.js') }}"></script>
+    {% if announce.latitude != 0 and announce.longitude != 0 %}
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="{{ asset('js/announce_show_map.js') }}"></script>
+    {% endif %}
 {% endblock %}

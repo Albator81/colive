@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Announce;
 use App\Entity\Equipment;
+use App\Entity\UserEquipment;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -25,7 +26,7 @@ class AnnounceType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class, [
-                'label' => 'Titre de l\'announce',
+                'label' => 'Titre de l\'annonce',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description détaillée',
@@ -50,12 +51,27 @@ class AnnounceType extends AbstractType
                 'class' => Equipment::class,
                 'choice_label' => 'nom',
                 'multiple' => true,
-                'expanded' => true,
+                'expanded' => false,
+                'label' => 'Équipements',
+            ])
+            ->add('userEquipments', EntityType::class, [
+                'class' => UserEquipment::class,
+                'choice_label' => 'nom',
+                'multiple' => true,
+                'expanded' => false,
+                'label' => 'Mes équipements personnalisés',
+                'query_builder' => function ($repo) use ($options) {
+                    if (!isset($options['user'])) {
+                        return $repo->createQueryBuilder('ue')->where('1 = 0');
+                    }
+                    return $repo->createQueryBuilder('ue')
+                        ->where('ue.utilisateur = :user')
+                        ->setParameter('user', $options['user']);
+                },
             ])
             ->add('regle', TextareaType::class, [
                 'required' => false,
             ])
-//            ->add('dateCreation')
             ->add('disponibilite_debut', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Disponible du',
@@ -95,10 +111,6 @@ class AnnounceType extends AbstractType
                     'class' => 'd-none',
                 ],
             ])
-//            ->add('utilisateur', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'id',
-//            ])
         ;
     }
 
@@ -106,6 +118,7 @@ class AnnounceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Announce::class,
+            'user' => null,
         ]);
     }
 }

@@ -140,6 +140,16 @@ class Announce
     #[Groups(['announce_read'])]
     private Collection $equipment;
 
+    /**
+     * @var Collection<int, UserEquipment>
+     */
+    #[ORM\ManyToMany(targetEntity: UserEquipment::class, inversedBy: 'annonces')]
+    #[ORM\JoinTable(name: 'announce_user_equipment')]
+    #[ORM\JoinColumn(name: 'announce_id', referencedColumnName: 'id_annonce')]
+    #[ORM\InverseJoinColumn(name: 'user_equipment_id', referencedColumnName: 'id')]
+    #[Groups(['announce_read'])]
+    private Collection $userEquipments;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTime();
@@ -151,6 +161,7 @@ class Announce
         $this->reservations = new ArrayCollection();
         $this->isValidated = false;
         $this->equipment = new ArrayCollection();
+        $this->userEquipments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -425,6 +436,30 @@ class Announce
     {
         if ($this->equipment->removeElement($equipment)) {
             $equipment->removeAnnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function getUserEquipments(): Collection
+    {
+        return $this->userEquipments;
+    }
+
+    public function addUserEquipment(UserEquipment $userEquipment): static
+    {
+        if (!$this->userEquipments->contains($userEquipment)) {
+            $this->userEquipments->add($userEquipment);
+            $userEquipment->addAnnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserEquipment(UserEquipment $userEquipment): static
+    {
+        if ($this->userEquipments->removeElement($userEquipment)) {
+            $userEquipment->removeAnnonce($this);
         }
 
         return $this;
