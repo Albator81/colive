@@ -194,8 +194,18 @@ final class AnnounceController extends AbstractController
     #[Route('/announce/{id}', name: 'app_announce_show')]
     public function show(Announce $announce): Response
     {
+        $reservedDates = [];
+
+        foreach ($announce->getReservations() as $reservation) {
+            $reservedDates[] = [
+                'from' => $reservation->getDateDebut()->format('Y-m-d'),
+                'to' => $reservation->getDateFin()->format('Y-m-d'),
+            ];
+        }
+
         return $this->render('announce/show.html.twig', [
             'announce' => $announce,
+            'reservedDates' => json_encode($reservedDates),
         ]);
     }
 }
