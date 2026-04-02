@@ -1,164 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Avis de {{ host.prenom }}{% endblock %}
+{# Configuration pour header blanc et fond blanc #}
+{% set bg_image = false %}
+{% set header_transparent = false %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('styles/host_reviews.css') }}">
+{% block title %}Avis de
+	{{ host.prenom }}
+{% endblock %}
+
+{% block body_data %}
+	data-host-id="{{ host.id }}"
 {% endblock %}
 
 {% block body %}
+	{# bg-white pour respecter ta consigne #}
+	<div class="bg-white min-vh-100 py-5">
+		<div
+			class="container">
 
-    <nav class="user-navbar">
-        <a href="{{ path('app_home') }}" style="font-weight:bold; font-size:1.2rem; display:flex; align-items:center; gap:5px;">
-            <span style="background:black; color:white; padding:2px 8px; border-radius:6px;">C</span> CoLive
-        </a>
-        <div>
-            {% if app.user %}
-                <a href="{{ path('app_profile') }}" class="nav-user-pill">
-                    {% if app.user.avatar %}
-                        <img src="{{ app.user.avatar }}" alt="Avatar" class="nav-avatar-mini">
-                    {% else %}
-                        <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=000&color=fff&size=256&font-size=0.33" alt="Avatar" class="nav-avatar-mini">
-                    {% endif %}
-                    <span>{{ app.user.prenom }}</span>
-                </a>
-            {% else %}
-                <a href="{{ path("app_login") }}" class="login-btn">Se connecter</a>
-            {% endif %}
-        </div>
-    </nav>
+			<!-- Titre de la page -->
+			<div class="mb-5">
+				<a href="javascript:history.back()" class="text-decoration-none text-muted small fw-bold mb-2 d-inline-block">
+					<i class="bi bi-arrow-left me-1"></i>Retour
+				</a>
+				<h1 class="h2 fw-bold">Profil et avis de
+					{{ host.prenom }}</h1>
+			</div>
 
-    <div class="page-container">
+			<div
+				class="row g-4">
+				<!-- Colonne Gauche : Carte Profil -->
+				<div class="col-lg-4">
+					<div class="card border shadow-sm rounded-4 p-4 text-center sticky-top" style="top: 100px;">
+						<img src="{{ host.avatar ? host.avatar : 'https://ui-avatars.com/api/?name=' ~ host.prenom ~ '+' ~ host.nom ~ '&background=000&color=fff&size=256' }}" alt="{{ host.prenom }}" class="rounded-circle mx-auto mb-3 object-fit-cover shadow-sm border" style="width:140px;height:140px;">
 
-        <aside class="profile-card">
-            <img src="{{ host.avatar ? host.avatar : 'https://ui-avatars.com/api/?name=' ~ host.prenom ~ '+' ~ host.nom ~ '&background=000&color=fff&size=256' }}"
-                 alt="{{ host.prenom }}"
-                 class="profile-avatar">
+						<h2 class="h4 fw-bold mb-1">{{ host.prenom }}
+							{{ host.nom|first }}.</h2>
+						<p class="text-muted small mb-4">Hôte sur CoLive depuis
+							{{ host.dateCreationCompte|date('Y') }}</p>
 
-            <h1 class="profile-name">{{ host.prenom }} {{ host.nom }}</h1>
-            <div class="profile-sub">Membre depuis {{ host.dateCreationCompte|date('Y') }}</div>
+						<div class="d-grid gap-2 mb-4">
+							<a href="{{ path('app_contact_add', {id: host.id}) }}" class="btn btn-dark rounded-pill py-2 fw-bold">
+								<i class="bi bi-chat-left-text me-2"></i>Contacter l'hôte
+							</a>
+						</div>
 
-            <div class="contact-info-wrapper">
-                <a href="{{ path('app_contact_add', {id: host.id}) }}" class="info-row">
-                    <span class="info-icon">
-                        <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#fff" viewBox="0 0 24 24">
-                        <path d="m20.56,3.17c-.29-.2-.67-.23-.99-.08L2.57,11.1c-.35.17-.58.53-.57.92s.24.75.6.9l5.4,2.36v6.72l5.84-4.17,4.76,2.08c.13.06.26.08.4.08.18,0,.36-.05.52-.15.28-.17.46-.46.48-.79l1-15c.02-.35-.14-.69-.43-.89Zm-2.47,14.34l-5.21-2.28,3.12-6.23-7.65,4.25-2.93-1.28,13.47-6.34-.79,11.89Z"></path>
-                        </svg>
-                    </span>
-                    <span class="info-text">Contacter</span>
-                </a>
-            </div>
+						<hr
+						class="my-4 opacity-25">
 
-            <div class="rating-box">
-                <div class="rating-large" id="averageRating">...</div>
-                <div class="rating-stars" id="ratingStars"></div>
-                <div class="rating-count" id="totalReviews">... avis reçus</div>
-            </div>
-        </aside>
+						<!-- Score moyen -->
+						<div class="bg-light rounded-4 p-4">
+							<div class="h1 fw-bold text-dark mb-0" id="averageRating">--</div>
+							<div
+								class="d-flex justify-content-center my-2 text-warning fs-5" id="ratingStars">{# Rempli dynamiquement par JS #}
+							</div>
+							<p class="text-muted small mb-0" id="totalReviews">Chargement des avis...</p>
+						</div>
+					</div>
+				</div>
 
-        <main class="content-card">
-            <div class="content-header">
-                <div class="content-title">Tous les avis</div>
-                <div class="pill-badge" id="reviewCount">... commentaires</div>
-            </div>
+				<!-- Colonne Droite : Liste des Avis -->
+				<div class="col-lg-8">
+					<div class="card border shadow-sm rounded-4 p-4">
+						<div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+							<h3 class="h5 fw-bold mb-0">Ce que disent les voyageurs</h3>
+							<span class="badge bg-primary rounded-pill px-3 py-2" id="reviewCount">0 avis</span>
+						</div>
 
-            <div class="reviews-grid" id="reviewsGrid">
-                <div style="text-align:center; padding: 20px;">Chargement des avis...</div>
-            </div>
-        </main>
-    </div>
+						<!-- Conteneur pour les avis injectés par JS -->
+						<div class="row g-4" id="reviewsGrid">
+							<div class="col-12 text-center py-5" id="reviews-loading">
+								<div class="spinner-grow text-primary" role="status">
+									<span class="visually-hidden">Chargement...</span>
+								</div>
+								<p class="mt-3 text-muted fw-medium">Récupération des commentaires...</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <script>        
-        async function loadReviews() {
-            try {
-                const response = await fetch(`/api/reviews?annonce.utilisateur.id={{ host.id }}`);
-                const data = await response.json();
-                const reviewsData = data.member || [];
-                console.log(reviewsData);
-                
-                if (reviewsData.length === 0) {
-                    document.getElementById('reviewsGrid').innerHTML = '<p>Aucun avis n\'a été publié pour cet hôte.</p>';
-                    document.getElementById('averageRating').textContent = '0';
-                    document.getElementById('totalReviews').textContent = '0 avis reçus';
-                    document.getElementById('reviewCount').textContent = '0 commentaires';
-                    renderStars(0);
-                    return;
-                }
-                
-                let totalNote = 0;
-                
-                reviewsData.forEach(review => {
-                    totalNote += review.note;
-                });
-                
-                const averageRating = (totalNote / reviewsData.length).toFixed(1);
-                const totalReviews = reviewsData.length;
-                
-                document.getElementById('averageRating').textContent = averageRating;
-                document.getElementById('totalReviews').textContent = `${totalReviews} avis reçus`;
-                document.getElementById('reviewCount').textContent = `${totalReviews} commentaires`;
-                renderStars(Math.round(averageRating));
-                
-                const reviewsGrid = document.getElementById('reviewsGrid');
-                reviewsGrid.innerHTML = '';
-                
-                reviewsData.forEach(review => {
-                    const reviewer = review.utilisateur;
-                    const avatarUrl = `https://ui-avatars.com/api/?name=${reviewer.prenom}&background=random&color=fff`;
-                    
-                    const starsHtml = generateStars(review.note);
-                    const date = new Date(review.dateCreation).toLocaleDateString('fr-FR');
-                    
-                    const reviewHtml = `
-                        <div class="review-item">
-                            <div class="review-head">
-                                <img src="${avatarUrl}" class="review-avatar">
-                                <div class="head-right">
-                                    <div class="date-name">
-                                        <h4 class="review-author">${reviewer.prenom} ${reviewer.nom}</h4>
-                                        <div class="review-date">${date}</div>
-                                    </div>
-                                    <span class="review-stars-mini">${starsHtml}</span>
-                                </div>
-                            </div>
-                            <div class="review-body">
-                                ${review.commentaire}
-                            </div>
-                        </div>
-                    `;
-                    reviewsGrid.innerHTML += reviewHtml;
-                });
-                
-            } catch (error) {
-                document.getElementById('reviewsGrid').innerHTML = '<p>Erreur lors du chargement des avis.</p>';
-            }
-        }
-        
-        function generateStars(note) {
-            let starsHtml = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= note) {
-                   starsHtml += `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#FFB400"><path d="m6.87 14.33-1.83 6.4c-.12.4.03.84.37 1.08.34.25.8.26 1.14.02L12 18.2l5.45 3.63a.988.988 0 0 0 1.14-.02c.34-.25.49-.68.37-1.08l-1.83-6.4 4.54-4.08c.3-.27.41-.69.28-1.06-.13-.38-.47-.64-.87-.68l-5.7-.45-2.47-5.46a.998.998 0 0 0-1.82 0L8.62 8.06l-5.7.45c-.4.03-.74.3-.87.68s-.02.8.28 1.06z"></path></svg>`;
-                } else {
-                    starsHtml += `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#D1D5DB" viewBox="0 0 24 24"><path d="m4.83 12.49 2.04 1.83-.83 2.9-1 3.5c-.12.4.03.84.37 1.08.34.25.8.26 1.14.02l3-2L12 18.19l2.45 1.63 3 2a.988.988 0 0 0 1.14-.02c.34-.25.49-.68.37-1.08l-1-3.5-.83-2.9 2.04-1.83 2.5-2.25c.3-.27.41-.69.28-1.06-.13-.38-.47-.64-.87-.68l-3.15-.25-2.56-.2-2.47-5.46a.998.998 0 0 0-1.82 0L8.61 8.05l-2.56.2-3.15.25c-.4.03-.74.3-.87.68s-.02.8.28 1.06l2.5 2.25Zm1.39-2.25 2.52-.2.62-.05.59-.05.84-1.86 1.2-2.66 1.2 2.66.84 1.86.59.05.62.05 2.52.2.83.07-.77.69-2.5 2.25-.46.42.17.6 1.25 4.38-3.74-2.49-.55-.37-.55.37-3.74 2.49 1.25.17-.6-.46-.42-4.38L6.16 11l-.77-.69z"></path></svg>`;
-                }
-            }
-            return starsHtml;
-        }
-        
-        function renderStars(rating) {
-            const container = document.getElementById('ratingStars');
-
-            for (let i = 1; i <= 5; i++) {
-                const color = i <= rating ? '#FFB400' : '#D1D5DB';
-                
-                const svgHtml = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}"><path d="m6.87 14.33-1.83 6.4c-.12.4.03.84.37 1.08.34.25.8.26 1.14.02L12 18.2l5.45 3.63a.988.988 0 0 0 1.14-.02c.34-.25.49-.68.37-1.08l-1.83-6.4 4.54-4.08c.3-.27.41-.69.28-1.06-.13-.38-.47-.64-.87-.68l-5.7-.45-2.47-5.46a.998.998 0 0 0-1.82 0L8.62 8.06l-5.7.45c-.4.03-.74.3-.87.68s-.02.8.28 1.06z"></path></svg>`;
-
-                container.insertAdjacentHTML('beforeend', svgHtml);
-            }
-        }
-        
-        loadReviews();
-    </script>
+	<script src="{{ asset('js/host_reviews_index.js') }}"></script>
 {% endblock %}

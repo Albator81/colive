@@ -1,337 +1,208 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ announce.titre }}{% endblock %}
+{% set bg_image = false %}
+{% set header_transparent = true %}
+
+{% block title %}
+    {{ announce.titre }}
+{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('styles/announce_show.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 {% endblock %}
 
 {% block body %}
 
-    <!-- HEADER DESKTOP -->
-    <header class="desktop-header">
-        <a href="{{ path('app_home') }}" class="header-logo">CoLive</a>
-        {% if app.user %}
-            <a href="{{ path('app_profile') }}" class="nav-user-pill">
-                {% if app.user.avatar %}
-                    <img src="{{ app.user.avatar }}" alt="Avatar" class="nav-avatar-mini-desktop">
-                {% else %}
-                    <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=000&color=fff" class="nav-avatar-mini-desktop" alt="Avatar">
-                {% endif %}
-                <span>{{ app.user.prenom }}</span>
-            </a>
-        {% else %}
-            <a href="{{ path('app_login') }}" class="nav-login-btn">Se connecter</a>
-        {% endif %}
-    </header>
-
-    <div class="main-desktop-wrapper">
-
-        <!--HERO WRAPPER (CARROUSEL DESKTOP / HERO MOBILE) -->
-        <div class="hero-wrapper" id="heroWrapper">
-
-            <!-- BOUTONS MOBILE -->
-            <a href="{{ path('app_announce') }}" class="btn-back-floating" onclick="event.stopPropagation()">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            {% if app.user %}
-                <a href="{{ path('app_profile') }}" class="btn-profile-floating" onclick="event.stopPropagation()">
-                    {% if app.user.avatar %}
-                        <img src="{{ app.user.avatar }}" alt="Avatar" class="nav-avatar-mini">
-                    {% else %}
-                        <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=000&color=fff" class="nav-avatar-mini" alt="Avatar">
-                    {% endif %}
-                    <span>{{ app.user.prenom }}</span>
-                </a>
-            {% else %}
-                <a href="{{ path('app_login') }}" class="btn-profile-floating" onclick="event.stopPropagation()" style="padding: 0 30px;">Se connecter</a>
-            {% endif %}
-
-            <!-- FLECHES CAROUSSEL MOBILE -->
-            <div class="desktop-carousel-nav">
-                <button class="desk-nav-btn prev" onclick="moveDesktopCarousel(-1, event)"><i class="bi bi-chevron-left"></i></button>
-                <button class="desk-nav-btn next" onclick="moveDesktopCarousel(1, event)"><i class="bi bi-chevron-right"></i></button>
-            </div>
-
-            {% if announce.photos is not empty %}
-                <img id="main-hero-img" src="{{ announce.photos|first.contenu }}" class="hero-img" alt="Couverture" onclick="handleHeroClick()">
-                <div id="desktop-photo-count" class="photo-count-badge">1 / {{ announce.photos|length }}</div>
-            {% else %}
-                <img src="https://picsum.photos/seed/{{ announce.id }}/800/1000" class="hero-img" alt="Couverture">
-            {% endif %}
-        </div>
-
-        <!-- 2. CONTENU PRINCIPAL -->
-        <main class="content-sheet">
-
-            <div class="left-column">
-                <div class="title-row">
-                    <h1 class="announce-title">{{ announce.titre }}</h1>
-                    {% set isLiked = false %}
-                    {% if app.user %}
-                        {% for like in announce.likes %}
-                            {% if like.utilisateur == app.user %}{% set isLiked = true %}{% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <button class="btn-like-big {{ isLiked ? 'liked' : '' }}" onclick="toggleLike(event, {{ announce.id }})">
-                        <i class="bi {{ isLiked ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-                    </button>
-                </div>
-
-                <div class="announce-location">
-                    <i class="bi bi-geo-alt-fill"></i> {{ announce.ville }}
-                </div>
-
-                <ul class="tags-list">
-                    <li class="tag-pill">{{ announce.type }}</li>
-                    {% if announce.surface %}<li class="tag-pill">{{ announce.surface }} m²</li>{% endif %}
-                    {% if announce.nbPieces %}<li class="tag-pill">{{ announce.nbPieces }} pièces</li>{% endif %}
-                </ul>
-
-                {% if announce.utilisateur %}
-                    <section class="host-card">
-                        {% if announce.utilisateur.avatar %}
-                            <img src="{{ announce.utilisateur.avatar }}" class="host-avatar" alt="Avatar">
-                        {% else %}
-                            <img src="https://ui-avatars.com/api/?name={{ announce.utilisateur.prenom }}+{{ announce.utilisateur.nom }}&background=000&color=fff" class="host-avatar" alt="Avatar">
-                        {% endif %}
-                        <div class="host-info">
-                            <h3>Hôte : {{ announce.utilisateur.prenom }}</h3>
-                            <p>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}</p>
-                        </div>
-                    </section>
-                {% endif %}
-
-                <section>
-                    <h2 class="section-title">Le logement</h2>
-                    <p class="text-content">{{ announce.description }}</p>
-                </section>
-
-                {% if announce.photos|length > 1 %}
-                    <section>
-                        <h2 class="section-title">Photos</h2>
-                        <div class="mini-gallery">
-                            {% for photo in announce.photos|slice(1) %}
-                                <img src="{{ photo.contenu }}" alt="Photo" onclick="openLightbox({{ loop.index }})">
-                            {% endfor %}
-                        </div>
-                    </section>
-                {% endif %}
-
-{% if announce.equipment or announce.userEquipments %}
-<section>
-<h2 class="section-title">Équipements</h2>
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-{% for equipment in announce.equipment %}
-<p class="text-content">{{ equipment.nom }}{% if not loop.last or announce.userEquipments|length > 0 %},{% endif %}</p>
-{% endfor %}
-{% for userEquipment in announce.userEquipments %}
-<p class="text-content">{{ userEquipment.nom }}{% if not loop.last %},{% endif %}</p>
-{% endfor %}
-</div>
-</section>
-{% endif %}
-
-                <section class="d-lg-none" style="display:block;">
-                    <h2 class="section-title">Dates</h2>
-                    <div class="tag-pill" style="display:inline-flex;">
-                        <i class="bi bi-calendar3"></i>
-                        {{ announce.disponibiliteDebut|date('d M') }} - {{ announce.disponibiliteFin|date('d M Y') }}
-                    </div>
-                </section>
-            </div>
-
-            <!-- SIDEBAR DESKTOP -->
-            <div class="desktop-sidebar-wrapper">
-                <div class="booking-card">
-                    <div class="card-price-row">
-                        <span class="card-price-amount">{{ announce.prix }}€</span>
-                        <span class="card-price-label">par mois</span>
-                    </div>
-                    <div class="card-dates-box">
-                        <div class="card-date-line">
-                            <span>Arrivée</span>
-                            <span class="card-date-val">{{ announce.disponibiliteDebut|date('d/m/Y') }}</span>
-                        </div>
-                        <div class="card-date-line">
-                            <span>Départ</span>
-                            <span class="card-date-val">{{ announce.disponibiliteFin|date('d/m/Y') }}</span>
-                        </div>
-                    </div>
-                    {% if app.user %}
-                        <a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn-card-action btn-reserve-desk">Réserver</a>
-                    {% else %}
-                        <a href="{{ path('app_login') }}" class="btn-card-action btn-reserve-desk">Connexion requise</a>
-                    {% endif %}
-                    <a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn-card-action btn-contact-desk">Contacter l'hôte</a>
-                </div>
-            </div>
-
-            <div class="spacer-footer"></div>
-
-        </main>
-
-        {% if announce.latitude != 0 and announce.longitude != 0 %}
-            <div id="map" class="flex-grow-1 shadow rounded mt-4" style="height:400px; width:100%;"></div>
-        {% else %}
-            <div class="flex-grow-1 shadow rounded d-flex align-items-center justify-content-center bg-light" style="min-height:400px;">
-                <div class="text-center text-muted">
-                    <p class="mt-2 fw-bold">Carte non disponible</p>
-                    <small>Nous n'avons pas réussi à géolocaliser cet événement. Merci de vous référer à l'adresse postale.</small>
-                </div>
-            </div>
-        {% endif %}
-
-    </div>
-
-    <!-- FOOTER MOBILE -->
-
-    <aside class="fixed-bottom-bar">
-        <div class="price-row">
-            <span class="price-amount">{{ announce.prix }}€</span>
-            <span class="price-label">/ mois</span>
-        </div>
-        <div class="buttons-row">
-            <a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn-action btn-contact">Contacter</a>
-            {% if app.user %}
-                <a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn-action btn-reserve">Réserver</a>
-            {% else %}
-                <a href="{{ path('app_login') }}" class="btn-action btn-reserve">Réserver</a>
-            {% endif %}
-        </div>
-    </aside>
-
-    <!-- LIGHTBOX -->
-    <div id="lightbox" class="lightbox">
-        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-        <img id="lightbox-img" src="" class="lightbox-img" alt="Plein écran">
-        <div class="lightbox-nav">
-            <button class="lightbox-btn" onclick="prevImage()"><i class="bi bi-chevron-left"></i></button>
-            <button class="lightbox-btn" onclick="nextImage()"><i class="bi bi-chevron-right"></i></button>
-        </div>
-        <div id="lightbox-counter" class="lightbox-counter">1 / 1</div>
-    </div>
-
-    <script>
-        // --- 1. DONNEES IMAGES ---
-        const galleryImages = [];
-        {% if announce.photos is not empty %}
+    {% set photos_array = [] %}
+    {% if announce.photos is not empty %}
         {% for photo in announce.photos %}
-        galleryImages.push("{{ photo.contenu }}");
+            {% set photos_array = photos_array|merge([photo.contenu]) %}
         {% endfor %}
-        {% else %}
-        galleryImages.push("https://picsum.photos/seed/{{ announce.id }}/800/1000");
-        {% endif %}
-
-        // --- 2. CARROUSEL DESKTOP ---
-        let currentHeroIndex = 0;
-        const mainHeroImg = document.getElementById('main-hero-img');
-        const desktopCounter = document.getElementById('desktop-photo-count');
-
-        function moveDesktopCarousel(direction, event) {
-            event.stopPropagation(); // Empêche l'ouverture de la lightbox quand on clique sur les flèches
-            currentHeroIndex = (currentHeroIndex + direction + galleryImages.length) % galleryImages.length;
-            mainHeroImg.src = galleryImages[currentHeroIndex];
-            if(desktopCounter) desktopCounter.innerText = (currentHeroIndex + 1) + " / " + galleryImages.length;
-        }
-
-        // --- 3. LIGHTBOX ---
-        let currentImageIndex = 0;
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const counter = document.getElementById('lightbox-counter');
-
-        function handleHeroClick() {
-            openLightbox(currentHeroIndex);
-        }
-
-        function openLightbox(index) {
-            currentImageIndex = index;
-            updateLightbox();
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeLightbox() {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        function nextImage() {
-            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
-            updateLightbox();
-        }
-        function prevImage() {
-            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
-            updateLightbox();
-        }
-        function updateLightbox() {
-            lightboxImg.src = galleryImages[currentImageIndex];
-            counter.innerText = (currentImageIndex + 1) + " / " + galleryImages.length;
-        }
-
-        // --- 4. LIKE AJAX ---
-        async function toggleLike(event, announceId) {
-            event.stopPropagation();
-            event.preventDefault();
-            {% if not app.user %}
-            window.location.href = "{{ path('app_login') }}";
-            return;
-            {% endif %}
-            const btn = event.currentTarget;
-            const icon = btn.querySelector('i');
-            try {
-                const response = await fetch('/announce/' + announceId + '/like', { method: 'POST' });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.isLiked) {
-                        btn.classList.add('liked');
-                        icon.classList.remove('bi-heart');
-                        icon.classList.add('bi-heart-fill');
-                    } else {
-                        btn.classList.remove('liked');
-                        icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart');
-                    }
-                }
-            } catch (error) { console.error(error); }
-        }
-
-        // Swipe & Clavier
-        let touchStartX = 0;
-        let touchEndX = 0;
-        lightbox.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-        lightbox.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) nextImage();
-            if (touchEndX > touchStartX + 50) prevImage();
-        });
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "Escape") closeLightbox();
-            if (event.key === "ArrowRight") nextImage();
-            if (event.key === "ArrowLeft") prevImage();
-        });
-
-    </script>
-
-    {% if announce.latitude != 0 and announce.longitude != 0 %}
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script>
-            const map = L.map('map').setView([{{ announce.latitude }}, {{ announce.longitude }}], 15);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                minZoom: 10,
-                maxZoom: 18,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            L.marker([{{ announce.latitude }}, {{ announce.longitude }}]).addTo(map)
-                .bindPopup("{{announce.adresse}}, {{announce.codepostal}} - {{announce.ville}}")
-                .openPopup()
-                .on('click', function(e) {
-                    map.setView(e.latlng, map.getZoom() < 15 ? 15 : map.getZoom() , { animate: true });
-                });
-        </script>
+    {% else %}
+        {% set photos_array = ['https://picsum.photos/seed/' ~ announce.id ~ '/800/1000'] %}
     {% endif %}
 
+<div id="announce-data" class="d-none" data-photos="{{ photos_array|json_encode|e('html_attr') }}" data-announce-id="{{ announce.id }}" data-login-url="{{ path('app_login') }}" data-is-logged-in="{{ app.user ? 'true' : 'false' }}" data-lat="{{ announce.latitude }}" data-lng="{{ announce.longitude }}" data-address="{{ announce.adresse }} , {{ announce.codepostal }} - {{ announce.ville }}"></div>
+
+    <div class="bg-white min-vh-100">
+
+        <div class="position-relative" style="height: 50vh; min-height: 400px; margin-top: -76px;">
+            <img id="main-hero-img" src="{{ photos_array[0] }}" class="w-100 h-100 object-fit-cover" alt="Couverture" style="cursor: pointer;" onclick="handleHeroClick()">
+
+            <div id="desktop-photo-count" class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-3 py-1 m-3 rounded-pill fw-semibold small">
+                1 / {{ photos_array|length }}
+            </div>
+
+            <a href="{{ path('app_announce') }}" class="position-absolute top-50 start-0 translate-middle-y m-3 btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 2;">
+                <i class="bi bi-arrow-left fs-5"></i>
+            </a>
+
+            {% if photos_array|length > 1 %}
+                <div class="position-absolute bottom-0 end-0 mb-5 pb-3 me-3 d-flex gap-2">
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(-1, event)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="moveDesktopCarousel(1, event)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-9">
+
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
+                            <p class="text-muted fs-5 mb-3">
+                                <i class="bi bi-geo-alt-fill text-primary"></i>
+                                {{ announce.ville }}
+                            </p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.type }}</span>
+                                {% if announce.surface %}
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.surface }} m²</span>
+                                {% endif %}
+                                {% if announce.nbPieces %}
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.nbPieces }} pièces</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% set isLiked = false %}
+                        {% if app.user %}
+                            {% for like in announce.likes %}
+                                {% if like.utilisateur == app.user %}
+                                    {% set isLiked = true %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <button class="btn bg-transparent border-0 p-0 shadow-none d-inline-flex align-items-center justify-content-center ms-3" onclick="toggleLike(event, {{ announce.id }})">
+                            <i class="bi {{ isLiked ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' }} fs-1"></i>
+                        </button>
+                    </div>
+
+                    <div class="card bg-light border-0 shadow-sm rounded-4 p-4 mb-5">
+                        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+                            <div class="flex-grow-1">
+                                <div class="fs-1 fw-bold text-dark mb-3">
+                                    {{ announce.prix }}€
+                                    <span class="fs-5 text-muted fw-normal">/ mois</span>
+                                </div>
+                                <div class="d-inline-flex align-items-center gap-3 bg-white border rounded-pill px-4 py-2 shadow-sm">
+                                    <div>
+                                        <span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Arrivée</span>
+                                        <span class="fw-bold">{{ announce.disponibiliteDebut|date('d/m/Y') }}</span>
+                                    </div>
+                                    <i class="bi bi-arrow-right text-muted"></i>
+                                    <div>
+                                        <span class="d-block small text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem;">Départ</span>
+                                        <span class="fw-bold">{{ announce.disponibiliteFin|date('d/m/Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column gap-2" style="min-width: 250px;">
+                                {% if app.user %}
+                                    <a href="{{ path('app_announce_reserve', {'id': announce.id}) }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Réserver ce logement</a>
+                                {% else %}
+                                    <a href="{{ path('app_login') }}" class="btn btn-dark btn-lg rounded-pill fw-semibold shadow-sm">Connectez-vous pour réserver</a>
+                                {% endif %}
+                                <a href="{{ path('app_contact_add', {'id': announce.utilisateur.id}) }}" class="btn btn-outline-dark btn-white-bg rounded-pill fw-semibold shadow-sm">Contacter l'hôte</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if announce.utilisateur %}
+                        <div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
+                                <div>
+                                    <h3 class="h5 fw-bold mb-1">Hôte : {{ announce.utilisateur.prenom }}</h3>
+                                    <span class="text-muted small">
+                                        <i class="bi bi-shield-check text-success me-1"></i>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <section class="mb-5">
+                        <h2 class="h4 fw-bold mb-4">À propos de ce logement</h2>
+                        <p class="text-secondary lh-lg">{{ announce.description }}</p>
+                    </section>
+
+                    {% if announce.equipment|length > 0 or announce.userEquipments|length > 0 %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Ce que propose ce logement</h2>
+                            <div class="d-flex flex-wrap gap-3">
+                                {% for equipment in announce.equipment %}
+                                    <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
+                                        <i class="bi bi-check-circle-fill text-dark"></i>
+                                        <span>{{ equipment.nom }}</span>
+                                    </div>
+                                {% endfor %}
+                                
+                                {% for userEquipment in announce.userEquipments %}
+                                    <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
+                                        <i class="bi bi-plus-circle-fill text-primary"></i>
+                                        <span>{{ userEquipment.nom }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if announce.photos|length > 1 %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Toutes les photos</h2>
+                            <div class="row g-3">
+                                {% for photo in announce.photos|slice(1) %}
+                                    <div class="col-6 col-md-4 col-lg-3">
+                                        <img src="{{ photo.contenu }}" alt="Photo" class="rounded-3 w-100 shadow-sm object-fit-cover" style="height: 140px; cursor: pointer;" onclick="openLightbox({{ loop.index }})">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if announce.latitude != 0 and announce.longitude != 0 %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Où se situe le logement</h2>
+                            <div id="map" class="rounded-4 shadow-sm border" style="height: 400px; z-index: 1;"></div>
+                        </section>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div id="lightbox" class="position-fixed top-0 start-0 w-100 h-100 bg-black bg-opacity-75 d-none align-items-center justify-content-center" style="z-index: 9999;">
+            <button class="position-absolute top-0 end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="closeLightbox()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <button class="position-absolute start-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="prevImage(event)">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <img id="lightbox-img" src="" class="w-100 h-75 object-fit-contain" alt="Plein écran">
+            <button class="position-absolute end-0 m-4 btn btn-dark rounded-circle border border-secondary shadow d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" onclick="nextImage(event)">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+            <div id="lightbox-counter" class="position-absolute bottom-0 start-50 translate-middle-x text-white bg-dark bg-opacity-50 px-3 py-1 rounded-pill mb-4">1 / 1</div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/announce_show.js') }}"></script>
+    {% if announce.latitude != 0 and announce.longitude != 0 %}
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="{{ asset('js/announce_show_map.js') }}"></script>
+    {% endif %}
 {% endblock %}

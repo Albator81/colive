@@ -1,324 +1,161 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Toutes nos annonces{% endblock %}
+{# Configuration pour le base.html.twig #}
+{% set bg_image = false %}
+{% set header_transparent = false %}
+
+{% block title %}Toutes nos annonces
+{% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('styles/announce_index.css') }}">
-
+	{{ parent() }}
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
+	<div class="container-fluid py-4 px-lg-4">
+		<div
+			class="row g-4">
 
-    <div class="main-wrapper">
+			{# Bouton d'affichage des filtres sur Mobile #}
+			<div class="col-12 d-lg-none mb-2">
+				<button class="btn btn-outline-dark w-100 d-flex justify-content-center align-items-center gap-2 rounded-pill shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarFilters" aria-expanded="false" aria-controls="sidebarFilters">
+					<i class="bi bi-filter"></i>
+					Afficher les filtres
+				</button>
+			</div>
 
-        <header class="header-nav">
-            <a href="{{ path('app_home') }}" class="header-logo">
-                CoLive
-            </a>
+			{# COLONNE GAUCHE : Filtres #}
+			<aside class="col-12 col-lg-3 collapse d-lg-block" id="sidebarFilters">
+				<div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 85px; z-index: 1;">
+					<div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+						<h2 class="h5 fw-bold mb-0 text-dark">
+							<i class="bi bi-sliders me-2"></i>Filtres</h2>
+					</div>
 
-            {% if app.user %}
-                <a href="{{ path('app_profile') }}" class="nav-user-pill">
-                    {% if app.user.avatar %}
-                        <img src="{{ app.user.avatar }}" alt="Avatar" class="nav-avatar-mini">
-                    {% else %}
-                        <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=000&color=fff&size=256&font-size=0.33" alt="Avatar" class="nav-avatar-mini">
-                    {% endif %}
-                    <span>{{ app.user.prenom }}</span>
-                </a>
-            {% else %}
-                <a href="{{ path('app_login') }}" class="nav-login-btn">
-                    Se connecter
-                </a>
-            {% endif %}
-        </header>
+					<div class="card-body">
+						<form
+							action="{{ path('app_announce') }}" method="get">
 
-        <div class="filter-overlay" id="overlay" onclick="toggleMenu()"></div>
+							{# Ville #}
+							<div class="mb-4">
+								<label for="location" class="form-label fw-semibold small text-uppercase text-muted">Ville</label>
+								<input type="text" id="location" name="location" value="{{ app.request.query.get('location') }}" class="form-control rounded-3" placeholder="Ex: Paris">
+							</div>
 
-        <aside class="filter-sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2 class="sidebar-title">Filtres</h2>
-                <button class="btn-close" onclick="toggleMenu()">&times;</button>
-            </div>
+							{# Type de logement #}
+							<div class="mb-4">
+								<label class="form-label fw-semibold small text-uppercase text-muted">Type de logement</label>
+								{% set currentFilter = app.request.query.get('type', 'all') %}
 
-            <form action="{{ path('app_announce') }}" method="get">
-                <div>
-                    <label for="location" class="form-label">Ville</label>
-                    <input type="text" id="location" name="location" value="{{ app.request.query.get('location') }}" class="form-input" placeholder="Ex: Paris">
-                </div>
+								<div class="d-flex flex-column gap-2">
+									<div class="form-check">
+										<input class="form-check-input" type="radio" id="type_all" name="type" value="all" {% if currentFilter == 'all' %} checked {% endif %}>
+										<label class="form-check-label" for="type_all">Tout</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" id="type_chambre" name="type" value="Chambre" {% if currentFilter == 'Chambre' %} checked {% endif %}>
+										<label class="form-check-label" for="type_chambre">Chambre</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" id="type_coloc" name="type" value="Collocation" {% if currentFilter == 'Collocation' %} checked {% endif %}>
+										<label class="form-check-label" for="type_coloc">Collocation</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" id="type_studio" name="type" value="Studio" {% if currentFilter == 'Studio' %} checked {% endif %}>
+										<label class="form-check-label" for="type_studio">Studio</label>
+									</div>
+								</div>
+							</div>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+							{# Période #}
+							<div class="mb-4">
+								<label class="form-label fw-semibold small text-uppercase text-muted">Période</label>
+								<div class="row g-2">
+									<div class="col-12 col-xl-6">
+										<label class="form-label small mb-1">Arrivée</label>
+										<input type="date" name="date_start" class="form-control form-control-sm rounded-3" value="{{ app.request.query.get('date_start') }}">
+									</div>
+									<div class="col-12 col-xl-6">
+										<label class="form-label small mb-1">Départ</label>
+										<input type="date" name="date_end" class="form-control form-control-sm rounded-3" value="{{ app.request.query.get('date_end') }}">
+									</div>
+								</div>
+							</div>
 
-                <fieldset class="form-fieldset">
-                    <legend class="form-legend">Type de logement</legend>
+							{# Prix #}
+							<div class="mb-4">
+								<label class="form-label fw-semibold small text-uppercase text-muted">Prix (€/mois)</label>
+								<div class="row g-2">
+									<div class="col-6">
+										<input type="number" name="prix_min" class="form-control rounded-3" value="{{ app.request.query.get('prix_min') }}" placeholder="Min">
+									</div>
+									<div class="col-6">
+										<input type="number" name="prix_max" class="form-control rounded-3" value="{{ app.request.query.get('prix_max') }}" placeholder="Max">
+									</div>
+								</div>
+							</div>
 
-                    {% set currentFilter = app.request.query.get('type', 'all') %}
+							{# Surface #}
+							<div class="mb-4">
+								<label class="form-label fw-semibold small text-uppercase text-muted">Surface min. (m²)</label>
+								<input type="number" name="surface" class="form-control rounded-3" value="{{ app.request.query.get('surface') }}" placeholder="Ex: 15">
+							</div>
 
-                    <div>
-                        <input type="radio" id="type_all" name="type" value="all" class="radio-hidden"
-                               {% if currentFilter == 'all' %}checked{% endif %}>
-                        <label for="type_all" class="radio-text-label">Tout</label>
-                    </div>
+							{# Équipements #}
+							<div class="mb-4">
+								<label class="form-label fw-semibold small text-uppercase text-muted">Équipements</label>
+								<select name="equipement" class="form-select rounded-3">
+									<option value="">Tous</option>
+									{% for equip in equipment %}
+										<option value="{{ equip.id }}" {% if app.request.query.get('equipement') == equip.id %} selected {% endif %}>
+											{{ equip.nom }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
 
-                    <div>
-                        <input type="radio" id="type_chambre" name="type" value="Chambre" class="radio-hidden"
-                               {% if currentFilter == 'Chambre' %}checked{% endif %}>
-                        <label for="type_chambre" class="radio-text-label">Chambre</label>
-                    </div>
+							<hr class="text-muted opacity-25">
 
-                    <div>
-                        <input type="radio" id="type_coloc" name="type" value="Collocation" class="radio-hidden"
-                               {% if currentFilter == 'Collocation' %}checked{% endif %}>
-                        <label for="type_coloc" class="radio-text-label">Collocation</label>
-                    </div>
+							<div class="d-grid gap-2">
+								<button type="submit" class="btn btn-dark fw-bold rounded-pill shadow-sm">
+									Voir les résultats
+								</button>
+								<a href="{{ path('app_announce') }}" class="btn btn-outline-danger btn-white-bg fw-bold rounded-pill shadow-sm">
+									Réinitialiser les filtres
+								</a>
+							</div>
 
-                    <div>
-                        <input type="radio" id="type_studio" name="type" value="Studio" class="radio-hidden"
-                               {% if currentFilter == 'Studio' %}checked{% endif %}>
-                        <label for="type_studio" class="radio-text-label">Studio</label>
-                    </div>
+						</form>
+					</div>
+				</div>
+			</aside>
 
-                </fieldset>
+			{# COLONNE DROITE : Grille d'annonces #}
+			<section class="col-12 col-lg-9">
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+				<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+					<h1 class="h3 fw-bold text-dark mb-0">
+						Toutes nos annonces
+						{% if app.request.query.get('type') != 'all' and app.request.query.get('type') is not empty %}
+							<span class="text-primary">de
+								{{ app.request.query.get('type') }}</span>
+						{% endif %}
+					</h1>
+				</div>
 
-                <fieldset class="form-fieldset">
-                    <legend class="form-legend">Période</legend>
-                    <div style="margin-bottom:30px;">
-                        <label class="form-label">Arrivée</label>
-                        <input type="date" name="date_start" class="form-input" value="{{ app.request.query.get('date_start') }}">
-                    </div>
-                    <div>
-                        <label class="form-label">Départ</label>
-                        <input type="date" name="date_end" class="form-input" value="{{ app.request.query.get('date_end') }}">
-                    </div>
-                </fieldset>
+				{# Le container pour le JS #}
+				<div
+					class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" id="grid-announces" data-user-id="{{ app.user ? app.user.id : '' }}" data-login-url="{{ path('app_login') }}">{# Les annonces seront injectées ici par ton script JS #}
+				</div>
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
+			</section>
 
-                <fieldset class="form-fieldset">
-                    <legend class="form-legend">Prix (€/mois)</legend>
-                    <div style="display: flex; gap: 10px;">
-                        <div>
-                            <label class="form-label">Min</label>
-                            <input type="number" name="prix_min" class="form-input" value="{{ app.request.query.get('prix_min') }}" placeholder="Prix minimum">
-                        </div>
-                        <div>
-                            <label class="form-label">Max</label>
-                            <input type="number" name="prix_max" class="form-input" value="{{ app.request.query.get('prix_max') }}" placeholder="Prix maximum">
-                        </div>
-                    </div>
-                </fieldset>
+		</div>
+	</div>
+{% endblock %}
 
-                <div style="height: 50px;" class="desktop-hidden"></div>
-
-                <fieldset class="form-fieldset">
-                    <legend class="form-legend">Surface (m²)</legend>
-                    <div>
-                        <label class="form-label">Min</label>
-                        <input type="number" name="surface" class="form-input" value="{{ app.request.query.get('surface') }}" placeholder="Surface minimum">
-                    </div>
-                </fieldset>
-
-                <div style="height: 50px;" class="desktop-hidden"></div>
-
-                <fieldset class="form-fieldset">
-                    <legend class="form-legend">Équipements</legend>
-                    <div>
-                        <select name="equipement" class="form-input">
-                            <option value="">Tous</option>
-                            {% for equip in equipment %}
-                                <option value="{{ equip.id }}" {% if app.request.query.get('equipement') == equip.id %}selected{% endif %}>
-                                    {{ equip.nom }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </fieldset>
-
-                <button type="submit" class="btn-submit">Voir les résultats</button>
-
-                <a href="{{ path('app_announce') }}" class="btn-reset-filters">
-                    Réinitialiser les filtres
-                </a>
-            </form>
-        </aside>
-
-        <section>
-            <div class="page-header-container">
-                <h1 class="page-title">Toutes nos annonces
-                {% if app.request.query.get('type') != 'all' %}
-                    de {{ app.request.query.get('type') }}
-                {% endif %}
-                </h1>
-
-                <button class="btn-filter-text" onclick="toggleMenu()">
-                    <i class="bi bi-filter"></i> Filtres
-                </button>
-            </div>
-
-            <div class="pinterest-grid" id="grid-announces">
-            </div>
-        </section>
-
-    </div>
-
-    <script>
-        function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
-        async function toggleLike(event, announceId) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            {% if not app.user %}
-            window.location.href = "{{ path('app_login') }}";
-            return;
-            {% endif %}
-
-            const btn = event.currentTarget;
-            const icon = btn.querySelector('i');
-
-            try {
-                const response = await fetch('/announce/' + announceId + '/like', {
-                    method: 'POST'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-
-                    if (data.isLiked) {
-                        btn.classList.add('liked');
-                        btn.classList.add('animate');
-
-                        icon.classList.remove('bi-heart');
-                        icon.classList.add('bi-heart-fill');
-
-                        setTimeout(() => btn.classList.remove('animate'), 400);
-
-                    } else {
-                        btn.classList.remove('liked');
-                        icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart');
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur', error);
-            }
-        }
-
-        async function create_cards() {
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-
-                const apiParams = new URLSearchParams();
-
-                const locationParam = urlParams.get('location');
-                const typeParam = urlParams.get('type');
-                const dateStart = urlParams.get('date_start');
-                const dateEnd = urlParams.get('date_end');
-
-                const prixMin = urlParams.get('prix_min');
-                const prixMax = urlParams.get('prix_max');
-                const surface = urlParams.get('surface');
-                const equipement = urlParams.get('equipement');
-
-                if (locationParam) {
-                    apiParams.append('ville', locationParam);
-                }
-
-                if (typeParam && typeParam !== 'all') {
-                    apiParams.append('type', typeParam);
-                }
-
-                if (dateStart) {
-                    apiParams.append('disponibilite_debut[after]', dateStart);
-                }
-
-                if (dateEnd) {
-                    apiParams.append('disponibilite_fin[before]', dateEnd);
-                }
-
-                if (prixMin) {
-                    apiParams.append('prix[gte]', prixMin);
-                }
-
-                if (prixMax) {
-                    apiParams.append('prix[lte]', prixMax);
-                }
-
-                if (surface) {
-                    apiParams.append('surface[gte]', surface);
-                }
-
-                if (equipement) {
-                    apiParams.append('equipment', equipement);
-                }
-
-                const apiURL = `/api/announces?${apiParams.toString()}`;
-
-                const response = await fetch(apiURL);
-                const data = await response.json();
-                const announceData = data.member || [];
-                const userId = {{ app.user ? app.user.id : 'null' }};
-                
-                const announceGrid = document.getElementById('grid-announces');
-                announceGrid.innerHTML = '';
-
-                if (announceData.length === 0) {
-                    announceGrid.innerHTML = '<p>Aucune annonce n\'a été trouvée.</p>';
-                    return;
-                }
-
-                announceData.forEach(announce => {
-                    let isLiked = false;
-
-                    announce.likes.forEach(like => {
-                        if (like.utilisateur.id == userId) {
-                            isLiked = true;
-                        }
-                    });
-
-                    const photoUrl = (announce.photos && announce.photos.length > 0) ? announce.photos[0].contenu : `https://picsum.photos/seed/${announce.id}/400/600`;
-
-                    let dateHtml = '';
-                    
-                    const start = new Date(announce.disponibilite_debut).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-                    const end = new Date(announce.disponibilite_fin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-                    dateHtml = `<p class="card-date">${start} - ${end}</p>`;
-
-                    const announceHtml = `
-                        <article class="announce-card" onclick="window.location.href='/announce/${announce.id}'">
-                            <button class="card-like-btn ${isLiked ? 'liked' : ''}" 
-                                    onclick="toggleLike(event, ${announce.id})">
-                                <i class="bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}"></i>
-                            </button>
-
-                            <img src="${photoUrl}" class="card-img" alt="${announce.titre}">
-
-                            <div class="card-content">
-                                <h2 class="card-title">${announce.titre}</h2>
-                                <p class="card-location"><i class="bi bi-geo-alt-fill"></i> ${announce.ville}</p>
-                                ${dateHtml}
-                                <div class="card-price">${announce.prix}€ <small>/mois</small></div>
-                            </div>
-                        </article>
-                    `;
-
-                    announceGrid.innerHTML += announceHtml;
-                });
-            } catch (error) {
-                console.log(error);
-                document.getElementById('grid-announces').innerHTML = '<p>Erreur lors du chargement des annonces.</p>';
-            }
-        }
-
-        create_cards();
-    </script>
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/announce_index.js') }}"></script>
 {% endblock %}
