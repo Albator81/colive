@@ -44,9 +44,17 @@
                 1 / {{ photos_array|length }}
             </div>
 
-            <a href="{{ path('app_announce') }}" class="position-absolute top-50 start-0 translate-middle-y m-3 btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 2;">
-                <i class="bi bi-arrow-left fs-5"></i>
-            </a>
+<div class="position-fixed top-0 start-0 d-flex gap-2 z-3" style="margin: 80px 0 0 20px;">
+<a href="javascript:history.back()" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+<i class="bi bi-arrow-left fs-4 fw-bold"></i>
+</a>
+
+{% if app.user and app.user.id == announce.utilisateur.id %}
+<a href="{{ path('app_announce_edit', {id: announce.id}) }}" class="btn btn-light rounded-pill shadow-sm d-flex align-items-center justify-content-center px-3 text-dark">
+<i class="bi bi-pencil me-1"></i>Modifier
+</a>
+{% endif %}
+</div>
 
             {% if photos_array|length > 1 %}
                 <div class="position-absolute bottom-0 end-0 mb-5 pb-3 me-3 d-flex gap-2">
