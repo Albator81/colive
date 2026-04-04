@@ -13,25 +13,19 @@
 {% endblock %}
 
 {% block body %}
-	{# bg-white pour respecter ta consigne #}
-	<div class="bg-white min-vh-100 py-5">
-		<div
-			class="container">
+<div class="bg-white py-5">
+<div class="container">
+<a href="javascript:history.back()" class="btn bg-white text-dark border-0 shadow-sm rounded-pill mb-3 px-4 py-2 d-inline-flex align-items-center fw-semibold">
+<i class="bi bi-arrow-left me-2"></i>Retour
+</a>
 
-			<!-- Titre de la page -->
-			<div class="mb-5">
-				<a href="javascript:history.back()" class="text-decoration-none text-muted small fw-bold mb-2 d-inline-block">
-					<i class="bi bi-arrow-left me-1"></i>Retour
-				</a>
-				<h1 class="h2 fw-bold">Profil et avis de
-					{{ host.prenom }}</h1>
-			</div>
+<h1 class="h2 fw-bold mb-4">Profil et avis de
+{{ host.prenom }}</h1>
 
-			<div
-				class="row g-4">
-				<!-- Colonne Gauche : Carte Profil -->
-				<div class="col-lg-4">
-					<div class="card border shadow-sm rounded-4 p-4 text-center sticky-top" style="top: 100px;">
+<div class="row g-4">
+<!-- Colonne Gauche : Carte Profil -->
+<div class="col-lg-4">
+<div class="card border shadow-sm rounded-4 p-4 text-center">
 						<img src="{{ host.avatar ? host.avatar : 'https://ui-avatars.com/api/?name=' ~ host.prenom ~ '+' ~ host.nom ~ '&background=000&color=fff&size=256' }}" alt="{{ host.prenom }}" class="rounded-circle mx-auto mb-3 object-fit-cover shadow-sm border" style="width:140px;height:140px;">
 
 						<h2 class="h4 fw-bold mb-1">{{ host.prenom }}
