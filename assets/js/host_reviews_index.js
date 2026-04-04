@@ -32,31 +32,37 @@ async function loadReviews() {
         const reviewsGrid = document.getElementById('reviewsGrid');
         reviewsGrid.innerHTML = '';
 
-        reviewsData.forEach(review => {
-            const reviewer = review.utilisateur;
-            const avatarUrl = `https://ui-avatars.com/api/?name=${reviewer.prenom}&background=random&color=fff`;
+    reviewsData.forEach(review => {
+        const reviewer = review.utilisateur;
+        const avatarUrl = `https://ui-avatars.com/api/?name=${reviewer.prenom}&background=random&color=fff`;
 
-            const starsHtml = generateStars(review.note);
-            const date = new Date(review.dateCreation).toLocaleDateString('fr-FR');
+        const starsHtml = generateStars(review.note);
+        const date = new Date(review.dateCreation).toLocaleDateString('fr-FR');
 
-            const reviewHtml = `
-                <div class="review-item">
-                    <div class="review-head">
-                        <img src="${avatarUrl}" class="review-avatar">
-                        <div class="head-right">
-                            <div class="date-name">
-                                <h4 class="review-author">${reviewer.prenom} ${reviewer.nom}</h4>
-                                <div class="review-date">${date}</div>
+        const reviewHtml = `
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="d-flex gap-3 align-items-start">
+                    <a href="/hote/${reviewer.id}/avis">
+                        <img src="${avatarUrl}" class="rounded-circle shadow-sm" style="width:50px;height:50px;object-fit:cover;">
+                    </a>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <a href="/hote/${reviewer.id}/avis" class="text-decoration-none text-dark">
+                                    <h5 class="fw-bold mb-0">${reviewer.prenom} ${reviewer.nom}</h5>
+                                </a>
+                                <small class="text-muted">${date}</small>
                             </div>
-                            <span class="review-stars-mini">${starsHtml}</span>
+                            <div>${starsHtml}</div>
                         </div>
-                    </div>
-                    <div class="review-body">
-                        ${review.commentaire}
+                        <p class="mb-0 text-secondary">${review.commentaire}</p>
                     </div>
                 </div>
-            `;
-            reviewsGrid.innerHTML += reviewHtml;
+            </div>
+        </div>
+        `;
+        reviewsGrid.innerHTML += reviewHtml;
         });
 
     } catch (error) {

@@ -127,19 +127,19 @@
                         </div>
                     </div>
 
-                    {% if announce.utilisateur %}
-                        <div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
-                            <div class="d-flex align-items-center gap-3">
-                                <img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
-                                <div>
-                                    <h3 class="h5 fw-bold mb-1">Hôte : {{ announce.utilisateur.prenom }}</h3>
-                                    <span class="text-muted small">
-                                        <i class="bi bi-shield-check text-success me-1"></i>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
+{% if announce.utilisateur %}
+<div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
+<a href="{{ path('app_host_reviews', {id: announce.utilisateur.id}) }}" class="d-flex align-items-center gap-3 text-decoration-none text-dark">
+<img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
+<div>
+<h3 class="h5 fw-bold mb-1">Hôte : {{ announce.utilisateur.prenom }}</h3>
+<span class="text-muted small">
+<i class="bi bi-shield-check text-success me-1"></i>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}
+</span>
+</div>
+</a>
+</div>
+{% endif %}
 
                     <section class="mb-5">
                         <h2 class="h4 fw-bold mb-4">À propos de ce logement</h2>
