@@ -119,4 +119,53 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.key === "ArrowRight") nextImage();
         if (event.key === "ArrowLeft") prevImage();
     });
+
+    const reviewForm = document.getElementById('review-form');
+
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Empêche le rechargement classique de la page
+
+            const url = this.dataset.url;
+            const note = document.getElementById('review-note').value;
+            const commentaire = document.getElementById('review-comment').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const errorBox = document.getElementById('review-error');
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Envoi...';
+            errorBox.classList.add('d-none');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        note: note,
+                        commentaire: commentaire
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.location.reload();
+                } else {
+                    errorBox.innerText = data.error || "Une erreur est survenue.";
+                    errorBox.classList.remove('d-none');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Publier l'avis";
+                }
+            } catch (error) {
+                console.error("Erreur Fetch:", error);
+                errorBox.innerText = "Erreur de connexion au serveur.";
+                errorBox.classList.remove('d-none');
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Publier l'avis";
+            }
+        });
+    }
 });

@@ -67,6 +67,28 @@
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <div>
                             <h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
+                            {# Calcul de la moyenne des avis #}
+                            {% set nbAvis = announce.avis|length %}
+                            {% if nbAvis > 0 %}
+                                {% set totalNotes = 0 %}
+                                {% for avis in announce.avis %}
+                                    {% set totalNotes = totalNotes + avis.note %}
+                                {% endfor %}
+                                {% set moyenne = (totalNotes / nbAvis)|round(1, 'common') %}
+
+                                <div class="mb-3 d-flex align-items-center gap-1 text-warning fs-5">
+                                    {% for i in 1..5 %}
+                                        {% if i <= moyenne %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% elseif i - 0.5 <= moyenne %}
+                                            <i class="bi bi-star-half"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="text-muted fs-6 ms-2">({{ moyenne }}/5 - {{ nbAvis }} avis)</span>
+                                </div>
+                            {% endif %}
                             <p class="text-muted fs-5 mb-3">
                                 <i class="bi bi-geo-alt-fill text-primary"></i>
                                 {{ announce.ville }}
@@ -176,6 +198,64 @@
                                         <img src="{{ photo.contenu }}" alt="Photo" class="rounded-3 w-100 shadow-sm object-fit-cover" style="height: 140px; cursor: pointer;" onclick="openLightbox({{ loop.index }})">
                                     </div>
                                 {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if app.user %}
+                        {% if announce.avis|length > 0 %}
+                            <section class="mb-5">
+                                <h2 class="h4 fw-bold mb-4">Avis des voyageurs</h2>
+                                <div class="d-flex flex-column gap-3">
+                                    {% for avis in announce.avis %}
+                                        <div class="card bg-light border-0 shadow-sm rounded-4 p-3">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="fw-bold d-flex align-items-center gap-2">
+                                                    <i class="bi bi-person-circle text-secondary fs-4"></i>
+                                                    {{ avis.utilisateur.prenom }}
+                                                </div>
+                                                <div class="text-warning small">
+                                                    {% for i in 1..5 %}
+                                                        <i class="bi {{ i <= avis.note ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% if avis.commentaire %}
+                                                <p class="text-secondary mb-1 fst-italic">"{{ avis.commentaire }}"</p>
+                                            {% endif %}
+                                            <small class="text-muted">{{ avis.dateCreation|date('d/m/Y') }}</small>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                        {% endif %}
+                        <section class="mb-5">
+                            <h2 class="h4 fw-bold mb-4">Laisser un avis</h2>
+                            <div class="card bg-light border-0 shadow-sm rounded-4 p-4">
+                                <form id="review-form" data-url="{{ path('app_announce_review_create', {'id': announce.id}) }}">
+
+                                    <div class="mb-3">
+                                        <label for="review-note" class="form-label fw-bold">Note sur 5</label>
+                                        <select id="review-note" class="form-select w-auto border-secondary shadow-sm" required>
+                                            <option value="" disabled selected>Choisissez une note...</option>
+                                            <option value="5">5 - Excellent ⭐⭐⭐⭐⭐</option>
+                                            <option value="4">4 - Très bien ⭐⭐⭐⭐</option>
+                                            <option value="3">3 - Correct ⭐⭐⭐</option>
+                                            <option value="2">2 - Décevant ⭐⭐</option>
+                                            <option value="1">1 - À fuir ⭐</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="review-comment" class="form-label fw-bold">Votre commentaire</label>
+                                        <textarea id="review-comment" class="form-control border-secondary shadow-sm" rows="3" placeholder="Racontez votre expérience (optionnel)"></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-dark rounded-pill px-4 fw-semibold shadow-sm">
+                                        Publier l'avis
+                                    </button>
+                                    <div id="review-error" class="text-danger small fw-bold mt-2 d-none"></div>
+                                </form>
                             </div>
                         </section>
                     {% endif %}
