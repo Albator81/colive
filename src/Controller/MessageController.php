@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\Reservation;
 use App\Entity\User;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Csrf\CsrfTokenManagerInterface;
 
 class MessageController extends AbstractController
 {
@@ -44,6 +44,7 @@ class MessageController extends AbstractController
             $r = $request->headers->get('referer') ?? '/';
             if ($selectedUser && !$currentUser->getContacts()->contains($selectedUser)) {
                 $this->addFlash('error', 'Vous ne pouvez envoyer des messages qu\'à vos propres contacts.');
+
                 return $this->redirect($r);
             }
 
@@ -51,6 +52,7 @@ class MessageController extends AbstractController
                 if ($request->isMethod('POST')) {
                     if (!$this->isCsrfTokenValid('message_send', $request->request->get('_token'))) {
                         $this->addFlash('danger', 'Token CSRF invalide');
+
                         return $this->redirectToRoute('app_message_conversation', ['id' => $id]);
                     }
                     $content = $request->request->get('content');
@@ -83,7 +85,25 @@ class MessageController extends AbstractController
             }
         }
 
+        $reservationStatuses = [];
+        $reservationRepository = $entityManager->getRepository(Reservation::class); // Assure-toi d'importer la classe Reservation !
+
+        foreach ($messages as $message) {
+            if (false !== strpos($message->getContent(), '[RES_ID:')) {
+                // On extrait l'ID (ex: "[RES_ID:42] Bonjour...")
+                preg_match('/\[RES_ID:(\d+)\]/', $message->getContent(), $matches);
+                if (isset($matches[1])) {
+                    $resId = (int) $matches[1];
+                    $reservation = $reservationRepository->find($resId);
+                    if ($reservation) {
+                        $reservationStatuses[$resId] = $reservation->getStatut();
+                    }
+                }
+            }
+        }
+
         return $this->render('message/index.html.twig', [
+            'reservationStatuses' => $reservationStatuses,
             'users' => $users,
             'selectedUser' => $selectedUser,
             'messages' => $messages,
