@@ -118,5 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.key === "Escape") closeLightbox();
         if (event.key === "ArrowRight") nextImage();
         if (event.key === "ArrowLeft") prevImage();
+
     });
+
+    const calendarElement = document.getElementById("availability-calendar");
+
+    if (calendarElement) {
+        flatpickr("#availability-calendar", {
+            inline: true,
+            minDate: "today",
+            locale: "fr",
+            disable: window.reservedDates || [],
+            showMonths: window.innerWidth > 768 ? 2 : 1
+        });
+    }
 });
