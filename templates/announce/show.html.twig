@@ -44,9 +44,17 @@
                 1 / {{ photos_array|length }}
             </div>
 
-            <a href="{{ path('app_announce') }}" class="position-absolute top-50 start-0 translate-middle-y m-3 btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; z-index: 2;">
-                <i class="bi bi-arrow-left fs-5"></i>
-            </a>
+<div class="position-fixed top-0 start-0 d-flex gap-2 z-3" style="margin: 80px 0 0 20px;">
+<a href="javascript:history.back()" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+<i class="bi bi-arrow-left fs-4 fw-bold"></i>
+</a>
+
+{% if app.user and app.user.id == announce.utilisateur.id %}
+<a href="{{ path('app_announce_edit', {id: announce.id}) }}" class="btn btn-light rounded-pill shadow-sm d-flex align-items-center justify-content-center px-3 text-dark">
+<i class="bi bi-pencil me-1"></i>Modifier
+</a>
+{% endif %}
+</div>
 
             {% if photos_array|length > 1 %}
                 <div class="position-absolute bottom-0 end-0 mb-5 pb-3 me-3 d-flex gap-2">
@@ -127,19 +135,19 @@
                         </div>
                     </div>
 
-                    {% if announce.utilisateur %}
-                        <div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
-                            <div class="d-flex align-items-center gap-3">
-                                <img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
-                                <div>
-                                    <h3 class="h5 fw-bold mb-1">Hôte : {{ announce.utilisateur.prenom }}</h3>
-                                    <span class="text-muted small">
-                                        <i class="bi bi-shield-check text-success me-1"></i>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
+{% if announce.utilisateur %}
+<div class="card border border-light shadow-sm rounded-4 p-4 mb-5">
+<a href="{{ path('app_host_reviews', {id: announce.utilisateur.id}) }}" class="d-flex align-items-center gap-3 text-decoration-none text-dark">
+<img src="{{ announce.utilisateur.avatar ?: 'https://ui-avatars.com/api/?name=' ~ announce.utilisateur.prenom ~ '+' ~ announce.utilisateur.nom ~ '&background=000&color=fff' }}" class="rounded-circle object-fit-cover shadow-sm" style="width: 60px; height: 60px;">
+<div>
+<h3 class="h5 fw-bold mb-1">Hôte : {{ announce.utilisateur.prenom }}</h3>
+<span class="text-muted small">
+<i class="bi bi-shield-check text-success me-1"></i>Inscrit en {{ announce.utilisateur.dateCreationCompte|date('Y') }}
+</span>
+</div>
+</a>
+</div>
+{% endif %}
 
                     <section class="mb-5">
                         <h2 class="h4 fw-bold mb-4">À propos de ce logement</h2>
