@@ -33,7 +33,7 @@
         {% set photos_array = ['https://picsum.photos/seed/' ~ announce.id ~ '/800/1000'] %}
     {% endif %}
 
-<div id="announce-data" class="d-none" data-photos="{{ photos_array|json_encode|e('html_attr') }}" data-announce-id="{{ announce.id }}" data-login-url="{{ path('app_login') }}" data-is-logged-in="{{ app.user ? 'true' : 'false' }}" data-lat="{{ announce.latitude }}" data-lng="{{ announce.longitude }}" data-address="{{ announce.adresse }} , {{ announce.codepostal }} - {{ announce.ville }}"></div>
+    <div id="announce-data" class="d-none" data-photos="{{ photos_array|json_encode|e('html_attr') }}" data-announce-id="{{ announce.id }}" data-login-url="{{ path('app_login') }}" data-is-logged-in="{{ app.user ? 'true' : 'false' }}" data-lat="{{ announce.latitude }}" data-lng="{{ announce.longitude }}" data-address="{{ announce.adresse }} , {{ announce.codepostal }} - {{ announce.ville }}"></div>
 
     <div class="bg-white min-vh-100">
 
@@ -72,13 +72,16 @@
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-10 col-xl-9">
 
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <div>
-                            <h1 class="h2 fw-bold mb-2">{{ announce.titre }}</h1>
-                            <p class="text-muted fs-5 mb-3">
-                                <i class="bi bi-geo-alt-fill text-primary"></i>
-                                {{ announce.ville }}
-                            </p>
+                    <div>
+                        <h1 class="h2 fw-bold mb-3">{{ announce.titre }}</h1>
+
+                        <p class="fs-4 fw-semibold text-dark mb-4">
+                            <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                            {{ announce.ville }}
+                        </p>
+
+                        <div class="d-flex gap-2 flex-wrap">
+
                             <div class="d-flex gap-2 flex-wrap">
                                 <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">{{ announce.type }}</span>
                                 {% if announce.surface %}
@@ -157,18 +160,46 @@
                     {% if announce.equipment|length > 0 or announce.userEquipments|length > 0 %}
                         <section class="mb-5">
                             <h2 class="h4 fw-bold mb-4">Ce que propose ce logement</h2>
+
+                            {% set iconMap = {
+                                'wifi': 'bi-wifi',
+                                'machine à laver': 'bi-droplet',
+                                'sèche-linge': 'bi-wind',
+                                'lave-vaisselle': 'bi-cup',
+                                'réfrigérateur': 'bi-snow',
+                                'four': 'bi-fire',
+                                'micro-ondes': 'bi-cup-hot',
+                                'climatisation': 'bi-fan',
+                                'chauffage': 'bi-thermometer-half',
+                                'télévision': 'bi-tv',
+                                'canapé': 'bi-lamp',
+                                'lit': 'bi-moon-stars',
+                                'bureau': 'bi-laptop',
+                                'armoire': 'bi-door-closed',
+                                'salle de bain privative': 'bi-droplet-half',
+                                'balcon': 'bi-door-open',
+                                'terrasse': 'bi-sun',
+                                'parking': 'bi-p-square',
+                                'ascenseur': 'bi-arrow-down-up',
+                                'piscine': 'bi-water'
+                            } %}
+
                             <div class="d-flex flex-wrap gap-3">
                                 {% for equipment in announce.equipment %}
+                                    {% set itemName = equipment.nom|lower|trim %}
+                                    {% set itemIcon = iconMap[itemName] ?? 'bi-check-circle-fill' %}
                                     <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
-                                        <i class="bi bi-check-circle-fill text-dark"></i>
-                                        <span>{{ equipment.nom }}</span>
+                                        <i class="bi {{ itemIcon }} text-dark fs-5"></i>
+                                        <span class="fw-medium">{{ equipment.nom }}</span>
                                     </div>
                                 {% endfor %}
-                                
+
                                 {% for userEquipment in announce.userEquipments %}
+                                    {% set itemName = userEquipment.nom|lower|trim %}
+                                    {% set itemIcon = iconMap[itemName] ?? 'bi-check-circle' %}
                                     <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
-                                        <i class="bi bi-plus-circle-fill text-primary"></i>
-                                        <span>{{ userEquipment.nom }}</span>
+                                        <i class="bi {{ itemIcon }} text-dark fs-5"></i>
+                                        <span class="fw-medium">{{ userEquipment.nom }}</span>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -248,25 +279,18 @@
 
 {% block javascripts %}
     {{ parent() }}
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+
+    <script>
+        window.reservedDates = {{ reservedDates|default('[]')|raw }};
+    </script>
+
     <script src="{{ asset('js/announce_show.js') }}"></script>
+
     {% if announce.latitude != 0 and announce.longitude != 0 %}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script src="{{ asset('js/announce_show_map.js') }}"></script>
     {% endif %}
-
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const reservedDates = {{ reservedDates|raw }};
-
-            flatpickr("#availability-calendar", {
-                inline: true,
-                minDate: "today",
-                locale: "fr",
-                disable: reservedDates,
-                showMonths: window.innerWidth > 768 ? 2 : 1
-            });
-        });
-    </script>
 {% endblock %}
