@@ -69,22 +69,37 @@
 											</div>
 										{% endif %}
 
-										{% if "[RES_ID:" in message.content %}
-											{% set resId = message.content|split('[RES_ID:')[1]|split(']')[0] %}
-											{% set cleanContent = message.content|split(']')|last %}
-											{% if message.sender.id == app.user.id %}
-												<div class="small fw-bold mb-1 text-info">
-													<i class="bi bi-send-check me-1"></i>Demande envoyée</div>
-												<p class="mb-0">{{ cleanContent }}</p>
-											{% else %}
-												<div class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill shadow-sm">
-													<i class="bi bi-megaphone me-1"></i>Demande reçue</div>
-												<p class="mb-3">{{ cleanContent }}</p>
-												<div class="d-flex gap-2">
-													<a href="{{ path('app_reservation_accept', {id: resId}) }}" class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm">Accepter</a>
-													<a href="{{ path('app_reservation_reject', {id: resId}) }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold shadow-sm" onclick="return confirm('Refuser cette demande ?')">Refuser</a>
-												</div>
-											{% endif %}
+                                        {% if "[RES_ID:" in message.content %}
+                                            {% set resId = (message.content|split('[RES_ID:')[1]|split(']')[0])|number_format %}
+                                            {% set cleanContent = message.content|split(']')|last %}
+                                            {% set resStatus = reservationStatuses[resId] ?? 'CANCELLED' %}
+
+                                            {% if message.sender.id == app.user.id %}
+                                                <div class="small fw-bold mb-1 text-info">
+                                                    <i class="bi bi-send-check me-1"></i>Demande envoyée</div>
+                                                <p class="mb-0">{{ cleanContent }}</p>
+                                                <div class="mt-2 small">
+                                         <span class="badge {% if resStatus == 'PENDING' %}bg-warning text-dark{% elseif resStatus == 'CONFIRMED' %}bg-success{% else %}bg-danger{% endif %}">
+                                             Statut : {{ resStatus }}
+                                         </span>
+                                                </div>
+                                            {% else %}
+                                                <div class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill shadow-sm">
+                                                    <i class="bi bi-megaphone me-1"></i>Demande reçue</div>
+                                                <p class="mb-3">{{ cleanContent }}</p>
+
+                                                <div class="d-flex gap-2 align-items-center">
+                                                    {% if resStatus == 'PENDING' %}
+                                                        <a href="{{ path('app_reservation_accept', {id: resId}) }}" class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm">Accepter</a>
+                                                        <a href="{{ path('app_reservation_reject', {id: resId}) }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold shadow-sm" onclick="return confirm('Refuser définitivement cette demande ?')">Refuser</a>
+                                                    {% elseif resStatus == 'CONFIRMED' %}
+                                                        <span class="text-success fw-bold me-2"><i class="bi bi-check-circle-fill me-1"></i>Réservation validée</span>
+                                                        <a href="{{ path('app_reservation_reject', {id: resId}) }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold shadow-sm" onclick="return confirm('Annuler cette réservation (action irréversible) ?')">Annuler</a>
+                                                    {% else %}
+                                                        <span class="text-danger fw-bold"><i class="bi bi-x-circle-fill me-1"></i>Réservation annulée/refusée</span>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
 										{% elseif "[RES_ACCEPT]" in message.content %}
 											<div class="text-success fw-bold">
 												<i class="bi bi-check-circle-fill me-1"></i>
