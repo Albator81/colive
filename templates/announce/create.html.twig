@@ -13,48 +13,14 @@
 {% endblock %}
 
 {% block body %}
-	<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-n1" style="backdrop-filter: blur(5px);"></div>
-	<div class="container py-5" style="max-width:850px;">
-		<div class="text-center mb-5 text-white">
-			<h1 class="fw-bold display-5">Publier une annonce</h1>
-			<p class="lead opacity-75">Partagez votre logement avec la communauté CoLive</p>
-		</div>
+<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-n1" style="backdrop-filter: blur(5px);"></div>
+<div class="container py-5" style="max-width:850px;">
+<div class="text-center mb-5 text-white">
+<h1 class="fw-bold display-5">Publier une annonce</h1>
+<p class="lead opacity-75">Partagez votre logement avec la communauté CoLive</p>
+</div>
 
-		{{ form_start(formAnnonce) }}
-
-		<div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
-			<h4 class="fw-bold mb-1">Informations de base</h4>
-			<p class="text-muted small mb-4">Décrivez votre logement en quelques mots</p>
-
-			<div class="row g-4">
-				<div class="col-md-6 d-flex flex-column gap-3">
-					<div>
-						<label class="form-label fw-bold">Titre de l'annonce
-							<span class="text-danger">*</span>
-						</label>
-						{{ form_widget(formAnnonce.titre, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : Chambre confortable...'}}) }}
-					</div>
-					<div>
-						<label class="form-label fw-bold">Type de logement
-							<span class="text-danger">*</span>
-						</label>
-						{{ form_widget(formAnnonce.type, {'attr': {'class': 'form-select form-select-lg rounded-3 bg-light border-0'}}) }}
-					</div>
-					<div>
-						<label class="form-label fw-bold">Nombre de pièces
-							<span class="text-danger">*</span>
-						</label>
-						{{ form_widget(formAnnonce.nb_pieces, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : 2'}}) }}
-					</div>
-				</div>
-				<div class="col-md-6">
-					<label class="form-label fw-bold">Description
-						<span class="text-danger">*</span>
-					</label>
-					{{ form_widget(formAnnonce.description, {'attr': {'class': 'form-control rounded-3 bg-light border-0', 'style': 'height: 100%; min-height: 200px; resize: none;', 'placeholder': 'Décrivez votre logement, l\'ambiance, les avantages...'}}) }}
-            </div>
-
-            {{ form_start(formAnnonce) }}
+{{ form_start(formAnnonce) }}
 
             <div class="card rounded-4 mb-4 p-4">
                 <h5 class="fw-bold mb-1">Informations de base</h5>
@@ -103,20 +69,20 @@
                 </div>
             </div>
 
-            <div class="card rounded-4 mb-4 p-4">
-                <h5 class="fw-bold mb-1">Tarification</h5>
-                <p class="text-muted small mb-4">Définissez le prix de votre logement</p>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Surface (m²) <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control', 'placeholder': '25'}}) }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small">Prix par mois (€) <span class="text-danger">*</span></label>
-                        {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control', 'placeholder': '450'}}) }}
-                    </div>
-                </div>
-            </div>
+<div class="card rounded-4 mb-4 p-4">
+<h5 class="fw-bold mb-1">Tarification</h5>
+<p class="text-muted small mb-4">Définissez le prix de votre logement</p>
+<div class="row g-3">
+<div class="col-md-6">
+<label class="form-label fw-bold small">Surface (m²) <span class="text-danger">*</span></label>
+{{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control', 'placeholder': '25'}}) }}
+</div>
+<div class="col-md-6">
+<label class="form-label fw-bold small">Prix par mois <span class="text-danger">*</span></label>
+{{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control', 'placeholder': '450'}}) }}
+</div>
+</div>
+</div>
 
             <div class="card rounded-4 mb-4 p-4">
                 <h5 class="fw-bold mb-1">Photos</h5>
@@ -178,111 +144,9 @@
                 </button>
             </div>
 
-            {{ form_end(formAnnonce) }}
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
-        <h4 class="fw-bold mb-1">Localisation</h4>
-        <p class="text-muted small mb-4">Où se trouve votre logement ?</p>
-        
-        <div class="mb-3">
-            <label class="form-label fw-bold">Adresse <span class="text-danger">*</span></label>
-            {{ form_widget(formAnnonce.adresse, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Numéro et nom de rue'}}) }}
-        </div>
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Ville <span class="text-danger">*</span></label>
-                {{ form_widget(formAnnonce.ville, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : Paris'}}) }}
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Code postal <span class="text-danger">*</span></label>
-                {{ form_widget(formAnnonce.code_postal, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : 75001'}}) }}
-            </div>
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
-        <h4 class="fw-bold mb-1">Tarification & Surface</h4>
-        <p class="text-muted small mb-4">Définissez les caractéristiques principales</p>
-        
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Surface (m²) <span class="text-danger">*</span></label>
-                <div class="input-group input-group-lg">
-                    {{ form_widget(formAnnonce.surface, {'attr': {'class': 'form-control rounded-start-3 bg-light border-0', 'placeholder': '25'}}) }}
-                    <span class="input-group-text bg-light border-0 rounded-end-3">m²</span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Prix par mois <span class="text-danger">*</span></label>
-                <div class="input-group input-group-lg">
-                    {{ form_widget(formAnnonce.prix, {'attr': {'class': 'form-control rounded-start-3 bg-light border-0', 'placeholder': '450'}}) }}
-                    <span class="input-group-text bg-light border-0 rounded-end-3">€</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
-        <h4 class="fw-bold mb-1">Photos</h4>
-        <p class="text-muted small mb-4">Ajoutez des photos attrayantes de votre logement (optionnel)</p>
-
-        <div class="d-none">
-            {{ form_widget(formAnnonce.images) }}
-        </div>
-
-        <div class="border border-2 border-dashed rounded-4 p-5 text-center d-flex flex-column align-items-center justify-content-center bg-light" id="drop-zone" style="cursor: pointer; transition: all 0.2s;">
-            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                <i class="bi bi-cloud-arrow-up-fill fs-3 text-primary"></i>
-            </div>
-            <button type="button" class="btn btn-dark rounded-pill px-4 py-2 mb-2 fw-bold">Parcourir les fichiers</button>
-            <p class="text-muted small mb-0">ou glissez-déposez vos photos ici</p>
-            <div id="preview-container" class="d-flex gap-3 flex-wrap mt-4 justify-content-center"></div>
-        </div>
-
-        <div class="text-danger mt-2 small fw-bold text-center">
-            {{ form_errors(formAnnonce.images) }}
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
-        <h4 class="fw-bold mb-1">Équipements et services</h4>
-        <p class="text-muted small mb-4">Sélectionnez les équipements disponibles</p>
-        
-        {{ form_widget(formAnnonce.equipment, {'attr': {'class': 'form-select form-select-lg rounded-3 bg-light border-0', 'style': 'min-height:150px;'}}) }}
-    </div>
-
-    <div class="card border-0 shadow-lg rounded-4 mb-4 p-4 p-md-5">
-        <h4 class="fw-bold mb-1">Disponibilité & Règles</h4>
-        <p class="text-muted small mb-4">Précisez vos conditions</p>
-        
-        <div class="row g-4 mb-4">
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Disponible à partir du <span class="text-danger">*</span></label>
-                {{ form_widget(formAnnonce.disponibilite_debut, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Disponible jusqu'au <span class="text-danger">*</span></label>
-                {{ form_widget(formAnnonce.disponibilite_fin, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0'}}) }}
-				</div>
-			</div>
-
-			<div>
-				<label class="form-label fw-bold">Règles et informations complémentaires</label>
-				{{ form_widget(formAnnonce.regle, {'attr': {'class': 'form-control form-control-lg rounded-3 bg-light border-0', 'placeholder': 'Ex : Animaux non autorisés, non-fumeur...'}}) }}
-			</div>
-		</div>
-
-		<div class="text-center mt-5 mb-5">
-			<button type="submit" class="btn btn-light btn-lg fw-bold px-5 py-3 rounded-pill shadow-lg">
-				<i class="bi bi-send-fill me-2"></i>
-				Publier mon annonce
-			</button>
-		</div>
-
-		{{ form_end(formAnnonce) }}
-	</div>
+{{ form_end(formAnnonce) }}
+</div>
+</div>
 
 {% endblock %}
 

@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.key === "Escape") closeLightbox();
         if (event.key === "ArrowRight") nextImage();
         if (event.key === "ArrowLeft") prevImage();
+
     });
 
     const reviewForm = document.getElementById('review-form');
