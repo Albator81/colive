@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Announce;
 use App\Entity\AnnouncePicture;
 use App\Entity\Equipment;
+use App\Entity\Review;
 use App\Entity\UserLikes;
 use App\Form\AnnounceType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class AnnounceController extends AbstractController
@@ -207,5 +209,35 @@ final class AnnounceController extends AbstractController
             'announce' => $announce,
             'reservedDates' => json_encode($reservedDates),
         ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/announce/{id}/review', name: 'app_announce_review_create', methods: ['POST'])]
+    public function addReview(Announce $announce, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $note = isset($data['note']) ? (int) $data['note'] : null;
+        $commentaire = $data['commentaire'] ?? '';
+
+        if (null === $note || $note < 1 || $note > 5) {
+            return $this->json(['error' => 'La note doit être comprise entre 1 et 5.'], 400);
+        }
+
+        $review = new Review();
+        $review->setNote($note);
+        $review->setCommentaire($commentaire);
+        $review->setUtilisateur($this->getUser());
+        $review->setAnnonce($announce);
+
+        $errors = $validator->validate($review);
+        if (count($errors) > 0) {
+            return $this->json(['error' => $errors[0]->getMessage()], 400);
+        }
+
+        $em->persist($review);
+        $em->flush();
+
+        return $this->json(['success' => true]);
     }
 }
