@@ -12,10 +12,13 @@ class AnnounceFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        AnnounceFactory::createMany(20, function() {
+        AnnounceFactory::createMany(20, function () {
             return ['utilisateur' => UserFactory::random()];
         });
     }
 
-    public function getDependencies(): array { return [UserFixtures::class]; }
+    public function getDependencies(): array
+    {
+        return [UserFixtures::class, EquipmentFixtures::class];
+    }
 }

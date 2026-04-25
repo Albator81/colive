@@ -3,7 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Announce;
-use App\Entity\User;
+use App\Entity\Equipment;
+use App\Entity\UserEquipment;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -25,51 +26,67 @@ class AnnounceType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class, [
-                'label' => 'Titre de l\'announce'
+                'label' => 'Titre de l\'annonce',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description détaillée',
-                'attr' => ['rows' => 5]
+                'attr' => ['rows' => 5],
             ])
             ->add('type', ChoiceType::class, [
                 'label' => 'Type de bien',
-                'choices'  => [
+                'choices' => [
                     'Chambre' => 'Chambre',
                     'Collocation' => 'Collocation',
                     'Studio' => 'Studio',
                 ],
             ])
             ->add('nb_pieces', IntegerType::class, [
-                'label' => 'Nombre de pièces'
+                'label' => 'Nombre de pièces',
             ])
             ->add('prix', MoneyType::class, [
                 'label' => 'Prix par nuit',
-                'currency' => 'EUR'
+                'currency' => 'EUR',
             ])
-            ->add('latitude', NumberType::class, ['scale' => 6,'required' => false])
-            ->add('longitude', NumberType::class, ['scale' => 6,'required' => false])
-            ->add('equipements', TextType::class, [
-                'help' => 'Ex: Wifi, Parking, Piscine...'
+            ->add('equipment', EntityType::class, [
+                'class' => Equipment::class,
+                'choice_label' => 'nom',
+                'multiple' => true,
+                'expanded' => false,
+                'label' => 'Équipements',
+            ])
+            ->add('userEquipments', EntityType::class, [
+                'class' => UserEquipment::class,
+                'choice_label' => 'nom',
+                'multiple' => true,
+                'expanded' => false,
+                'label' => 'Mes équipements personnalisés',
+                'query_builder' => function ($repo) use ($options) {
+                    if (!isset($options['user'])) {
+                        return $repo->createQueryBuilder('ue')->where('1 = 0');
+                    }
+                    return $repo->createQueryBuilder('ue')
+                        ->where('ue.utilisateur = :user')
+                        ->setParameter('user', $options['user']);
+                },
             ])
             ->add('regle', TextareaType::class, [
-                'required' => false
+                'required' => false,
             ])
-//            ->add('dateCreation')
             ->add('disponibilite_debut', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Disponible du'
+                'label' => 'Disponible du',
             ])
             ->add('disponibilite_fin', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Au'
+                'label' => 'Au',
             ])
             ->add('adresse')
             ->add('ville')
             ->add('code_postal', TextType::class, [
-                'label' => 'Code postal'
+                'label' => 'Code postal',
             ])
             ->add('surface', NumberType::class, [
-                'label' => 'Surface'
+                'label' => 'Surface',
             ])
             ->add('images', FileType::class, [
                 'label' => 'Photos du logement',
@@ -86,18 +103,14 @@ class AnnounceType extends AbstractType
                                 'image/webp',
                             ],
                             'mimeTypesMessage' => 'Veuillez uploader une image valide (jpg, png, webp)',
-                        ])
-                    ])
+                        ]),
+                    ]),
                 ],
                 'attr' => [
                     'accept' => 'image/*',
                     'class' => 'd-none',
-                ]
+                ],
             ])
-//            ->add('utilisateur', EntityType::class, [
-//                'class' => User::class,
-//                'choice_label' => 'id',
-//            ])
         ;
     }
 
@@ -105,6 +118,7 @@ class AnnounceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Announce::class,
+            'user' => null,
         ]);
     }
 }

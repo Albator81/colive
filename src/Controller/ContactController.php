@@ -7,9 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ContactController extends AbstractController
 {
+    #[IsGranted('ROLE_USER')]
     #[Route('/contact/ajouter/{id}', name: 'app_contact_add')]
     public function add(User $userToAdd, EntityManagerInterface $em): Response
     {
@@ -21,11 +23,12 @@ class ContactController extends AbstractController
             $userToAdd->addContact($currentUser);
             $em->persist($currentUser);
             $em->flush();
-
         }
+
         return $this->redirectToRoute('app_message_conversation', ['id' => $userToAdd->getId()]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/contact/supprimer/{id}', name: 'app_contact_remove')]
     public function remove(User $userToRemove, EntityManagerInterface $em): Response
     {

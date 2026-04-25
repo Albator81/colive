@@ -24,7 +24,7 @@ final class BotCest
     }
 
     /**
-     * Verify if the page load correctly if the user is connected
+     * Verify if the page load correctly if the user is connected.
      */
     public function testBotPageDisplay(ControllerTester $I): void
     {
@@ -37,7 +37,7 @@ final class BotCest
     }
 
     /**
-     * Verify if the url is redirected on the login page
+     * Verify if the url is redirected on the login page.
      */
     public function testAccessDeniedForAnonymous(ControllerTester $I): void
     {

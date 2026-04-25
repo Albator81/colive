@@ -17,7 +17,7 @@ final class AnnounceFactory extends PersistentProxyObjectFactory
         return [
             'titre' => self::faker()->sentence(4),
             'description' => self::faker()->paragraphs(2, true),
-            'type' => self::faker()->randomElement(['Studio', 'Chambre', 'Appartement', 'Colocation']),
+            'type' => self::faker()->randomElement(['Studio', 'Chambre', 'Appartement', 'Collocation']),
             'nb_pieces' => self::faker()->numberBetween(1, 4),
             'prix' => self::faker()->randomFloat(2, 350, 950),
             'latitude' => self::faker()->latitude(45.7, 45.8),
@@ -29,6 +29,7 @@ final class AnnounceFactory extends PersistentProxyObjectFactory
             'disponibilite_debut' => self::faker()->dateTimeBetween('now', '+1 month'),
             'disponibilite_fin' => self::faker()->dateTimeBetween('+6 months', '+1 year'),
             'utilisateur' => UserFactory::new(),
+            'equipment' => EquipmentFactory::randomRange(1, 5),
             'isValidated' => self::faker()->boolean(),
         ];
     }

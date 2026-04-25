@@ -1,45 +1,49 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Se connecter{% endblock %}
+{% set show_header = false %}
+{% set show_btn_notif = false %}
+{% set bg_image = true %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('styles/registration.css') }}">
+{% block title %}Se connecter
 {% endblock %}
 
 {% block body %}
-    <div class="auth-bg">
-        <img src="{{ asset('img/home.png') }}" alt="CoLive Background" class="hero-bg-image">
-        <div class="auth-center">
-            <section class="auth-card">
+	<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 z-n1"></div>
+	<div class="min-vh-100 d-flex align-items-center justify-content-center px-3">
+		<div class="card border-0 shadow-lg rounded-4 p-4 bg-white w-100" style="max-width:400px;">
+			<div class="text-center mb-4">
+				<div class="bg-dark text-white rounded-3 d-inline-flex justify-content-center align-items-center mb-3" style="width:50px;height:50px;font-weight:bold;font-size:1.5rem;">C</div>
+				<h2 class="h4 fw-bold">Connexion</h2>
+				<p class="text-muted">Heureux de vous revoir !</p>
+			</div>
 
-                <div class="logo-box">C</div>
-                <h2 class="title">Connexion</h2>
-                <p class="subtitle">Heureux de vous revoir !</p>
+			<form action="{{ path('app_login') }}" method="post">
+				{% if error %}
+					<div class="alert alert-danger rounded-3">
+						{{ error.messageKey|trans(error.messageData, 'security') }}
+					</div>
+				{% endif %}
 
-                <form action="{{ path('app_login') }}" method="post" class="form">
+				<div class="mb-3">
+					<label for="username" class="form-label fw-bold">Email</label>
+					<input type="email" id="username" name="_username" value="{{ last_username }}" class="form-control rounded-3" placeholder="votre.email@example.com" required autofocus>
+				</div>
 
-                    <label for="username">Email</label>
-                    <input type="email" id="username" name="_username" value="{{ last_username }}" placeholder="votre.email@example.com" required autofocus>
+				<div class="mb-3">
+					<label for="password" class="form-label fw-bold">Mot de passe</label>
+					<input type="password" id="password" name="_password" class="form-control rounded-3" placeholder="......." required>
+				</div>
 
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="_password" placeholder="......." required>
+				<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+				<button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill mt-3 fw-bold">Se connecter</button>
+			</form>
 
-                    {% if error %}
-                        <div class="flash-error">
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
-                        </div>
-                    {% endif %}
+			<p class="text-center mt-4 mb-0">
+				Pas encore de compte ?
+				<a href="{{ path('app_registration') }}" class="fw-bold text-dark">S'inscrire</a>
+			</p>
+		</div>
+	</div>
 
-                    <button type="submit" class="btn-primary">Se connecter</button>
-                </form>
-
-                <p class="login-link">
-                    Pas encore de compte ? <a href="{{ path('app_registration') }}">S'inscrire</a>
-                </p>
-
-            </section>
-        </div>
-    </div>
 {% endblock %}

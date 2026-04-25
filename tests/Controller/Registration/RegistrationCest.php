@@ -36,12 +36,12 @@ final class RegistrationCest
 
         $I->seeInRepository(User::class, [
             'email' => 'amina@example.com',
-            'prenom' => 'Amina'
+            'prenom' => 'Amina',
         ]);
     }
 
     /**
-     * Teste l'erreur quand les mots de passe ne sont pas identiques
+     * Teste l'erreur quand les mots de passe ne sont pas identiques.
      */
     public function testPasswordMismatchError(ControllerTester $I): void
     {
@@ -59,7 +59,7 @@ final class RegistrationCest
     }
 
     /**
-     * Teste l'erreur si un champ est manquant (Logique du controller)
+     * Teste l'erreur si un champ est manquant (Logique du controller).
      */
     public function testEmptyFieldsError(ControllerTester $I): void
     {
