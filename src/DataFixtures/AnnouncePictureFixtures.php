@@ -13,7 +13,9 @@ class AnnouncePictureFixtures extends Fixture implements DependentFixtureInterfa
     public function load(ObjectManager $manager): void
     {
         foreach (AnnounceFactory::all() as $announce) {
-            AnnouncePictureFactory::createMany(rand(2, 4), ['annonce' => $announce]);
+            foreach (AnnouncePictureFactory::randomImages(rand(2, 4)) as $image) {
+                AnnouncePictureFactory::createOne(['annonce' => $announce, 'contenu' => $image]);
+            }
         }
     }
 
