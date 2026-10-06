@@ -134,6 +134,11 @@ composer fix:cs             # apply coding standards
 
 CoLive was built as a team project during the second year of the BUT Informatique at the IUT de Reims (2025–2026), using feature branches and merge requests on the school's GitLab.
 
-**Team:** Hugo Alfredo, Adam Benahmed, Eliott Betry, Nathan Buffet.
+## Authors
+
+- BUFFET Nathan
+- ALFREDO Hugo
+- BENAHMED Adam
+- BETRY Eliott
 
 Sample listing photos come from [Unsplash](https://unsplash.com) (see `src/DataFixtures/images/CREDITS.md`).
